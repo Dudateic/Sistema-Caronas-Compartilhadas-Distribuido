@@ -1,5 +1,5 @@
 # TEC502 - TP02: Especificação do Problema
-> **Concorrência e Conectividade — Semestre 2026.2 | UEFS**
+> **TEC502 - TP02 - Concorrência e Conectividade — Semestre 2026.2 | UEFS**
 
 
 ## 1. Objetivo
