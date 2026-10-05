@@ -1,0 +1,83 @@
+x-servidor: &servidor
+  build:
+    context: .
+    target: servidor
+
+  user: "${UID:-1000}:${GID:-1000}"
+  restart: unless-stopped
+  networks: [consorcio]
+
+x-passageiro: &passageiro
+  build:
+    context: .
+    target: passageiro
+  profiles: ["clientes"]
+  stdin_open: true
+  tty: true
+  networks: [consorcio]
+
+x-motorista: &motorista
+  build:
+    context: .
+    target: motorista
+  profiles: ["clientes"]
+  stdin_open: true
+  tty: true
+  networks: [consorcio]
+
+services:
+  empresa-a:
+    <<: *servidor
+    container_name: vaijunto-empresa-a
+    environment:
+      EMPRESA: A
+      TCP_ADDR: ":6060"
+      HTTP_ADDR: ":9090"
+      PARES: "B=http://empresa-b:9090,C=http://empresa-c:9090"
+    ports: ["6060:6060", "9091:9090"]
+    volumes: ["./dados/a:/app/dados"]
+
+  empresa-b:
+    <<: *servidor
+    container_name: vaijunto-empresa-b
+    environment:
+      EMPRESA: B
+      TCP_ADDR: ":7070"
+      HTTP_ADDR: ":9090"
+      PARES: "A=http://empresa-a:9090,C=http://empresa-c:9090"
+    ports: ["7070:7070", "9092:9090"]
+    volumes: ["./dados/b:/app/dados"]
+
+  empresa-c:
+    <<: *servidor
+    container_name: vaijunto-empresa-c
+    environment:
+      EMPRESA: C
+      TCP_ADDR: ":8080"
+      HTTP_ADDR: ":9090"
+      PARES: "A=http://empresa-a:9090,B=http://empresa-b:9090"
+    ports: ["8080:8080", "9093:9090"]
+    volumes: ["./dados/c:/app/dados"]
+
+  passageiro-a:
+    <<: *passageiro
+    environment: { SERVIDOR: "empresa-a:6060" }
+  passageiro-b:
+    <<: *passageiro
+    environment: { SERVIDOR: "empresa-b:7070" }
+  passageiro-c:
+    <<: *passageiro
+    environment: { SERVIDOR: "empresa-c:8080" }
+
+  motorista-a:
+    <<: *motorista
+    environment: { SERVIDOR: "empresa-a:6060" }
+  motorista-b:
+    <<: *motorista
+    environment: { SERVIDOR: "empresa-b:7070" }
+  motorista-c:
+    <<: *motorista
+    environment: { SERVIDOR: "empresa-c:8080" }
+
+networks:
+  consorcio:
