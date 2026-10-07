@@ -1,18 +1,8 @@
 package protocolo
 
 const (
-	TipoLoginReq    = "login"
-	TipoCadastroReq = "cadastro"
-
-	TipoPublicarCaronaReq   = "publicar_carona"
-	TipoConsultarCaronasReq = "consultar_caronas_motorista"
-	TipoCancelarCaronaReq   = "cancelar_carona"
-
-	TipoBuscarItinerariosReq     = "buscar_itinerarios"
-	TipoReservarItinerarioReq    = "reservar_itinerario"
-	TipoConsultarReservasReq     = "consultar_reservas_passageiro"
-	TipoCancelarReservaReq       = "cancelar_reserva_passageiro"
-	TipoConsultarNotificacoesReq = "consultar_notificacoes"
+	PerfilMotorista  = "motorista"
+	PerfilPassageiro = "passageiro"
 )
 
 type MensagemBase struct {

@@ -1,0 +1,14 @@
+[
+  {
+    "tipo": "passageiro",
+    "id_usuario": "c68b598e75efbff4",
+    "usuario": "Duda",
+    "senha": "09550794019a7c2092e5872e26a4cd2155868b8c427adb53734c8a9d4ea343d7"
+  },
+  {
+    "tipo": "motorista",
+    "id_usuario": "0aa0ae6b3d72ca75",
+    "usuario": "Dudinha",
+    "senha": "09550794019a7c2092e5872e26a4cd2155868b8c427adb53734c8a9d4ea343d7"
+  }
+]

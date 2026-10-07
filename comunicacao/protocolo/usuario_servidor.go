@@ -1,5 +1,29 @@
 package protocolo
 
+const (
+	TipoLoginReq                 = "login_requisicao"
+	TipoCadastroReq              = "cadastro_requisicao"
+	TipoPublicarCaronaReq        = "publicar_carona_requisicao"
+	TipoConsultarCaronasReq      = "consultar_caronas_requisicao"
+	TipoCancelarCaronaReq        = "cancelar_carona_requisicao"
+	TipoBuscarItinerariosReq     = "buscar_itinerarios_requisicao"
+	TipoReservarItinerarioReq    = "reservar_requisicao"
+	TipoConsultarReservasReq     = "consultar_reservas_requisicao"
+	TipoCancelarReservaReq       = "cancelar_reserva_requisicao"
+	TipoConsultarNotificacoesReq = "consultar_notificacoes_requisicao"
+
+	TipoLoginRes                 = "login_resposta"
+	TipoCadastroRes              = "cadastro_resposta"
+	TipoPublicarCaronaRes        = "publicar_carona_resposta"
+	TipoConsultarCaronasRes      = "consultar_caronas_resposta"
+	TipoCancelarCaronaRes        = "cancelar_carona_resposta"
+	TipoBuscarItinerariosRes     = "buscar_itinerarios_resposta"
+	TipoReservarItinerarioRes    = "reservar_resposta"
+	TipoConsultarReservasRes     = "consultar_reservas_resposta"
+	TipoCancelarReservaRes       = "cancelar_reserva_resposta"
+	TipoConsultarNotificacoesRes = "consultar_notificacoes_resposta"
+)
+
 // Trecho representa um segmento contíguo dentro do anúncio de uma carona.
 type Trecho struct {
 	Origem         string   `json:"origem"`
@@ -54,4 +78,67 @@ type Notificacao struct {
 	Passageiro string `json:"passageiro"`
 	Mensagem   string `json:"mensagem"`
 	Data       string `json:"data"`
+}
+
+// Resposta para ações sem retorno de dados (ex: cadastro, cancelamentos).
+type RespostaSimples struct {
+	Tipo     string `json:"tipo"`
+	Sucesso  bool   `json:"sucesso"`
+	Mensagem string `json:"mensagem"`
+}
+
+// informa o resultado da autenticação e as credenciais da sessão.
+type RespostaLogin struct {
+	Tipo        string `json:"tipo"`
+	Sucesso     bool   `json:"sucesso"`
+	Mensagem    string `json:"mensagem"`
+	IDUsuario   string `json:"id_usuario,omitempty"`
+	TipoUsuario string `json:"tipo_usuario,omitempty"`
+}
+
+// retorna o identificador único gerado para a nova carona.
+type RespostaPublicarCarona struct {
+	Tipo     string `json:"tipo"`
+	Sucesso  bool   `json:"sucesso"`
+	Mensagem string `json:"mensagem"`
+	CaronaID int    `json:"carona_id,omitempty"`
+}
+
+// devolve a lista de caronas pertencentes ao motorista.
+type RespostaConsultarCaronas struct {
+	Tipo     string   `json:"tipo"`
+	Sucesso  bool     `json:"sucesso"`
+	Mensagem string   `json:"mensagem"`
+	Caronas  []Carona `json:"caronas,omitempty"`
+}
+
+// retorna as combinações de trechos encontradas pelo algoritmo de busca.
+type RespostaBuscarItinerarios struct {
+	Tipo        string       `json:"tipo"`
+	Sucesso     bool         `json:"sucesso"`
+	Mensagem    string       `json:"mensagem"`
+	Itinerarios []Itinerario `json:"itinerarios,omitempty"`
+}
+
+// devolve o identificador gerado após o commit da reserva atômica.
+type RespostaReservar struct {
+	Tipo      string `json:"tipo"`
+	Sucesso   bool   `json:"sucesso"`
+	Mensagem  string `json:"mensagem"`
+	ReservaID int    `json:"reserva_id,omitempty"`
+}
+
+// lista as reservas ativas do passageiro solicitante.
+type RespostaConsultarReservas struct {
+	Tipo     string    `json:"tipo"`
+	Sucesso  bool      `json:"sucesso"`
+	Mensagem string    `json:"mensagem"`
+	Reservas []Reserva `json:"reservas,omitempty"`
+}
+
+// entrega os avisos pendentes do passageiro.
+type RespostaConsultarNotificacoes struct {
+	Tipo         string        `json:"tipo"`
+	Sucesso      bool          `json:"sucesso"`
+	Notificacoes []Notificacao `json:"notificacoes"`
 }
