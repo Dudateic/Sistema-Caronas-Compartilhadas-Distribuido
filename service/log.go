@@ -13,8 +13,6 @@ var mutexLog sync.Mutex
 
 const ArquivoLog = "servidor.log"
 
-// RegistrarLog grava a requisicao recebida no arquivo de log do servidor.
-// Senhas nao sao registradas: apenas o tipo e o remetente.
 func RegistrarLog(conn net.Conn, tipo string, _ string) {
 	mutexLog.Lock()
 	defer mutexLog.Unlock()

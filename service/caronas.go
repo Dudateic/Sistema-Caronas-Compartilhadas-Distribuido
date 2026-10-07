@@ -8,7 +8,6 @@ import (
 	"sync"
 )
 
-// Estado compartilhado em memoria protegido por Mutex
 var (
 	CaronasRegistradas []protocolo.Carona
 	ProximoCaronaID    = 1
@@ -17,20 +16,16 @@ var (
 
 const ArquivoCaronas = "caronas.json"
 
-// Callback executado sempre que uma carona é cancelada
 var AoCancelarCarona func(caronaID int, motorista string)
 
-// InicializarCaronas deve ser chamado no main do servidor
 func InicializarCaronas() error {
 	MutexCaronas.Lock()
 	defer MutexCaronas.Unlock()
 
-	// Função CarregarJSON pertence ao mesmo package (service)
 	if err := CarregarJSON(ArquivoCaronas, &CaronasRegistradas); err != nil {
 		return err
 	}
 
-	// Recalcula o proximo ID com base no que veio do disco
 	for _, c := range CaronasRegistradas {
 		if c.ID >= ProximoCaronaID {
 			ProximoCaronaID = c.ID + 1
@@ -39,9 +34,6 @@ func InicializarCaronas() error {
 	return nil
 }
 
-/**
- * Valida a rota e os dados da carona, monta os trechos e armazena a viagem em memoria
- */
 func ProcessarPublicarCarona(conn net.Conn, dadosBrutos string) {
 	var req protocolo.PublicacaoCarona
 	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
@@ -67,7 +59,6 @@ func ProcessarPublicarCarona(conn net.Conn, dadosBrutos string) {
 	MutexCaronas.Lock()
 	defer MutexCaronas.Unlock()
 
-	// Divide a sequencia de cidades em trechos individuais consecutivos
 	var trechos []protocolo.Trecho
 	for i := 0; i < len(req.Rota)-1; i++ {
 		trechos = append(trechos, protocolo.Trecho{
@@ -114,9 +105,6 @@ func responderPublicacao(conn net.Conn, sucesso bool, mensagem string, id int) {
 	_ = json.NewEncoder(conn).Encode(resp)
 }
 
-/**
- * Filtra e devolve todas as caronas criadas pelo motorista solicitante
- */
 func ProcessarConsultarCaronas(conn net.Conn, dadosBrutos string) {
 	var req protocolo.ConsultaCaronasMotorista
 	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
@@ -142,9 +130,6 @@ func ProcessarConsultarCaronas(conn net.Conn, dadosBrutos string) {
 	_ = json.NewEncoder(conn).Encode(resp)
 }
 
-/**
- * Localiza a viagem pelo ID e remove da memoria caso pertencente ao motorista
- */
 func ProcessarCancelarCarona(conn net.Conn, dadosBrutos string) {
 	var req protocolo.CancelamentoCarona
 	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {

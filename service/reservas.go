@@ -21,7 +21,6 @@ var NotificacoesRegistradas []protocolo.Notificacao
 
 const ArquivoNotificacoes = "notificacoes.json"
 
-// InicializarReservas carrega o estado guardado no disco para a memória
 func InicializarReservas() error {
 	MutexReservas.Lock()
 	defer MutexReservas.Unlock()
@@ -53,7 +52,6 @@ func ProcessarBuscarItinerarios(conn net.Conn, dadosBrutos string) {
 			continue
 		}
 		for _, t := range c.Trechos {
-			// Vagas presas por reservas em andamento (2PC) nao contam como livres.
 			if t.AssentosLivres-Bloqueados(c.ID, t.Origem, t.Destino) > 0 {
 				novoTrecho := protocolo.TrechoViagem{
 					Empresa:   Config.Empresa,
@@ -151,8 +149,6 @@ func responderBusca(conn net.Conn, sucesso bool, mensagem string, itinerarios []
 	_ = json.NewEncoder(conn).Encode(resp)
 }
 
-// ProcessarReservarItinerario recebe o pedido do passageiro e atua como COORDENADOR
-// do Two-Phase Commit (ver coordenador.go): tudo ou nada, mesmo entre empresas.
 func ProcessarReservarItinerario(conn net.Conn, dadosBrutos string) {
 	var req protocolo.SolicitacaoReserva
 	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
@@ -237,7 +233,6 @@ func ProcessarCancelarReserva(conn net.Conn, dadosBrutos string) {
 
 	ReservasRegistradas = append(ReservasRegistradas[:idxReserva], ReservasRegistradas[idxReserva+1:]...)
 
-	// Libera apenas os trechos desta empresa. (Trechos de outras empresas: ver limitacoes.)
 	for _, trReq := range reservaAlvo.Trechos {
 		if !ehLocal(trReq.Empresa) {
 			continue
@@ -287,7 +282,6 @@ func LimparReservasDaCarona(caronaID int, motorista string) {
 	for _, res := range ReservasRegistradas {
 		afetada := false
 		for _, tr := range res.Trechos {
-			// O ID da carona so identifica a carona dentro da empresa dona dela.
 			if ehLocal(tr.Empresa) && tr.CaronaID == caronaID {
 				afetada = true
 				break

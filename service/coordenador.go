@@ -13,21 +13,12 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
 )
 
-// Lado COORDENADOR do Two-Phase Commit: o servidor que recebe o pedido do
-// passageiro conduz a transacao. Nao ha coordenador fixo; cada reserva escolhe o
-// servidor onde o cliente esta conectado.
-//
-// Deadlock: nenhuma transacao espera por outra indefinidamente. Em conflito de vaga
-// vale wait-die com precedencia de Lamport: a transacao mais antiga espera (poucas
-// tentativas) e a mais nova aborta na hora. Alem disso todo bloqueio expira.
-
 var (
 	maxTentativasPrepare = 8
 	esperaPrepare        = 50 * time.Millisecond
 	tentativasDecisao    = 6
 	intervaloDecisao     = 200 * time.Millisecond
 
-	// retriesDecisao permite aos testes aguardar o termino dos reenvios em segundo plano.
 	retriesDecisao sync.WaitGroup
 )
 
@@ -67,7 +58,6 @@ func enviarPrepare(empresa string, pedido protocolo.PedidoBloqueio) (protocolo.R
 	return voto, nil
 }
 
-// solicitarVoto pede o voto de um trecho aplicando wait-die em recusas transitorias.
 func solicitarVoto(txID string, ts int64, req protocolo.SolicitacaoReserva, t protocolo.TrechoViagem) votoTrecho {
 	pedido := protocolo.PedidoBloqueio{
 		TxID: txID, CaronaID: t.CaronaID, Origem: t.Origem, Destino: t.Destino,
@@ -95,8 +85,6 @@ func solicitarVoto(txID string, ts int64, req protocolo.SolicitacaoReserva, t pr
 	}
 }
 
-// enviarDecisao entrega commit/rollback a uma empresa. O segundo retorno indica
-// falha permanente (nao adianta repetir).
 func enviarDecisao(empresa, txID, decisao, motivo string) (error, bool) {
 	if ehLocal(empresa) {
 		var status int
@@ -141,8 +129,6 @@ func enviarDecisao(empresa, txID, decisao, motivo string) (error, bool) {
 	}
 }
 
-// distribuirDecisao envia a decisao a todas as empresas em paralelo. Quem nao respondeu
-// continua sendo tentado em segundo plano; se nunca responder, o bloqueio expira sozinho.
 func distribuirDecisao(txID string, empresas []string, decisao, motivo string) {
 	var mu sync.Mutex
 	var falhas []string
@@ -189,7 +175,6 @@ func reenviarDecisao(txID string, empresas []string, decisao, motivo string) {
 	}
 }
 
-// CoordenarReserva conduz o 2PC de um itinerario. Retorna (reservaID, mensagem, sucesso).
 func CoordenarReserva(req protocolo.SolicitacaoReserva) (int, string, bool) {
 	inicio := time.Now()
 
@@ -224,7 +209,6 @@ func CoordenarReserva(req protocolo.SolicitacaoReserva) (int, string, bool) {
 	ts := Relogio.Tick()
 	fmt.Printf("[2PC] Iniciando transacao %s (ts=%d, %d trecho(s), %d empresa(s))\n", txID, ts, len(trechos), len(empresas))
 
-	// Fase 1: prepare em paralelo para todos os trechos.
 	votos := make([]votoTrecho, len(trechos))
 	var wg sync.WaitGroup
 	for i := range trechos {
@@ -243,19 +227,16 @@ func CoordenarReserva(req protocolo.SolicitacaoReserva) (int, string, bool) {
 			break
 		}
 	}
-	// Se a fase 1 consumiu metade do TTL, o commit poderia chegar com bloqueios vencidos.
 	if motivo == "" && time.Since(inicio) > Config.TTLBloqueio/2 {
 		motivo = "tempo excedido na fase de preparacao"
 	}
 
-	// Fase 2a: qualquer NAO (ou timeout) => rollback em todos os participantes.
 	if motivo != "" {
 		distribuirDecisao(txID, empresas, "rollback", motivo)
 		fmt.Printf("[2PC] Transacao %s abortada: %s\n", txID, motivo)
 		return 0, motivo, false
 	}
 
-	// Fase 2b: todos disseram SIM. Registra a decisao de forma duravel e confirma.
 	var total float64
 	for i := range trechos {
 		trechos[i].Preco = votos[i].preco

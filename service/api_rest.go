@@ -9,8 +9,6 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
 )
 
-// NovoHandlerAPI monta a API REST usada entre os servidores do consorcio.
-//
 //	POST /api/v1/transacoes/prepare            -> 200 (voto SIM) | 409 (voto NAO) | 400
 //	POST /api/v1/transacoes/{tx_id}/commit     -> 200 | 404 (desconhecida) | 409 (nao pode confirmar) | 400
 //	POST /api/v1/transacoes/{tx_id}/rollback   -> 200 | 409 (ja confirmada) | 400
@@ -32,7 +30,6 @@ func erroHTTP(w http.ResponseWriter, status int, msg string) {
 	escreverJSON(w, status, protocolo.ErroHTTP{Status: status, Mensagem: msg})
 }
 
-// decodificar le o corpo JSON. Se opcional, um corpo vazio e aceito.
 func decodificar(w http.ResponseWriter, r *http.Request, destino any, opcional bool) bool {
 	r.Body = http.MaxBytesReader(w, r.Body, 1<<20)
 	err := json.NewDecoder(r.Body).Decode(destino)

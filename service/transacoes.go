@@ -10,15 +10,6 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
 )
 
-// Lado PARTICIPANTE do Two-Phase Commit.
-//
-// Prepare nao altera AssentosLivres: apenas registra um bloqueio temporario.
-// Assim, abortar (rollback ou expiracao) nao exige desfazer nada e um assento
-// nunca fica "perdido": o bloqueio simplesmente deixa de existir.
-// Commit converte o bloqueio em ocupacao definitiva.
-//
-// Ordem de locks (evita deadlock): MutexCaronas -> MutexReservas -> mutexTx.
-
 const ArquivoTransacoes = "transacoes.json"
 
 const (
@@ -56,8 +47,6 @@ var (
 	finalizadas = map[string]string{}
 )
 
-// InicializarTransacoes recarrega do disco os bloqueios e o historico de transacoes.
-// Bloqueios herdados continuam valendo ate expirar, honrando votos SIM ja dados.
 func InicializarTransacoes() error {
 	var est estadoPersistido
 	if err := CarregarJSON(ArquivoTransacoes, &est); err != nil {
@@ -87,7 +76,6 @@ func salvarTransacoesLocked() {
 	}
 }
 
-// expirarLocked descarta bloqueios vencidos. Deve ser chamado com mutexTx preso.
 func expirarLocked(agora int64) int {
 	n := 0
 	for id, tx := range pendentes {
@@ -104,14 +92,12 @@ func expirarLocked(agora int64) int {
 	return n
 }
 
-// LimparBloqueiosExpirados libera os assentos de transacoes que nunca receberam commit.
 func LimparBloqueiosExpirados() int {
 	mutexTx.Lock()
 	defer mutexTx.Unlock()
 	return expirarLocked(time.Now().UnixNano())
 }
 
-// IniciarLimpezaBloqueios roda a coleta de bloqueios expirados ate o contexto terminar.
 func IniciarLimpezaBloqueios(ctx context.Context) {
 	go func() {
 		t := time.NewTicker(500 * time.Millisecond)
@@ -127,7 +113,6 @@ func IniciarLimpezaBloqueios(ctx context.Context) {
 	}()
 }
 
-// localizarTrecho exige MutexCaronas preso (leitura ou escrita).
 func localizarTrecho(caronaID int, origem, destino string) (*protocolo.Carona, *protocolo.Trecho) {
 	for i := range CaronasRegistradas {
 		c := &CaronasRegistradas[i]
@@ -144,7 +129,6 @@ func localizarTrecho(caronaID int, origem, destino string) (*protocolo.Carona, *
 	return nil, nil
 }
 
-// bloqueiosLocked conta os bloqueios ativos de um trecho e devolve o de maior precedencia.
 func bloqueiosLocked(caronaID int, origem, destino string) (int, *transacaoPendente) {
 	n := 0
 	var menor *transacaoPendente
@@ -161,8 +145,6 @@ func bloqueiosLocked(caronaID int, origem, destino string) (int, *transacaoPende
 	return n, menor
 }
 
-// Bloqueados informa quantas vagas de um trecho estao presas por transacoes pendentes.
-// Exige que o chamador NAO esteja com mutexTx preso (pode estar com MutexCaronas).
 func Bloqueados(caronaID int, origem, destino string) int {
 	mutexTx.Lock()
 	defer mutexTx.Unlock()
@@ -171,7 +153,6 @@ func Bloqueados(caronaID int, origem, destino string) int {
 	return n
 }
 
-// Preparar executa a fase 1 como participante. Retorna o status HTTP e o voto.
 func Preparar(p protocolo.PedidoBloqueio) (int, protocolo.RespostaPrepare) {
 	Relogio.Atualizar(p.Timestamp)
 	voto := func(status int, ok bool, motivo string) (int, protocolo.RespostaPrepare) {
@@ -200,7 +181,6 @@ func Preparar(p protocolo.PedidoBloqueio) (int, protocolo.RespostaPrepare) {
 
 	tx := pendentes[p.TxID]
 	if tx != nil {
-		// Repeticao do mesmo prepare (retry de rede): responde SIM sem bloquear de novo.
 		for _, h := range tx.Trechos {
 			if h.CaronaID == p.CaronaID && h.Origem == p.Origem && h.Destino == p.Destino {
 				st, r := voto(http.StatusOK, true, "")
@@ -240,7 +220,6 @@ func Preparar(p protocolo.PedidoBloqueio) (int, protocolo.RespostaPrepare) {
 	return st, r
 }
 
-// Commitar executa a fase 2 (confirmacao) como participante. E idempotente.
 func Commitar(txID string) (int, protocolo.RespostaTransacao) {
 	resp := func(status int, estado, msg string) (int, protocolo.RespostaTransacao) {
 		return status, protocolo.RespostaTransacao{TxID: txID, Estado: estado, Mensagem: msg}
@@ -265,7 +244,6 @@ func Commitar(txID string) (int, protocolo.RespostaTransacao) {
 		return resp(http.StatusNotFound, "desconhecida", "transacao desconhecida neste servidor")
 	}
 
-	// Revalida tudo antes de aplicar: ou confirma todos os trechos locais ou nenhum.
 	for _, h := range tx.Trechos {
 		c, t := localizarTrecho(h.CaronaID, h.Origem, h.Destino)
 		if c == nil || t.AssentosLivres <= 0 {
@@ -292,8 +270,6 @@ func Commitar(txID string) (int, protocolo.RespostaTransacao) {
 	return resp(http.StatusOK, estadoCommit, "")
 }
 
-// Abortar executa o rollback como participante. E idempotente e tambem registra
-// um marcador para recusar um prepare atrasado que chegue depois do rollback.
 func Abortar(txID, motivo string) (int, protocolo.RespostaTransacao) {
 	mutexTx.Lock()
 	defer mutexTx.Unlock()
