@@ -1,6 +1,7 @@
-package service
+package testes
 
 import (
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/servicos"
 	"encoding/json"
 	"fmt"
 	"net"
@@ -23,7 +24,7 @@ func TestMain(m *testing.M) {
 		fmt.Println("falha ao entrar no diretorio temporario:", err)
 		os.Exit(1)
 	}
-	_ = os.MkdirAll(DiretorioDados, 0755)
+	_ = os.MkdirAll(service.DiretorioDados, 0755)
 	esperaPrepare = 5 * time.Millisecond
 	intervaloDecisao = 20 * time.Millisecond
 	code := m.Run()
@@ -39,21 +40,21 @@ func resetar(t *testing.T) {
 	pendentes = map[string]*transacaoPendente{}
 	finalizadas = map[string]string{}
 	mutexTx.Unlock()
-	Config = ConfigConsorcio{Empresa: "VAIJUNTO", Pares: map[string]string{}, TTLBloqueio: 30 * time.Second, TimeoutPar: 3 * time.Second}
-	MutexCaronas.Lock()
-	MutexReservas.Lock()
-	CaronasRegistradas = nil
-	ProximoCaronaID = 1
-	ReservasRegistradas = nil
-	ProximoReservaID = 1
-	NotificacoesRegistradas = nil
-	AoCancelarCarona = nil
-	MutexReservas.Unlock()
-	MutexCaronas.Unlock()
+	service.Config = service.ConfigConsorcio{Empresa: "VAIJUNTO", Pares: map[string]string{}, TTLBloqueio: 30 * time.Second, TimeoutPar: 3 * time.Second}
+	service.MutexCaronas.Lock()
+	service.MutexReservas.Lock()
+	service.CaronasRegistradas = nil
+	service.ProximoCaronaID = 1
+	service.ReservasRegistradas = nil
+	service.ProximoReservaID = 1
+	service.NotificacoesRegistradas = nil
+	service.AoCancelarCarona = nil
+	service.MutexReservas.Unlock()
+	service.MutexCaronas.Unlock()
 
-	entradas, _ := os.ReadDir(DiretorioDados)
+	entradas, _ := os.ReadDir(service.DiretorioDados)
 	for _, e := range entradas {
-		_ = os.Remove(DiretorioDados + "/" + e.Name())
+		_ = os.Remove(service.DiretorioDados + "/" + e.Name())
 	}
 }
 
@@ -79,7 +80,7 @@ func chamar(t *testing.T, handler func(net.Conn, string), req any, resp any) {
 func publicar(t *testing.T, motorista string, rota []string, horario string, assentos int, preco float64) int {
 	t.Helper()
 	var r protocolo.RespostaPublicarCarona
-	chamar(t, ProcessarPublicarCarona, protocolo.PublicacaoCarona{
+	chamar(t, service.ProcessarPublicarCarona, protocolo.PublicacaoCarona{
 		Tipo:           protocolo.TipoPublicarCaronaReq,
 		Motorista:      motorista,
 		Rota:           rota,
@@ -101,7 +102,7 @@ func trechoViagem(caronaID int, origem, destino, horario string, preco float64) 
 func reservar(t *testing.T, passageiro string, trechos ...protocolo.TrechoViagem) protocolo.RespostaReservar {
 	t.Helper()
 	var r protocolo.RespostaReservar
-	chamar(t, ProcessarReservarItinerario, protocolo.SolicitacaoReserva{
+	chamar(t, service.ProcessarReservarItinerario, protocolo.SolicitacaoReserva{
 		Tipo:       protocolo.TipoReservarItinerarioReq,
 		Passageiro: passageiro,
 		Data:       "2030-01-01",
@@ -111,9 +112,9 @@ func reservar(t *testing.T, passageiro string, trechos ...protocolo.TrechoViagem
 }
 
 func livres(caronaID int, origem, destino string) int {
-	MutexCaronas.RLock()
-	defer MutexCaronas.RUnlock()
-	for _, c := range CaronasRegistradas {
+	service.MutexCaronas.RLock()
+	defer service.MutexCaronas.RUnlock()
+	for _, c := range service.CaronasRegistradas {
 		if c.ID != caronaID {
 			continue
 		}
@@ -130,9 +131,9 @@ func livres(caronaID int, origem, destino string) int {
 // negativos ou superlotado, e ocupacao coerente com a lista de passageiros.
 func verificarInvariantes(t *testing.T) {
 	t.Helper()
-	MutexCaronas.RLock()
-	defer MutexCaronas.RUnlock()
-	for _, c := range CaronasRegistradas {
+	service.MutexCaronas.RLock()
+	defer service.MutexCaronas.RUnlock()
+	for _, c := range service.CaronasRegistradas {
 		for _, tr := range c.Trechos {
 			if tr.AssentosLivres < 0 {
 				t.Errorf("carona %d trecho %s->%s com assentos negativos (%d)", c.ID, tr.Origem, tr.Destino, tr.AssentosLivres)
@@ -149,12 +150,12 @@ func TestPublicarCaronaMontaTrechos(t *testing.T) {
 	resetar(t)
 	id := publicar(t, "m1", []string{"A", "B", "C"}, "08:00", 3, 10)
 
-	MutexCaronas.RLock()
-	defer MutexCaronas.RUnlock()
-	if len(CaronasRegistradas) != 1 || CaronasRegistradas[0].ID != id {
-		t.Fatalf("carona nao registrada corretamente: %+v", CaronasRegistradas)
+	service.MutexCaronas.RLock()
+	defer service.MutexCaronas.RUnlock()
+	if len(service.CaronasRegistradas) != 1 || service.CaronasRegistradas[0].ID != id {
+		t.Fatalf("carona nao registrada corretamente: %+v", service.CaronasRegistradas)
 	}
-	if n := len(CaronasRegistradas[0].Trechos); n != 2 {
+	if n := len(service.CaronasRegistradas[0].Trechos); n != 2 {
 		t.Fatalf("esperava 2 trechos, veio %d", n)
 	}
 }
@@ -169,7 +170,7 @@ func TestPublicarCaronaValidacoes(t *testing.T) {
 	for nome, req := range casos {
 		req.Tipo = protocolo.TipoPublicarCaronaReq
 		var r protocolo.RespostaPublicarCarona
-		chamar(t, ProcessarPublicarCarona, req, &r)
+		chamar(t, service.ProcessarPublicarCarona, req, &r)
 		if r.Sucesso {
 			t.Errorf("%s: publicacao deveria ser recusada", nome)
 		}
@@ -205,9 +206,9 @@ func TestUltimaVagaConcorrente(t *testing.T) {
 	if l := livres(id, "A", "B"); l != 0 {
 		t.Fatalf("esperava 0 assentos livres, veio %d", l)
 	}
-	MutexReservas.Lock()
-	n := len(ReservasRegistradas)
-	MutexReservas.Unlock()
+	service.MutexReservas.Lock()
+	n := len(service.ReservasRegistradas)
+	service.MutexReservas.Unlock()
 	if n != 1 {
 		t.Fatalf("esperava 1 reserva registrada, veio %d", n)
 	}
@@ -320,7 +321,7 @@ func TestCancelarReservaLiberaAssentos(t *testing.T) {
 
 	// Outro passageiro nao pode cancelar a reserva alheia.
 	var neg protocolo.RespostaSimples
-	chamar(t, ProcessarCancelarReserva, protocolo.CancelamentoReserva{
+	chamar(t, service.ProcessarCancelarReserva, protocolo.CancelamentoReserva{
 		Tipo: protocolo.TipoCancelarReservaReq, ReservaID: r.ReservaID, Passageiro: "intruso",
 	}, &neg)
 	if neg.Sucesso {
@@ -331,7 +332,7 @@ func TestCancelarReservaLiberaAssentos(t *testing.T) {
 	}
 
 	var ok protocolo.RespostaSimples
-	chamar(t, ProcessarCancelarReserva, protocolo.CancelamentoReserva{
+	chamar(t, service.ProcessarCancelarReserva, protocolo.CancelamentoReserva{
 		Tipo: protocolo.TipoCancelarReservaReq, ReservaID: r.ReservaID, Passageiro: "p1",
 	}, &ok)
 	if !ok.Sucesso {
@@ -349,14 +350,14 @@ func TestCancelarReservaLiberaAssentos(t *testing.T) {
 
 func TestCancelarCaronaCancelaReservasENotifica(t *testing.T) {
 	resetar(t)
-	AoCancelarCarona = LimparReservasDaCarona
+	service.AoCancelarCarona = service.LimparReservasDaCarona
 	id := publicar(t, "m1", []string{"A", "B"}, "08:00", 2, 10)
 	if !reservar(t, "p1", trechoViagem(id, "A", "B", "08:00", 10)).Sucesso {
 		t.Fatal("reserva falhou")
 	}
 
 	var r protocolo.RespostaSimples
-	chamar(t, ProcessarCancelarCarona, protocolo.CancelamentoCarona{
+	chamar(t, service.ProcessarCancelarCarona, protocolo.CancelamentoCarona{
 		Tipo: protocolo.TipoCancelarCaronaReq, CaronaID: id, Motorista: "m1",
 	}, &r)
 	if !r.Sucesso {
@@ -367,7 +368,7 @@ func TestCancelarCaronaCancelaReservasENotifica(t *testing.T) {
 	var notif protocolo.RespostaConsultarNotificacoes
 	limite := time.Now().Add(5 * time.Second)
 	for time.Now().Before(limite) {
-		chamar(t, ProcessarConsultarNotificacoes, protocolo.ConsultaNotificacoes{
+		chamar(t, service.ProcessarConsultarNotificacoes, protocolo.ConsultaNotificacoes{
 			Tipo: protocolo.TipoConsultarNotificacoesReq, Passageiro: "p1",
 		}, &notif)
 		if len(notif.Notificacoes) > 0 {
@@ -380,7 +381,7 @@ func TestCancelarCaronaCancelaReservasENotifica(t *testing.T) {
 	}
 
 	var lista protocolo.RespostaConsultarReservas
-	chamar(t, ProcessarConsultarReservas, protocolo.ConsultaReservasPassageiro{
+	chamar(t, service.ProcessarConsultarReservas, protocolo.ConsultaReservasPassageiro{
 		Tipo: protocolo.TipoConsultarReservasReq, Passageiro: "p1",
 	}, &lista)
 	if len(lista.Reservas) != 0 {
@@ -388,7 +389,7 @@ func TestCancelarCaronaCancelaReservasENotifica(t *testing.T) {
 	}
 
 	// Notificacao e entregue uma unica vez.
-	chamar(t, ProcessarConsultarNotificacoes, protocolo.ConsultaNotificacoes{
+	chamar(t, service.ProcessarConsultarNotificacoes, protocolo.ConsultaNotificacoes{
 		Tipo: protocolo.TipoConsultarNotificacoesReq, Passageiro: "p1",
 	}, &notif)
 	if len(notif.Notificacoes) != 0 {
@@ -400,15 +401,15 @@ func TestCancelarCaronaDeOutroMotoristaNegado(t *testing.T) {
 	resetar(t)
 	id := publicar(t, "m1", []string{"A", "B"}, "08:00", 1, 10)
 	var r protocolo.RespostaSimples
-	chamar(t, ProcessarCancelarCarona, protocolo.CancelamentoCarona{
+	chamar(t, service.ProcessarCancelarCarona, protocolo.CancelamentoCarona{
 		Tipo: protocolo.TipoCancelarCaronaReq, CaronaID: id, Motorista: "outro",
 	}, &r)
 	if r.Sucesso {
 		t.Fatal("motorista cancelou carona alheia")
 	}
-	MutexCaronas.RLock()
-	n := len(CaronasRegistradas)
-	MutexCaronas.RUnlock()
+	service.MutexCaronas.RLock()
+	n := len(service.CaronasRegistradas)
+	service.MutexCaronas.RUnlock()
 	if n != 1 {
 		t.Fatalf("carona deveria continuar registrada, restam %d", n)
 	}
@@ -422,7 +423,7 @@ func TestBuscaItinerarioComConexao(t *testing.T) {
 	publicar(t, "m3", []string{"B", "C"}, "07:00", 2, 5)
 
 	var r protocolo.RespostaBuscarItinerarios
-	chamar(t, ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
+	chamar(t, service.ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
 		Tipo: protocolo.TipoBuscarItinerariosReq, Origem: "A", Destino: "C", Data: "2030-01-01",
 	}, &r)
 
@@ -443,14 +444,14 @@ func TestBuscaIgnoraTrechoLotadoEOutraData(t *testing.T) {
 	}
 
 	var r protocolo.RespostaBuscarItinerarios
-	chamar(t, ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
+	chamar(t, service.ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
 		Tipo: protocolo.TipoBuscarItinerariosReq, Origem: "A", Destino: "B", Data: "2030-01-01",
 	}, &r)
 	if len(r.Itinerarios) != 0 {
 		t.Fatalf("trecho lotado nao deveria aparecer na busca: %+v", r.Itinerarios)
 	}
 
-	chamar(t, ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
+	chamar(t, service.ProcessarBuscarItinerarios, protocolo.ConsultaItinerario{
 		Tipo: protocolo.TipoBuscarItinerariosReq, Origem: "A", Destino: "B", Data: "2031-02-02",
 	}, &r)
 	if len(r.Itinerarios) != 0 {
@@ -468,28 +469,28 @@ func TestPersistenciaAposReinicio(t *testing.T) {
 	}
 
 	// Simula reinicio: zera memoria e recarrega do disco.
-	MutexCaronas.Lock()
-	MutexReservas.Lock()
-	CaronasRegistradas = nil
-	ProximoCaronaID = 1
-	ReservasRegistradas = nil
-	ProximoReservaID = 1
-	MutexReservas.Unlock()
-	MutexCaronas.Unlock()
+	service.MutexCaronas.Lock()
+	service.MutexReservas.Lock()
+	service.CaronasRegistradas = nil
+	service.ProximoCaronaID = 1
+	service.ReservasRegistradas = nil
+	service.ProximoReservaID = 1
+	service.MutexReservas.Unlock()
+	service.MutexCaronas.Unlock()
 
-	if err := InicializarCaronas(); err != nil {
+	if err := service.InicializarCaronas(); err != nil {
 		t.Fatal(err)
 	}
-	if err := InicializarReservas(); err != nil {
+	if err := service.InicializarReservas(); err != nil {
 		t.Fatal(err)
 	}
 
 	if l := livres(id, "A", "B"); l != 1 {
 		t.Fatalf("apos reinicio esperava 1 assento livre, veio %d", l)
 	}
-	MutexReservas.Lock()
-	n, prox := len(ReservasRegistradas), ProximoReservaID
-	MutexReservas.Unlock()
+	service.MutexReservas.Lock()
+	n, prox := len(service.ReservasRegistradas), service.ProximoReservaID
+	service.MutexReservas.Unlock()
 	if n != 1 || prox != rv.ReservaID+1 {
 		t.Fatalf("reservas nao recuperadas: n=%d proximoID=%d", n, prox)
 	}
@@ -500,7 +501,7 @@ func TestCadastroELogin(t *testing.T) {
 	resetar(t)
 	cad := func(usuario, senha, perfil string) protocolo.RespostaSimples {
 		var r protocolo.RespostaSimples
-		chamar(t, ProcessarCadastro, protocolo.RegistroUsuario{
+		chamar(t, service.ProcessarCadastro, protocolo.RegistroUsuario{
 			Tipo: protocolo.TipoCadastroReq, Usuario: usuario, Senha: senha, TipoUsuario: perfil,
 		}, &r)
 		return r
@@ -517,7 +518,7 @@ func TestCadastroELogin(t *testing.T) {
 
 	login := func(usuario, senha string) protocolo.RespostaLogin {
 		var r protocolo.RespostaLogin
-		chamar(t, ProcessarLogin, protocolo.CredencialLogin{
+		chamar(t, service.ProcessarLogin, protocolo.CredencialLogin{
 			Tipo: protocolo.TipoLoginReq, Usuario: usuario, Senha: senha,
 		}, &r)
 		return r
