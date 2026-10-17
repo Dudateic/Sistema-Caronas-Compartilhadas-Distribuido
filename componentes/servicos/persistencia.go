@@ -1,63 +1,66 @@
-package service
+package servicos
 
 import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
-	"sync"
 )
 
-var mutexArquivo sync.Mutex
-
-// DiretorioDados e a pasta de persistencia da empresa (configuravel no main).
-// Cada empresa deve usar a sua propria pasta: nao ha armazenamento compartilhado.
-var DiretorioDados = "dados"
-
-func SalvarJSON(nomeArquivo string, dados any) error {
-	mutexArquivo.Lock()
-	defer mutexArquivo.Unlock()
-
-	caminho := filepath.Join(DiretorioDados, nomeArquivo)
-
-	if err := os.MkdirAll(filepath.Dir(caminho), 0755); err != nil {
-		return fmt.Errorf("falha ao criar diretorio de persistencia: %w", err)
-	}
-
-	conteudo, err := json.MarshalIndent(dados, "", "  ")
+func (gc *GerenciadorCaronas) salvarEmDisco() error {
+	bytesDados, err := json.MarshalIndent(gc.caronas, "", "  ")
 	if err != nil {
-		return fmt.Errorf("falha ao serializar dados para JSON: %w", err)
+		return fmt.Errorf("falha ao serializar dados de caronas: %w", err)
 	}
 
-	if err := os.WriteFile(caminho, conteudo, 0644); err != nil {
-		return fmt.Errorf("falha ao gravar arquivo %s: %w", caminho, err)
-	}
-
-	return nil
+	return os.WriteFile(gc.caminhoPersistencia, bytesDados, 0644)
 }
 
-func CarregarJSON(nomeArquivo string, destino any) error {
-	mutexArquivo.Lock()
-	defer mutexArquivo.Unlock()
-
-	caminho := filepath.Join(DiretorioDados, nomeArquivo)
-
-	if _, err := os.Stat(caminho); os.IsNotExist(err) {
-		return nil
-	}
-
-	conteudo, err := os.ReadFile(caminho)
+func (gc *GerenciadorCaronas) carregarDoDisco() error {
+	conteudo, err := os.ReadFile(gc.caminhoPersistencia)
 	if err != nil {
-		return fmt.Errorf("falha ao ler arquivo %s: %w", caminho, err)
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
 	}
 
 	if len(conteudo) == 0 {
 		return nil
 	}
 
-	if err := json.Unmarshal(conteudo, destino); err != nil {
-		return fmt.Errorf("falha ao desserializar conteudo de %s: %w", caminho, err)
+	if err := json.Unmarshal(conteudo, &gc.caronas); err != nil {
+		return err
 	}
 
+	for _, c := range gc.caronas {
+		if c.ID >= gc.proximoID {
+			gc.proximoID = c.ID + 1
+		}
+	}
 	return nil
+}
+
+func (gu *GerenciadorUsuarios) salvarEmDisco() error {
+	bytesDados, err := json.MarshalIndent(gu.usuarios, "", "  ")
+	if err != nil {
+		return fmt.Errorf("falha ao serializar usuarios: %w", err)
+	}
+
+	return os.WriteFile(gu.caminhoPersistencia, bytesDados, 0644)
+}
+
+func (gu *GerenciadorUsuarios) carregarDoDisco() error {
+	conteudo, err := os.ReadFile(gu.caminhoPersistencia)
+	if err != nil {
+		if os.IsNotExist(err) {
+			return nil
+		}
+		return err
+	}
+
+	if len(conteudo) == 0 {
+		return nil
+	}
+
+	return json.Unmarshal(conteudo, &gu.usuarios)
 }

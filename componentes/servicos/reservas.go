@@ -1,349 +1,175 @@
-package service
+package servicos
 
 import (
-	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
 	"encoding/json"
+	"errors"
 	"fmt"
-	"net"
+	"os"
+	"path/filepath"
 	"sync"
 	"time"
+
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 )
 
 var (
-	ReservasRegistradas []protocolo.Reserva
-	ProximoReservaID    = 1
-	MutexReservas       sync.Mutex
+	ErrReservaNaoEncontrada = errors.New("reserva nao localizada")
 )
 
-const ArquivoReservas = "reservas.json"
+// GerenciadorReservas controla as reservas confirmadas e notificacoes aos passageiros
+type GerenciadorReservas struct {
+	idEmpresa           string
+	caminhoReservas     string
+	caminhoNotificacoes string
+	mu                  sync.RWMutex
 
-var NotificacoesRegistradas []protocolo.Notificacao
+	reservas     map[int]modelos.Reserva          // ReservaID -> Reserva
+	notificacoes map[string][]modelos.Notificacao // Passageiro -> lista de notificacoes
+	proximoID    int
+}
 
-const ArquivoNotificacoes = "notificacoes.json"
+// NovoGerenciadorReservas inicializa a memoria e restaura os bilhetes ja gravados em disco
+func NovoGerenciadorReservas(idEmpresa, diretorioDados string) *GerenciadorReservas {
+	caminhoRes := filepath.Join(diretorioDados, "reservas.json")
+	caminhoNot := filepath.Join(diretorioDados, "notificacoes.json")
 
-func InicializarReservas() error {
-	MutexReservas.Lock()
-	defer MutexReservas.Unlock()
+	gr := &GerenciadorReservas{
+		idEmpresa:           idEmpresa,
+		caminhoReservas:     caminhoRes,
+		caminhoNotificacoes: caminhoNot,
+		reservas:            make(map[int]modelos.Reserva),
+		notificacoes:        make(map[string][]modelos.Notificacao),
+		proximoID:           1,
+	}
 
-	if err := CarregarJSON(ArquivoReservas, &ReservasRegistradas); err != nil {
+	_ = gr.carregarDoDisco()
+	return gr
+}
+
+// CriarReservaConfirmada armazena o bilhete definitivo apos o GLOBAL COMMIT do 2PC
+func (gr *GerenciadorReservas) CriarReservaConfirmada(txID, passageiro string, itinerario modelos.Itinerario) modelos.Reserva {
+	gr.mu.Lock()
+	defer gr.mu.Unlock()
+
+	reserva := modelos.Reserva{
+		ID:         gr.proximoID,
+		TxID:       txID,
+		Passageiro: passageiro,
+		Data:       itinerario.Data,
+		PrecoTotal: itinerario.PrecoTotal,
+		Trechos:    itinerario.Trechos,
+	}
+
+	gr.reservas[gr.proximoID] = reserva
+	gr.proximoID++
+
+	// Emite aviso interno para a caixa de notificacoes do passageiro
+	msg := fmt.Sprintf("Itinerario confirmado com sucesso (TxID: %s, %d trechos). Boa viagem!", txID, len(itinerario.Trechos))
+	gr.adicionarNotificacaoSemLock(passageiro, msg)
+
+	_ = gr.salvarEmDisco()
+	return reserva
+}
+
+// ConsultarReservasPassageiro lista todos os bilhetes emitidos para o passageiro conectado
+func (gr *GerenciadorReservas) ConsultarReservasPassageiro(passageiro string) []modelos.Reserva {
+	gr.mu.RLock()
+	defer gr.mu.RUnlock()
+
+	var lista []modelos.Reserva
+	for _, r := range gr.reservas {
+		if r.Passageiro == passageiro {
+			lista = append(lista, r)
+		}
+	}
+	return lista
+}
+
+// CancelarReserva remove a reserva ativa e sinaliza o cancelamento
+func (gr *GerenciadorReservas) CancelarReserva(reservaID int, passageiro string) (*modelos.Reserva, error) {
+	gr.mu.Lock()
+	defer gr.mu.Unlock()
+
+	res, existe := gr.reservas[reservaID]
+	if !existe || res.Passageiro != passageiro {
+		return nil, ErrReservaNaoEncontrada
+	}
+
+	delete(gr.reservas, reservaID)
+	_ = gr.salvarEmDisco()
+
+	return &res, nil
+}
+
+// AdicionarNotificacao insere uma nova mensagem para um passageiro
+func (gr *GerenciadorReservas) AdicionarNotificacao(passageiro, mensagem string) {
+	gr.mu.Lock()
+	defer gr.mu.Unlock()
+
+	gr.adicionarNotificacaoSemLock(passageiro, mensagem)
+	_ = gr.salvarNotificacoesEmDisco()
+}
+
+func (gr *GerenciadorReservas) adicionarNotificacaoSemLock(passageiro, mensagem string) {
+	nova := modelos.Notificacao{
+		Passageiro: passageiro,
+		Mensagem:   mensagem,
+		Data:       time.Now().Format("2006-01-02 15:04:05"),
+	}
+	gr.notificacoes[passageiro] = append(gr.notificacoes[passageiro], nova)
+}
+
+// ConsultarNotificacoes devolve os avisos do passageiro e esvazia a caixa pendente
+func (gr *GerenciadorReservas) ConsultarNotificacoes(passageiro string) []modelos.Notificacao {
+	gr.mu.Lock()
+	defer gr.mu.Unlock()
+
+	mensagens, existe := gr.notificacoes[passageiro]
+	if !existe {
+		return []modelos.Notificacao{}
+	}
+
+	// Limpa apos a leitura pelo cliente
+	delete(gr.notificacoes, passageiro)
+	_ = gr.salvarNotificacoesEmDisco()
+
+	return mensagens
+}
+
+// Persistência em disco JSON
+func (gr *GerenciadorReservas) salvarEmDisco() error {
+	bytesDados, err := json.MarshalIndent(gr.reservas, "", "  ")
+	if err != nil {
 		return err
 	}
+	return os.WriteFile(gr.caminhoReservas, bytesDados, 0644)
+}
 
-	for _, r := range ReservasRegistradas {
-		if r.ID >= ProximoReservaID {
-			ProximoReservaID = r.ID + 1
+func (gr *GerenciadorReservas) salvarNotificacoesEmDisco() error {
+	bytesDados, err := json.MarshalIndent(gr.notificacoes, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(gr.caminhoNotificacoes, bytesDados, 0644)
+}
+
+func (gr *GerenciadorReservas) carregarDoDisco() error {
+	// 1. Carrega Reservas
+	conteudoRes, err := os.ReadFile(gr.caminhoReservas)
+	if err == nil && len(conteudoRes) > 0 {
+		_ = json.Unmarshal(conteudoRes, &gr.reservas)
+		for id := range gr.reservas {
+			if id >= gr.proximoID {
+				gr.proximoID = id + 1
+			}
 		}
 	}
+
+	// 2. Carrega Notificações
+	conteudoNot, err := os.ReadFile(gr.caminhoNotificacoes)
+	if err == nil && len(conteudoNot) > 0 {
+		_ = json.Unmarshal(conteudoNot, &gr.notificacoes)
+	}
+
 	return nil
-}
-
-func ProcessarBuscarItinerarios(conn net.Conn, dadosBrutos string) {
-	var req protocolo.ConsultaItinerario
-	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
-		responderBusca(conn, false, "JSON malformado", nil)
-		return
-	}
-
-	grafoAdjacenciaTrechos := make(map[string][]protocolo.TrechoViagem)
-
-	MutexCaronas.RLock()
-	for _, c := range CaronasRegistradas {
-		if c.Data != req.Data {
-			continue
-		}
-		for _, t := range c.Trechos {
-			if t.AssentosLivres-Bloqueados(c.ID, t.Origem, t.Destino) > 0 {
-				novoTrecho := protocolo.TrechoViagem{
-					Empresa:   Config.Empresa,
-					CaronaID:  c.ID,
-					Motorista: c.Motorista,
-					Origem:    t.Origem,
-					Destino:   t.Destino,
-					Horario:   c.Horario,
-					Preco:     t.Preco,
-				}
-				grafoAdjacenciaTrechos[t.Origem] = append(grafoAdjacenciaTrechos[t.Origem], novoTrecho)
-			}
-		}
-	}
-	MutexCaronas.RUnlock()
-
-	var itinerariosEncontrados []protocolo.Itinerario
-	visitados := make(map[string]bool)
-
-	buscarDFS(
-		req.Origem,
-		req.Destino,
-		req.Data,
-		grafoAdjacenciaTrechos,
-		visitados,
-		[]protocolo.TrechoViagem{},
-		0.0,
-		&itinerariosEncontrados,
-	)
-
-	if len(itinerariosEncontrados) == 0 {
-		responderBusca(conn, true, "Nenhum itinerario disponivel para essa data", []protocolo.Itinerario{})
-		return
-	}
-
-	msg := fmt.Sprintf("%d itinerario(s) encontrado(s)", len(itinerariosEncontrados))
-	responderBusca(conn, true, msg, itinerariosEncontrados)
-}
-
-func buscarDFS(
-	atual string,
-	destino string,
-	data string,
-	grafo map[string][]protocolo.TrechoViagem,
-	visitados map[string]bool,
-	caminho []protocolo.TrechoViagem,
-	custo float64,
-	resultados *[]protocolo.Itinerario,
-) {
-	if atual == destino {
-		trechosCopia := make([]protocolo.TrechoViagem, len(caminho))
-		copy(trechosCopia, caminho)
-
-		*resultados = append(*resultados, protocolo.Itinerario{
-			Data:       data,
-			PrecoTotal: custo,
-			Trechos:    trechosCopia,
-		})
-		return
-	}
-
-	visitados[atual] = true
-
-	for _, tr := range grafo[atual] {
-		if !visitados[tr.Destino] {
-			if len(caminho) > 0 {
-				ultimoTrecho := caminho[len(caminho)-1]
-
-				if ultimoTrecho.CaronaID != tr.CaronaID {
-					minutosUltimo := converterParaMinutos(ultimoTrecho.Horario)
-					minutosAtual := converterParaMinutos(tr.Horario)
-
-					if minutosAtual < minutosUltimo {
-						continue
-					}
-				}
-			}
-
-			caminho = append(caminho, tr)
-			buscarDFS(tr.Destino, destino, data, grafo, visitados, caminho, custo+tr.Preco, resultados)
-			caminho = caminho[:len(caminho)-1]
-		}
-	}
-
-	visitados[atual] = false
-}
-
-func responderBusca(conn net.Conn, sucesso bool, mensagem string, itinerarios []protocolo.Itinerario) {
-	resp := protocolo.RespostaBuscarItinerarios{
-		Tipo:        protocolo.TipoBuscarItinerariosRes,
-		Sucesso:     sucesso,
-		Mensagem:    mensagem,
-		Itinerarios: itinerarios,
-	}
-	_ = json.NewEncoder(conn).Encode(resp)
-}
-
-func ProcessarReservarItinerario(conn net.Conn, dadosBrutos string) {
-	var req protocolo.SolicitacaoReserva
-	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
-		responderReserva(conn, false, "JSON malformado", 0)
-		return
-	}
-
-	if len(req.Trechos) == 0 || req.Passageiro == "" {
-		responderReserva(conn, false, "Parametros de reserva invalidos", 0)
-		return
-	}
-
-	id, msg, ok := CoordenarReserva(req)
-	responderReserva(conn, ok, msg, id)
-}
-
-func responderReserva(conn net.Conn, sucesso bool, mensagem string, id int) {
-	resp := protocolo.RespostaReservar{
-		Tipo:      protocolo.TipoReservarItinerarioRes,
-		Sucesso:   sucesso,
-		Mensagem:  mensagem,
-		ReservaID: id,
-	}
-	_ = json.NewEncoder(conn).Encode(resp)
-}
-
-func ProcessarConsultarReservas(conn net.Conn, dadosBrutos string) {
-	var req protocolo.ConsultaReservasPassageiro
-	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
-		return
-	}
-
-	MutexReservas.Lock()
-	var minhas []protocolo.Reserva
-	for _, res := range ReservasRegistradas {
-		if res.Passageiro == req.Passageiro {
-			minhas = append(minhas, res)
-		}
-	}
-	MutexReservas.Unlock()
-
-	resp := protocolo.RespostaConsultarReservas{
-		Tipo:     protocolo.TipoConsultarReservasRes,
-		Sucesso:  true,
-		Mensagem: "OK",
-		Reservas: minhas,
-	}
-	_ = json.NewEncoder(conn).Encode(resp)
-}
-
-func ProcessarCancelarReserva(conn net.Conn, dadosBrutos string) {
-	var req protocolo.CancelamentoReserva
-	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
-		return
-	}
-
-	MutexCaronas.Lock()
-	defer MutexCaronas.Unlock()
-
-	MutexReservas.Lock()
-	defer MutexReservas.Unlock()
-
-	idxReserva := -1
-	var reservaAlvo protocolo.Reserva
-	for i, res := range ReservasRegistradas {
-		if res.ID == req.ReservaID && res.Passageiro == req.Passageiro {
-			idxReserva = i
-			reservaAlvo = res
-			break
-		}
-	}
-
-	if idxReserva == -1 {
-		resp := protocolo.RespostaSimples{
-			Tipo:     protocolo.TipoCancelarReservaRes,
-			Sucesso:  false,
-			Mensagem: "Reserva nao encontrada ou permissao negada",
-		}
-		_ = json.NewEncoder(conn).Encode(resp)
-		return
-	}
-
-	ReservasRegistradas = append(ReservasRegistradas[:idxReserva], ReservasRegistradas[idxReserva+1:]...)
-
-	for _, trReq := range reservaAlvo.Trechos {
-		if !ehLocal(trReq.Empresa) {
-			continue
-		}
-		for i := range CaronasRegistradas {
-			if CaronasRegistradas[i].ID == trReq.CaronaID {
-				for j := range CaronasRegistradas[i].Trechos {
-					tr := &CaronasRegistradas[i].Trechos[j]
-					if tr.Origem == trReq.Origem && tr.Destino == trReq.Destino {
-						tr.AssentosLivres++
-						for pIdx, pNome := range tr.Passageiros {
-							if pNome == req.Passageiro {
-								tr.Passageiros = append(tr.Passageiros[:pIdx], tr.Passageiros[pIdx+1:]...)
-								break
-							}
-						}
-					}
-				}
-			}
-		}
-	}
-
-	if err := SalvarJSON(ArquivoReservas, ReservasRegistradas); err != nil {
-		fmt.Printf("[ERRO] Falha ao persistir reservas apos cancelamento: %v\n", err)
-	}
-	if err := SalvarJSON(ArquivoCaronas, CaronasRegistradas); err != nil {
-		fmt.Printf("[ERRO] Falha ao persistir caronas apos restauracao de vagas: %v\n", err)
-	}
-
-	fmt.Printf("[RESERVA] Reserva #%d cancelada para '%s'\n", req.ReservaID, req.Passageiro)
-
-	resp := protocolo.RespostaSimples{
-		Tipo:     protocolo.TipoCancelarReservaRes,
-		Sucesso:  true,
-		Mensagem: "Reserva cancelada e assentos liberados com sucesso",
-	}
-	_ = json.NewEncoder(conn).Encode(resp)
-}
-
-func LimparReservasDaCarona(caronaID int, motorista string) {
-	MutexReservas.Lock()
-	defer MutexReservas.Unlock()
-
-	_ = CarregarJSON(ArquivoNotificacoes, &NotificacoesRegistradas)
-
-	var reservasRestantes []protocolo.Reserva
-	for _, res := range ReservasRegistradas {
-		afetada := false
-		for _, tr := range res.Trechos {
-			if ehLocal(tr.Empresa) && tr.CaronaID == caronaID {
-				afetada = true
-				break
-			}
-		}
-
-		if afetada {
-			msg := fmt.Sprintf("ATENCAO: Sua reserva #%d foi cancelada pelo sistema porque o motorista '%s' cancelou a carona.", res.ID, motorista)
-
-			novaNot := protocolo.Notificacao{
-				Passageiro: res.Passageiro,
-				Mensagem:   msg,
-				Data:       time.Now().Format("2006-01-02 15:04:05"),
-			}
-			NotificacoesRegistradas = append(NotificacoesRegistradas, novaNot)
-			fmt.Printf("[NOTIFICACAO] Aviso gerado para o passageiro '%s'\n", res.Passageiro)
-		} else {
-			reservasRestantes = append(reservasRestantes, res)
-		}
-	}
-
-	ReservasRegistradas = reservasRestantes
-	_ = SalvarJSON(ArquivoReservas, ReservasRegistradas)
-	_ = SalvarJSON(ArquivoNotificacoes, NotificacoesRegistradas)
-}
-
-func ProcessarConsultarNotificacoes(conn net.Conn, dadosBrutos string) {
-	var req protocolo.ConsultaNotificacoes
-	if err := json.Unmarshal([]byte(dadosBrutos), &req); err != nil {
-		return
-	}
-
-	MutexReservas.Lock()
-	defer MutexReservas.Unlock()
-	_ = CarregarJSON(ArquivoNotificacoes, &NotificacoesRegistradas)
-
-	var minhas []protocolo.Notificacao
-	var restantes []protocolo.Notificacao
-
-	for _, n := range NotificacoesRegistradas {
-		if n.Passageiro == req.Passageiro {
-			minhas = append(minhas, n)
-		} else {
-			restantes = append(restantes, n)
-		}
-	}
-
-	if len(minhas) > 0 {
-		NotificacoesRegistradas = restantes
-		_ = SalvarJSON(ArquivoNotificacoes, NotificacoesRegistradas)
-	}
-
-	resp := protocolo.RespostaConsultarNotificacoes{
-		Tipo:         protocolo.TipoConsultarNotificacoesRes,
-		Sucesso:      true,
-		Notificacoes: minhas,
-	}
-	_ = json.NewEncoder(conn).Encode(resp)
-}
-
-func converterParaMinutos(horario string) int {
-	var h, m int
-	_, _ = fmt.Sscanf(horario, "%d:%d", &h, &m)
-	return h*60 + m
 }

@@ -1,93 +1,50 @@
-package service
+package servicos
 
 import (
 	"fmt"
 	"strings"
-	"sync"
 	"time"
 )
 
-// ConfigConsorcio descreve a identidade desta empresa e como falar com as parceiras.
+// ConfigConsorcio agrega as definições do nó local no consórcio
 type ConfigConsorcio struct {
-	Empresa     string            // nome desta empresa (ex.: "A")
-	Pares       map[string]string // nome da empresa parceira -> URL base da API REST
-	TTLBloqueio time.Duration     // tempo maximo que um assento fica bloqueado sem commit
-	TimeoutPar  time.Duration     // timeout de cada chamada HTTP a uma parceira
+	Empresa     string
+	Pares       map[string]string // Empresa -> URL REST (ex: "B" -> "http://empresa_b:8080")
+	TTLBloqueio time.Duration
+	TimeoutPar  time.Duration
 }
 
-// Config deve ser definida uma unica vez no inicio do processo, antes de atender requisicoes.
-var Config = ConfigConsorcio{
-	Empresa:     "VAIJUNTO",
-	Pares:       map[string]string{},
-	TTLBloqueio: 30 * time.Second,
-	TimeoutPar:  3 * time.Second,
-}
+// Variáveis globais compartilhadas no pacote servicos
+var (
+	Config         ConfigConsorcio
+	DiretorioDados = "dados"
+)
 
-// ehLocal informa se o trecho pertence a esta empresa (campo vazio = local).
-func ehLocal(empresa string) bool {
-	return empresa == "" || empresa == Config.Empresa
-}
-
-// ParsePares le "B=http://host:8082,C=http://host:8083".
+// ParsePares converte a string de parceiras "B=http://host:8080,C=http://host:8080" em map
 func ParsePares(texto string) (map[string]string, error) {
-	pares := map[string]string{}
-	for _, item := range strings.Split(texto, ",") {
-		item = strings.TrimSpace(item)
-		if item == "" {
+	pares := make(map[string]string)
+	texto = strings.TrimSpace(texto)
+	if texto == "" {
+		return pares, nil
+	}
+
+	entradas := strings.Split(texto, ",")
+	for _, entrada := range entradas {
+		entrada = strings.TrimSpace(entrada)
+		if entrada == "" {
 			continue
 		}
-		nome, url, ok := strings.Cut(item, "=")
-		nome, url = strings.TrimSpace(nome), strings.TrimRight(strings.TrimSpace(url), "/")
-		if !ok || nome == "" || url == "" {
-			return nil, fmt.Errorf("par invalido %q (use Nome=http://host:porta)", item)
+		partes := strings.SplitN(entrada, "=", 2)
+		if len(partes) != 2 {
+			return nil, fmt.Errorf("formato invalido de parceira (esperado NOME=URL): %q", entrada)
 		}
-		if !strings.HasPrefix(url, "http://") && !strings.HasPrefix(url, "https://") {
-			return nil, fmt.Errorf("URL do par %q deve comecar com http:// ou https://", nome)
+		nome := strings.TrimSpace(partes[0])
+		url := strings.TrimRight(strings.TrimSpace(partes[1]), "/")
+		if nome == "" || url == "" {
+			return nil, fmt.Errorf("nome ou URL vazios na definicao de par: %q", entrada)
 		}
 		pares[nome] = url
 	}
+
 	return pares, nil
-}
-
-// relogioLamport e o relogio logico desta empresa. A precedencia entre transacoes
-// concorrentes usa (timestamp, tx_id), nunca o relogio fisico.
-type relogioLamport struct {
-	mu    sync.Mutex
-	valor int64
-}
-
-// Tick avanca o relogio para um evento local (ex.: iniciar uma transacao).
-func (r *relogioLamport) Tick() int64 {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	r.valor++
-	return r.valor
-}
-
-// Atualizar aplica a regra de recebimento: max(local, recebido) + 1.
-func (r *relogioLamport) Atualizar(recebido int64) int64 {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	if recebido > r.valor {
-		r.valor = recebido
-	}
-	r.valor++
-	return r.valor
-}
-
-func (r *relogioLamport) Valor() int64 {
-	r.mu.Lock()
-	defer r.mu.Unlock()
-	return r.valor
-}
-
-var Relogio relogioLamport
-
-// precede devolve true se a transacao 1 tem precedencia (e "mais antiga") sobre a 2.
-// Ordem total: menor timestamp de Lamport; empate decidido pelo menor tx_id.
-func precede(ts1 int64, tx1 string, ts2 int64, tx2 string) bool {
-	if ts1 != ts2 {
-		return ts1 < ts2
-	}
-	return tx1 < tx2
 }
