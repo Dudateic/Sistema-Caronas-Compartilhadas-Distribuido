@@ -1,15 +1,15 @@
 x-servidor: &servidor
   build:
-    context: .
+    context: ..
+    dockerfile: docker/Dockerfile
     target: servidor
-
-  user: "${UID:-1000}:${GID:-1000}"
   restart: unless-stopped
   networks: [consorcio]
 
 x-passageiro: &passageiro
   build:
-    context: .
+    context: ..
+    dockerfile: docker/Dockerfile
     target: passageiro
   profiles: ["clientes"]
   stdin_open: true
@@ -18,7 +18,8 @@ x-passageiro: &passageiro
 
 x-motorista: &motorista
   build:
-    context: .
+    context: ..
+    dockerfile: docker/Dockerfile
     target: motorista
   profiles: ["clientes"]
   stdin_open: true
@@ -34,8 +35,12 @@ services:
       TCP_ADDR: ":6060"
       HTTP_ADDR: ":9090"
       PARES: "B=http://empresa-b:9090,C=http://empresa-c:9090"
-    ports: ["6060:6060", "9091:9090"]
-    volumes: ["./dados/a:/app/dados"]
+      DADOS_DIR: "/app/dados"
+    ports:
+      - "6060:6060"
+      - "9091:9090"
+    volumes:
+      - dados-empresa-a:/app/dados
 
   empresa-b:
     <<: *servidor
@@ -45,8 +50,12 @@ services:
       TCP_ADDR: ":7070"
       HTTP_ADDR: ":9090"
       PARES: "A=http://empresa-a:9090,C=http://empresa-c:9090"
-    ports: ["7070:7070", "9092:9090"]
-    volumes: ["./dados/b:/app/dados"]
+      DADOS_DIR: "/app/dados"
+    ports:
+      - "7070:7070"
+      - "9092:9090"
+    volumes:
+      - dados-empresa-b:/app/dados
 
   empresa-c:
     <<: *servidor
@@ -56,28 +65,63 @@ services:
       TCP_ADDR: ":8080"
       HTTP_ADDR: ":9090"
       PARES: "A=http://empresa-a:9090,B=http://empresa-b:9090"
-    ports: ["8080:8080", "9093:9090"]
-    volumes: ["./dados/c:/app/dados"]
+      DADOS_DIR: "/app/dados"
+    ports:
+      - "8080:8080"
+      - "9093:9090"
+    volumes:
+      - dados-empresa-c:/app/dados
 
   passageiro-a:
     <<: *passageiro
-    environment: { SERVIDOR: "empresa-a:6060" }
+    container_name: vaijunto-passageiro-a
+    environment:
+      SERVIDOR: "empresa-a:6060"
+
   passageiro-b:
     <<: *passageiro
-    environment: { SERVIDOR: "empresa-b:7070" }
+    container_name: vaijunto-passageiro-b
+    environment:
+      SERVIDOR: "empresa-b:7070"
+
   passageiro-c:
     <<: *passageiro
-    environment: { SERVIDOR: "empresa-c:8080" }
+    container_name: vaijunto-passageiro-c
+    environment:
+      SERVIDOR: "empresa-c:8080"
 
   motorista-a:
     <<: *motorista
-    environment: { SERVIDOR: "empresa-a:6060" }
+    container_name: vaijunto-motorista-a
+    environment:
+      SERVIDOR: "empresa-a:6060"
+
   motorista-b:
     <<: *motorista
-    environment: { SERVIDOR: "empresa-b:7070" }
+    container_name: vaijunto-motorista-b
+    environment:
+      SERVIDOR: "empresa-b:7070"
+
   motorista-c:
     <<: *motorista
-    environment: { SERVIDOR: "empresa-c:8080" }
+    container_name: vaijunto-motorista-c
+    environment:
+      SERVIDOR: "empresa-c:8080"
+
+  simulador:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+      target: simulador
+    profiles: ["testes"]
+    networks: [consorcio]
+    command: ["/app/simulador", "-passageiros=20", "-operacoes=5", "-alvo=empresa-a:6060"]
 
 networks:
   consorcio:
+    driver: bridge
+
+volumes:
+  dados-empresa-a:
+  dados-empresa-b:
+  dados-empresa-c:

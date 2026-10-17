@@ -1,45 +1,39 @@
-FROM golang:1.23-alpine AS build
-WORKDIR /src
+# Estágio de compilação
+FROM golang:1.22-alpine AS builder
 
-COPY go.mod ./
+WORKDIR /build
+
+COPY go.mod go.sum* ./
 RUN go mod download
 
 COPY . .
 
-ENV CGO_ENABLED=0
-RUN go build -trimpath -ldflags="-s -w" -o /out/servidor   ./aplicacao/servidor \
- && go build -trimpath -ldflags="-s -w" -o /out/motorista  ./aplicacao/motorista \
- && go build -trimpath -ldflags="-s -w" -o /out/passageiro ./aplicacao/passageiro
+RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/servidor ./aplicacao/servidor
+RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/passageiro ./aplicacao/passageiro
+RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/motorista ./aplicacao/motorista
+RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/simulador ./aplicacao/simulador
 
-FROM alpine:3.20 AS servidor
-RUN apk add --no-cache tzdata && adduser -D -u 10001 vaijunto
+# Target: Servidor
+FROM alpine:3.19 AS servidor
 WORKDIR /app
-COPY --from=build /out/servidor /app/servidor
-
-RUN mkdir -p /app/dados && chown -R vaijunto /app
-USER vaijunto
-VOLUME ["/app/dados"]
-
-ENV TCP_ADDR=:8081 \
-    HTTP_ADDR=:8080 \
-    DADOS_DIR=/app/dados \
-    EMPRESA=VAIJUNTO \
-    PARES="" \
-    TTL_BLOQUEIO=30s \
-    TIMEOUT_PAR=3s
-EXPOSE 8080 8081
+COPY --from=builder /build/bin/servidor /app/servidor
+EXPOSE 6060 7070 8080 9090
 ENTRYPOINT ["/app/servidor"]
 
-FROM alpine:3.20 AS motorista
-RUN adduser -D -u 10001 vaijunto
-COPY --from=build /out/motorista /app/motorista
-USER vaijunto
-ENV SERVIDOR=empresa-a:8081
+# Target: Passageiro
+FROM alpine:3.19 AS passageiro
+WORKDIR /app
+COPY --from=builder /build/bin/passageiro /app/passageiro
+ENTRYPOINT ["/app/passageiro"]
+
+# Target: Motorista
+FROM alpine:3.19 AS motorista
+WORKDIR /app
+COPY --from=builder /build/bin/motorista /app/motorista
 ENTRYPOINT ["/app/motorista"]
 
-FROM alpine:3.20 AS passageiro
-RUN apk add --no-cache ncurses && adduser -D -u 10001 vaijunto
-COPY --from=build /out/passageiro /app/passageiro
-USER vaijunto
-ENV SERVIDOR=empresa-a:8081 TERM=xterm
-ENTRYPOINT ["/app/passageiro"]
+# Target: Simulador
+FROM alpine:3.19 AS simulador
+WORKDIR /app
+COPY --from=builder /build/bin/simulador /app/simulador
+ENTRYPOINT ["/app/simulador"]
