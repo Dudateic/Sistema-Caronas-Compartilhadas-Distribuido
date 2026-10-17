@@ -4,6 +4,7 @@ x-servidor: &servidor
     dockerfile: docker/Dockerfile
     target: servidor
   restart: unless-stopped
+  entrypoint: ""
   networks: [consorcio]
 
 x-passageiro: &passageiro
@@ -14,7 +15,7 @@ x-passageiro: &passageiro
   profiles: ["clientes"]
   stdin_open: true
   tty: true
-  networks: [consorcio]
+  network_mode: "host"
 
 x-motorista: &motorista
   build:
@@ -24,9 +25,10 @@ x-motorista: &motorista
   profiles: ["clientes"]
   stdin_open: true
   tty: true
-  networks: [consorcio]
+  network_mode: "host"
 
 services:
+  # Servidor Empresa A
   empresa-a:
     <<: *servidor
     container_name: vaijunto-empresa-a
@@ -34,14 +36,23 @@ services:
       EMPRESA: A
       TCP_ADDR: ":6060"
       HTTP_ADDR: ":9090"
-      PARES: "B=http://empresa-b:9090,C=http://empresa-c:9090"
+      PARES: "B=http://${IP_B:-empresa-b}:9090,C=http://${IP_C:-empresa-c}:9090"
       DADOS_DIR: "/app/dados"
     ports:
-      - "6060:6060"
-      - "9091:9090"
+      - "0.0.0.0:6060:6060"
+      - "0.0.0.0:9091:9090"
     volumes:
-      - dados-empresa-a:/app/dados
+      - ../dados/empresa_A:/app/dados
+    command: >
+      sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/log_transacoes.log ] && touch /app/dados/log_transacoes.log;
+             [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
+             [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
+             [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
+             chmod -R 777 /app/dados;
+             exec /app/servidor"
 
+  # Servidor Empresa B
   empresa-b:
     <<: *servidor
     container_name: vaijunto-empresa-b
@@ -49,14 +60,23 @@ services:
       EMPRESA: B
       TCP_ADDR: ":7070"
       HTTP_ADDR: ":9090"
-      PARES: "A=http://empresa-a:9090,C=http://empresa-c:9090"
+      PARES: "A=http://${IP_A:-empresa-a}:9090,C=http://${IP_C:-empresa-c}:9090"
       DADOS_DIR: "/app/dados"
     ports:
-      - "7070:7070"
-      - "9092:9090"
+      - "0.0.0.0:7070:7070"
+      - "0.0.0.0:9092:9090"
     volumes:
-      - dados-empresa-b:/app/dados
+      - ../dados/empresa_B:/app/dados
+    command: >
+      sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/log_transacoes.log ] && touch /app/dados/log_transacoes.log;
+             [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
+             [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
+             [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
+             chmod -R 777 /app/dados;
+             exec /app/servidor"
 
+  # Servidor Empresa C
   empresa-c:
     <<: *servidor
     container_name: vaijunto-empresa-c
@@ -64,50 +84,61 @@ services:
       EMPRESA: C
       TCP_ADDR: ":8080"
       HTTP_ADDR: ":9090"
-      PARES: "A=http://empresa-a:9090,B=http://empresa-b:9090"
+      PARES: "A=http://${IP_A:-empresa-a}:9090,B=http://${IP_B:-empresa-b}:9090"
       DADOS_DIR: "/app/dados"
     ports:
-      - "8080:8080"
-      - "9093:9090"
+      - "0.0.0.0:8080:8080"
+      - "0.0.0.0:9093:9090"
     volumes:
-      - dados-empresa-c:/app/dados
+      - ../dados/empresa_C:/app/dados
+    command: >
+      sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/log_transacoes.log ] && touch /app/dados/log_transacoes.log;
+             [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
+             [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
+             [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
+             chmod -R 777 /app/dados;
+             exec /app/servidor"
 
+  # Clientes Passageiro
   passageiro-a:
     <<: *passageiro
     container_name: vaijunto-passageiro-a
     environment:
-      SERVIDOR: "empresa-a:6060"
+      SERVIDOR: "127.0.0.1:6060"
 
   passageiro-b:
     <<: *passageiro
     container_name: vaijunto-passageiro-b
     environment:
-      SERVIDOR: "empresa-b:7070"
+      SERVIDOR: "127.0.0.1:7070"
 
   passageiro-c:
     <<: *passageiro
     container_name: vaijunto-passageiro-c
     environment:
-      SERVIDOR: "empresa-c:8080"
+      SERVIDOR: "127.0.0.1:8080"
 
+  # Clientes Motorista
   motorista-a:
     <<: *motorista
     container_name: vaijunto-motorista-a
     environment:
-      SERVIDOR: "empresa-a:6060"
+      SERVIDOR: "127.0.0.1:6060"
 
   motorista-b:
     <<: *motorista
     container_name: vaijunto-motorista-b
     environment:
-      SERVIDOR: "empresa-b:7070"
+      SERVIDOR: "127.0.0.1:7070"
 
   motorista-c:
     <<: *motorista
     container_name: vaijunto-motorista-c
     environment:
-      SERVIDOR: "empresa-c:8080"
+      SERVIDOR: "127.0.0.1:8080"
 
+  # Simulador
   simulador:
     build:
       context: ..
@@ -120,8 +151,3 @@ services:
 networks:
   consorcio:
     driver: bridge
-
-volumes:
-  dados-empresa-a:
-  dados-empresa-b:
-  dados-empresa-c:
