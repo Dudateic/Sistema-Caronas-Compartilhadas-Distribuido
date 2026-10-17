@@ -150,24 +150,26 @@ func main() {
 
 	endereco := *flagEndereco
 	if endereco == "" {
-		// Pergunta interativamente o IP e Porta do servidor da máquina remota
-		fmt.Printf("Digite o IP:Porta do servidor da sua empresa\n")
-		endereco = lerEntrada(fmt.Sprintf("(Pressione ENTER para usar %s): ", padrao))
-		if endereco == "" {
+		fmt.Printf("Servidor predefinido configurado: %s\n", padrao)
+		entrada := lerEntrada("Pressione ENTER para conectar ou digite outro IP:Porta: ")
+		if entrada != "" {
+			endereco = entrada
+		} else {
 			endereco = padrao
 		}
 	}
 
-	fmt.Printf("\nConectando ao servidor em %s...\n", endereco)
+	fmt.Printf("\nA tentar conectar ao servidor em %s...\n", endereco)
 	cli, err := cliente_servidor.ConectarTCP(endereco, 5*time.Second)
 	if err != nil {
-		visual.MensagemErro(fmt.Sprintf("Falha ao conectar: %v", err))
+		visual.MensagemErro(fmt.Sprintf("Falha ao conectar a %s: %v", endereco, err))
+		lerEntrada("\nPressione ENTER para sair...")
 		return
 	}
 	defer func() { _ = cli.Fechar() }()
 
-	visual.MensagemSucesso("Conexao estabelecida com sucesso!")
-	time.Sleep(1 * time.Second)
+	visual.MensagemSucesso(fmt.Sprintf("Conectado com sucesso ao servidor em %s!", endereco))
+	time.Sleep(1500 * time.Millisecond)
 
 	s := &sessaoPassageiro{
 		endereco: endereco,
@@ -175,7 +177,7 @@ func main() {
 	}
 
 	if !s.telaAcesso() {
-		fmt.Println("Operacao encerrada pelo usuario. Ate logo!")
+		fmt.Println("Operacao encerrada pelo utilizador. Ate logo!")
 		return
 	}
 
