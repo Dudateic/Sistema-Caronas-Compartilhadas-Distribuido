@@ -1,4 +1,4 @@
-package conexao
+package cliente_servidor
 
 import (
 	"bufio"
@@ -12,19 +12,17 @@ import (
 const (
 	EnderecoPadrao       = ":8081"
 	TimeoutConexaoPadrao = 5 * time.Second
+	TimeoutEscritaPadrao = 3 * time.Second
 )
 
 type ClienteTCP struct {
-	endereco string
-	conn     net.Conn
-	mu       sync.Mutex
+	conn net.Conn
+	mu   sync.Mutex
 
 	MensagensRecebidas chan []byte
 	Erros              chan error
-
-	filaEnvio   chan []byte
-	canalParada chan struct{}
-	encerrado   bool
+	canalParada        chan struct{}
+	fecharOnce         sync.Once
 }
 
 func ConectarTCP(endereco string, timeout ...time.Duration) (*ClienteTCP, error) {
@@ -43,101 +41,65 @@ func ConectarTCP(endereco string, timeout ...time.Duration) (*ClienteTCP, error)
 	}
 
 	cliente := &ClienteTCP{
-		endereco:           endereco,
 		conn:               conn,
-		MensagensRecebidas: make(chan []byte, 50),
+		MensagensRecebidas: make(chan []byte, 100),
 		Erros:              make(chan error, 10),
-		filaEnvio:          make(chan []byte, 50),
 		canalParada:        make(chan struct{}),
 	}
 
 	go cliente.loopLeitura()
-	go cliente.loopEnvio()
 
 	return cliente, nil
 }
 
-func (cliente *ClienteTCP) loopLeitura() {
-	leitor := bufio.NewReader(cliente.conn)
-
-	for {
-		select {
-		case <-cliente.canalParada:
-			return
-		default:
-			linha, err := leitor.ReadBytes('\n')
-			if err != nil {
-				select {
-				case <-cliente.canalParada:
-					return
-				default:
-					cliente.Erros <- fmt.Errorf("desconexao detetada na leitura: %w", err)
-					return
-				}
-			}
-
-			if len(linha) > 0 {
-				cliente.MensagensRecebidas <- linha
-			}
-		}
-	}
-}
-
-
-func (cliente *ClienteTCP) loopEnvio() {
-	for {
-		select {
-		case <-cliente.canalParada:
-			return
-		case dados, ok := <-cliente.filaEnvio:
-			if !ok {
-				return
-			}
-			cliente.mu.Lock()
-			_, err := cliente.conn.Write(dados)
-			cliente.mu.Unlock()
-
-			if err != nil {
-				cliente.Erros <- fmt.Errorf("falha ao escrever no socket: %w", err)
-			}
-		}
-	}
-}
-
-
-func (cliente *ClienteTCP) EnviarJSON(dados any) error {
+func (c *ClienteTCP) EnviarJSON(dados any) error {
 	bytesDados, err := json.Marshal(dados)
 	if err != nil {
 		return fmt.Errorf("erro na serializacao json: %w", err)
 	}
-
 	bytesDados = append(bytesDados, '\n')
 
-	select {
-	case <-cliente.canalParada:
-		return fmt.Errorf("cliente fechado, impossivel enviar")
-	case cliente.filaEnvio <- bytesDados:
-		return nil
+	c.mu.Lock()
+	defer c.mu.Unlock()
+
+	_ = c.conn.SetWriteDeadline(time.Now().Add(TimeoutEscritaPadrao))
+	_, err = c.conn.Write(bytesDados)
+	return err
+}
+
+func (c *ClienteTCP) loopLeitura() {
+	leitor := bufio.NewReader(c.conn)
+
+	for {
+		linha, err := leitor.ReadBytes('\n')
+		if err != nil {
+			select {
+			case <-c.canalParada:
+				return
+			default:
+				c.Erros <- fmt.Errorf("desconexao detectada: %w", err)
+				_ = c.Fechar()
+				return
+			}
+		}
+
+		if len(linha) > 0 {
+			select {
+			case c.MensagensRecebidas <- linha:
+			case <-c.canalParada:
+				return
+			}
+		}
 	}
 }
 
-
-func (cliente *ClienteTCP) Fechar() error {
-	cliente.mu.Lock()
-	defer cliente.mu.Unlock()
-
-	if cliente.encerrado {
-		return nil
-	}
-	cliente.encerrado = true
-
-	close(cliente.canalParada)
-
-
+func (c *ClienteTCP) Fechar() error {
 	var err error
-	if cliente.conn != nil {
-		err = cliente.conn.Close()
-	}
-
+	c.fecharOnce.Do(func() {
+		close(c.canalParada)
+		if c.conn != nil {
+			err = c.conn.Close()
+		}
+	})
 	return err
 }

@@ -1,4 +1,6 @@
-package protocolo
+package cliente_servidor
+
+import "Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 
 const (
 	TipoLoginReq                 = "login_requisicao"
@@ -24,70 +26,12 @@ const (
 	TipoConsultarNotificacoesRes = "consultar_notificacoes_resposta"
 )
 
-// Trecho representa um segmento contíguo dentro do anúncio de uma carona.
-type Trecho struct {
-	Origem         string   `json:"origem"`
-	Destino        string   `json:"destino"`
-	AssentosLivres int      `json:"assentos_livres"`
-	Preco          float64  `json:"preco"`
-	Passageiros    []string `json:"passageiros"`
-}
-
-// Carona representa o registro completo de uma carona publicada.
-type Carona struct {
-	ID             int      `json:"id"`
-	Motorista      string   `json:"motorista"`
-	Data           string   `json:"data"`
-	Horario        string   `json:"horario"`
-	AssentosTotais int      `json:"assentos_totais"`
-	PrecoPorTrecho float64  `json:"preco_por_trecho"`
-	Rota           []string `json:"rota"`
-	Trechos        []Trecho `json:"trechos"`
-}
-
-// TrechoViagem identifica de forma única um segmento de viagem no consórcio (Empresa + CaronaID).
-type TrechoViagem struct {
-	Empresa   string  `json:"empresa"`
-	CaronaID  int     `json:"carona_id"`
-	Motorista string  `json:"motorista"`
-	Origem    string  `json:"origem"`
-	Destino   string  `json:"destino"`
-	Horario   string  `json:"horario"`
-	Preco     float64 `json:"preco"`
-}
-
-// Itinerario é uma composição de trechos conectando origem e destino do passageiro.
-type Itinerario struct {
-	Data       string         `json:"data"`
-	PrecoTotal float64        `json:"preco_total"`
-	Trechos    []TrechoViagem `json:"trechos"`
-}
-
-// Reserva representa a confirmação atômica gerada ao final do processo de reserva.
-type Reserva struct {
-	ID         int            `json:"id"`
-	TxID       string         `json:"tx_id,omitempty"`
-	Passageiro string         `json:"passageiro"`
-	Data       string         `json:"data"`
-	PrecoTotal float64        `json:"preco_total"`
-	Trechos    []TrechoViagem `json:"trechos"`
-}
-
-// Notificacao define alertas emitidos para o passageiro.
-type Notificacao struct {
-	Passageiro string `json:"passageiro"`
-	Mensagem   string `json:"mensagem"`
-	Data       string `json:"data"`
-}
-
-// Resposta para ações sem retorno de dados (ex: cadastro, cancelamentos).
 type RespostaSimples struct {
 	Tipo     string `json:"tipo"`
 	Sucesso  bool   `json:"sucesso"`
 	Mensagem string `json:"mensagem"`
 }
 
-// informa o resultado da autenticação e as credenciais da sessão.
 type RespostaLogin struct {
 	Tipo        string `json:"tipo"`
 	Sucesso     bool   `json:"sucesso"`
@@ -96,7 +40,6 @@ type RespostaLogin struct {
 	TipoUsuario string `json:"tipo_usuario,omitempty"`
 }
 
-// retorna o identificador único gerado para a nova carona.
 type RespostaPublicarCarona struct {
 	Tipo     string `json:"tipo"`
 	Sucesso  bool   `json:"sucesso"`
@@ -104,23 +47,20 @@ type RespostaPublicarCarona struct {
 	CaronaID int    `json:"carona_id,omitempty"`
 }
 
-// devolve a lista de caronas pertencentes ao motorista.
 type RespostaConsultarCaronas struct {
-	Tipo     string   `json:"tipo"`
-	Sucesso  bool     `json:"sucesso"`
-	Mensagem string   `json:"mensagem"`
-	Caronas  []Carona `json:"caronas,omitempty"`
+	Tipo     string           `json:"tipo"`
+	Sucesso  bool             `json:"sucesso"`
+	Mensagem string           `json:"mensagem"`
+	Caronas  []modelos.Carona `json:"caronas,omitempty"`
 }
 
-// retorna as combinações de trechos encontradas pelo algoritmo de busca.
 type RespostaBuscarItinerarios struct {
-	Tipo        string       `json:"tipo"`
-	Sucesso     bool         `json:"sucesso"`
-	Mensagem    string       `json:"mensagem"`
-	Itinerarios []Itinerario `json:"itinerarios,omitempty"`
+	Tipo        string               `json:"tipo"`
+	Sucesso     bool                 `json:"sucesso"`
+	Mensagem    string               `json:"mensagem"`
+	Itinerarios []modelos.Itinerario `json:"itinerarios,omitempty"`
 }
 
-// devolve o identificador gerado após o commit da reserva atômica.
 type RespostaReservar struct {
 	Tipo      string `json:"tipo"`
 	Sucesso   bool   `json:"sucesso"`
@@ -128,17 +68,16 @@ type RespostaReservar struct {
 	ReservaID int    `json:"reserva_id,omitempty"`
 }
 
-// lista as reservas ativas do passageiro solicitante.
 type RespostaConsultarReservas struct {
-	Tipo     string    `json:"tipo"`
-	Sucesso  bool      `json:"sucesso"`
-	Mensagem string    `json:"mensagem"`
-	Reservas []Reserva `json:"reservas,omitempty"`
+	Tipo     string            `json:"tipo"`
+	Sucesso  bool              `json:"sucesso"`
+	Mensagem string            `json:"mensagem"`
+	Reservas []modelos.Reserva `json:"reservas,omitempty"`
 }
 
-// entrega os avisos pendentes do passageiro.
 type RespostaConsultarNotificacoes struct {
-	Tipo         string        `json:"tipo"`
-	Sucesso      bool          `json:"sucesso"`
-	Notificacoes []Notificacao `json:"notificacoes"`
+	Tipo         string                `json:"tipo"`
+	Sucesso      bool                  `json:"sucesso"`
+	Mensagem     string                `json:"mensagem"`
+	Notificacoes []modelos.Notificacao `json:"notificacoes"`
 }
