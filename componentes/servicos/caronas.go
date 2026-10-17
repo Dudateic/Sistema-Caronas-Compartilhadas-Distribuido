@@ -4,6 +4,7 @@ import (
 	"errors"
 	"fmt"
 	"path/filepath"
+	"strings"
 	"sync"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
@@ -47,20 +48,28 @@ func NovoGerenciadorCaronas(idEmpresa, diretorioDados string) (*GerenciadorCaron
 	}
 
 	_ = gc.carregarDoDisco()
+	_ = gc.salvarEmDisco() // Força a criação do ficheiro no disco logo no arranque!
 	return gc, nil
 }
 
-// BuscarTrechos retorna todos os segmentos compatíveis da empresa para itinerários do consórcio
+// BuscarTrechos retorna todos os segmentos compatíveis com assentos livres
 func (gc *GerenciadorCaronas) BuscarTrechos(origem, destino string) []modelos.TrechoViagem {
 	gc.mu.RLock()
 	defer gc.mu.RUnlock()
 
 	var encontrados []modelos.TrechoViagem
 
+	origemFiltro := strings.ToUpper(strings.TrimSpace(origem))
+	destinoFiltro := strings.ToUpper(strings.TrimSpace(destino))
+
 	for _, carona := range gc.caronas {
 		for _, trecho := range carona.Trechos {
-			origemOk := origem == "" || trecho.Origem == origem
-			destinoOk := destino == "" || trecho.Destino == destino
+			tOrigem := strings.ToUpper(trecho.Origem)
+			tDestino := strings.ToUpper(trecho.Destino)
+
+			// Se origem ou destino forem vazios, devolve todos os trechos livres para montagem via grafo (DFS)
+			origemOk := origemFiltro == "" || tOrigem == origemFiltro
+			destinoOk := destinoFiltro == "" || tDestino == destinoFiltro
 
 			if origemOk && destinoOk && trecho.AssentosLivres > 0 {
 				encontrados = append(encontrados, modelos.TrechoViagem{
@@ -93,8 +102,8 @@ func (gc *GerenciadorCaronas) BloquearAssentoProvisorio(caronaID int, origem, de
 		if gc.caronas[i].ID == caronaID {
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
-				if t.Origem == origem && t.Destino == destino {
-					// Verifica se o passageiro já está confirmado definitivamente
+				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
+					// Verifica se o passageiro já tem reserva confirmada
 					for _, p := range t.Passageiros {
 						if p == passageiro {
 							return ErrPassageiroJaInscrito
@@ -105,7 +114,7 @@ func (gc *GerenciadorCaronas) BloquearAssentoProvisorio(caronaID int, origem, de
 						return ErrSemAssentosLivres
 					}
 
-					// Decrementa assento provisoriamente e salva o bloqueio
+					// Bloqueia temporariamente 1 assento
 					t.AssentosLivres--
 					gc.bloqueiosAtivos[chave] = bloqueioItem{
 						caronaID:   caronaID,
@@ -130,7 +139,7 @@ func (gc *GerenciadorCaronas) LiberarAssentoProvisorio(caronaID int, origem, des
 
 	chave := fmt.Sprintf("%d:%s:%s:%s", caronaID, origem, destino, passageiro)
 	if _, existe := gc.bloqueiosAtivos[chave]; !existe {
-		return nil // Se não estava retido, operação já é idempotente
+		return nil // Já liberado ou nunca bloqueado (idempotência)
 	}
 	delete(gc.bloqueiosAtivos, chave)
 
@@ -138,7 +147,7 @@ func (gc *GerenciadorCaronas) LiberarAssentoProvisorio(caronaID int, origem, des
 		if gc.caronas[i].ID == caronaID {
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
-				if t.Origem == origem && t.Destino == destino {
+				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
 					t.AssentosLivres++
 					return nil
 				}
@@ -162,7 +171,7 @@ func (gc *GerenciadorCaronas) ConfirmarAssentoDefinitivo(caronaID int, origem, d
 		if gc.caronas[i].ID == caronaID {
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
-				if t.Origem == origem && t.Destino == destino {
+				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
 					t.Passageiros = append(t.Passageiros, passageiro)
 					_ = gc.salvarEmDisco()
 					return nil
@@ -193,12 +202,18 @@ func (gc *GerenciadorCaronas) PublicarCarona(motorista, data, horario string, ro
 	var trechos []modelos.Trecho
 	for i := 0; i < len(rota)-1; i++ {
 		trechos = append(trechos, modelos.Trecho{
-			Origem:         rota[i],
-			Destino:        rota[i+1],
+			Origem:         strings.ToUpper(strings.TrimSpace(rota[i])),
+			Destino:        strings.ToUpper(strings.TrimSpace(rota[i+1])),
 			AssentosLivres: assentos,
 			Preco:          precoTrecho,
 			Passageiros:    make([]string, 0),
 		})
+	}
+
+	// Normaliza as cidades da rota
+	rotaNormalizada := make([]string, len(rota))
+	for i, c := range rota {
+		rotaNormalizada[i] = strings.ToUpper(strings.TrimSpace(c))
 	}
 
 	novaCarona := modelos.Carona{
@@ -208,7 +223,7 @@ func (gc *GerenciadorCaronas) PublicarCarona(motorista, data, horario string, ro
 		Horario:        horario,
 		AssentosTotais: assentos,
 		PrecoPorTrecho: precoTrecho,
-		Rota:           rota,
+		Rota:           rotaNormalizada,
 		Trechos:        trechos,
 	}
 

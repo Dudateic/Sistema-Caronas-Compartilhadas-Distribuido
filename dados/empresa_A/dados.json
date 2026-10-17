@@ -1,0 +1,23 @@
+[
+  {
+    "id": 1,
+    "motorista": "Duda",
+    "data": "2026-10-20",
+    "horario": "10:20",
+    "assentos_totais": 10,
+    "preco_por_trecho": 1,
+    "rota": [
+      "SSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 1,
+        "passageiros": []
+      }
+    ]
+  }
+]

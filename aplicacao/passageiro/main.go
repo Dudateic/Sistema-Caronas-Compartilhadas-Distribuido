@@ -34,7 +34,7 @@ func lerEntrada(prompt string) string {
 	return ""
 }
 
-// LimparTela identifica o SO e limpa o terminal para manter a navegação limpa
+// LimparTela identifica o SO e limpa o terminal
 func LimparTela() {
 	var cmd *exec.Cmd
 	if runtime.GOOS == "windows" {
@@ -89,7 +89,6 @@ func (s *sessaoPassageiro) trocar(req any, tipoEsperado string, destino any) err
 		return err
 	}
 
-	// Drena mensagens residuais pendentes no buffer
 	for drenando := true; drenando; {
 		select {
 		case <-s.cli.MensagensRecebidas:
@@ -140,22 +139,24 @@ func main() {
 	LimparTela()
 	visual.ExibirCabecalho("VAIJUNTO - MODULO DO PASSAGEIRO")
 
-	padrao := os.Getenv("SERVIDOR")
-	if padrao == "" {
-		padrao = "localhost:8081"
+	padraoSugestao := os.Getenv("SERVIDOR")
+	if padraoSugestao == "" {
+		padraoSugestao = "127.0.0.1:6060"
 	}
 
-	flagEndereco := flag.String("servidor", "", "servidor da sua empresa (host:porta)")
+	flagEndereco := flag.String("servidor", "", "servidor da sua empresa (IP:porta)")
 	flag.Parse()
 
 	endereco := *flagEndereco
+
+	// Força o pedido no terminal mesmo dentro do Docker, exibindo o IP sugerido
 	if endereco == "" {
-		fmt.Printf("Servidor predefinido configurado: %s\n", padrao)
-		entrada := lerEntrada("Pressione ENTER para conectar ou digite outro IP:Porta: ")
+		fmt.Printf("Servidor predefinido: %s\n", padraoSugestao)
+		entrada := lerEntrada("Pressione ENTER para conectar ou digite o IP:PORTA do outro computador: ")
 		if entrada != "" {
 			endereco = entrada
 		} else {
-			endereco = padrao
+			endereco = padraoSugestao
 		}
 	}
 
@@ -281,7 +282,6 @@ func (s *sessaoPassageiro) telaAcesso() bool {
 }
 
 func (s *sessaoPassageiro) menuPrincipalPassageiro() {
-	// Notificações silenciosas ao logar
 	s.verificarNotificacoesSilenciosa()
 
 	for {
