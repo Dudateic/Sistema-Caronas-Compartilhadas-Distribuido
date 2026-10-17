@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 	"sync"
 	"time"
 )
@@ -32,9 +33,10 @@ type LogTransacoes struct {
 }
 
 func NovoLogTransacoes(caminho string) (*LogTransacoes, error) {
-	// os.O_APPEND: anexa no final
-	// os.O_WRONLY: abertura em modo escrita
-	// os.O_CREATE: cria o ficheiro caso ainda não exista
+	if err := os.MkdirAll(filepath.Dir(caminho), 0755); err != nil {
+		return nil, fmt.Errorf("falha ao criar pasta para log de transacoes: %w", err)
+	}
+
 	f, err := os.OpenFile(caminho, os.O_CREATE|os.O_WRONLY|os.O_APPEND, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("falha ao abrir log de transacoes em %s: %w", caminho, err)
@@ -46,7 +48,6 @@ func NovoLogTransacoes(caminho string) (*LogTransacoes, error) {
 	}, nil
 }
 
-// Gravar escreve a entrada no final do ficheiro e força a descarga física em disco via Sync()
 func (l *LogTransacoes) Gravar(txID string, tipo TipoRegistroLog, recursoID string, detalhes string) error {
 	entrada := EntradaLog{
 		Timestamp: time.Now(),
@@ -65,12 +66,10 @@ func (l *LogTransacoes) Gravar(txID string, tipo TipoRegistroLog, recursoID stri
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
-	// 1. Escrita sequencial no buffer do descritor de arquivo
 	if _, err := l.ficheiro.Write(dados); err != nil {
 		return fmt.Errorf("erro de I/O ao gravar no log: %w", err)
 	}
 
-	// 2. Chamada obrigatória fsync: garante que os dados chegam à persistência magnética/SSD
 	if err := l.ficheiro.Sync(); err != nil {
 		return fmt.Errorf("falha ao sincronizar log com o disco (fsync): %w", err)
 	}
@@ -78,7 +77,6 @@ func (l *LogTransacoes) Gravar(txID string, tipo TipoRegistroLog, recursoID stri
 	return nil
 }
 
-// RecuperarEstado lê todas as entradas históricas do ficheiro para recompor a memória após um crash
 func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
@@ -103,11 +101,9 @@ func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
 
 		var entrada EntradaLog
 		if err := json.Unmarshal(linha, &entrada); err != nil {
-			// Linha corrompida por corte incompleto de energia pode ser ignorada ou tratada
 			continue
 		}
 
-		// O último estado registrado da transação sobrepõe o anterior
 		estadoTransacoes[entrada.TxID] = entrada.Tipo
 	}
 
@@ -118,7 +114,6 @@ func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
 	return estadoTransacoes, nil
 }
 
-// Fechar descarrega pendências e encerra o ponteiro do ficheiro com segurança
 func (l *LogTransacoes) Fechar() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
