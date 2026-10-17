@@ -1,4 +1,3 @@
-// go run main.go -servidor localhost:8081
 package main
 
 import (
@@ -13,25 +12,34 @@ import (
 	"strings"
 	"time"
 
-	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/conexao"
-	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
+)
+
+const (
+	tentativasReconexao = 3
+	intervaloReconexao  = time.Second
+	timeoutResposta     = 10 * time.Second
 )
 
 type sessao struct {
 	endereco string
-	cli      *conexao.ClienteTCP
+	cli      *cliente_servidor.ClienteTCP
 	teclado  *bufio.Reader
 	usuario  string
 }
 
 func (s *sessao) ler(prompt string) string {
-	fmt.Print(prompt)
+	fmt.Print(visual.TextoBranco + prompt + visual.Reset)
 	linha, err := s.teclado.ReadString('\n')
 	if err != nil && strings.TrimSpace(linha) == "" {
 		if errors.Is(err, io.EOF) {
-			fmt.Println("\nEntrada encerrada. Ate logo!")
+			visual.MensagemAviso("Entrada encerrada. Até logo!")
 		}
-		_ = s.cli.Fechar()
+		if s.cli != nil {
+			_ = s.cli.Fechar()
+		}
 		os.Exit(0)
 	}
 	return strings.TrimSpace(linha)
@@ -46,25 +54,23 @@ func (s *sessao) reconectar() error {
 	if s.cli != nil {
 		_ = s.cli.Fechar()
 	}
-	var ultimo error
 	for i := 1; i <= tentativasReconexao; i++ {
-		fmt.Printf("[REDE] Reconectando a %s (tentativa %d/%d)...\n", s.endereco, i, tentativasReconexao)
-		cli, err := conexao.ConectarTCP(s.endereco, 2*time.Second)
+		visual.MensagemAviso(fmt.Sprintf("Reconectando a %s (tentativa %d/%d)...", s.endereco, i, tentativasReconexao))
+		cli, err := cliente_servidor.ConectarTCP(s.endereco, 2*time.Second)
 		if err == nil {
 			s.cli = cli
-			fmt.Println("[REDE] Conexao restabelecida.")
+			visual.MensagemSucesso("Conexão restabelecida com sucesso.")
 			return nil
 		}
-		ultimo = err
 		time.Sleep(intervaloReconexao)
 	}
-	return fmt.Errorf("servidor indisponivel: %w", ultimo)
+	return fmt.Errorf("servidor indisponível em %s", s.endereco)
 }
 
 func (s *sessao) garantirConexao() error {
 	select {
 	case err := <-s.cli.Erros:
-		fmt.Printf("[REDE] Conexao perdida (%v).\n", err)
+		visual.MensagemErro(fmt.Sprintf("Conexão perdida (%v).", err))
 		return s.reconectar()
 	default:
 		return nil
@@ -76,7 +82,7 @@ func (s *sessao) trocar(req any, tipoEsperado string, destino any) error {
 		return err
 	}
 
-	// Limpa dados residuais pendentes no buffer do canal
+	// Drena mensagens residuais que possam ter sobrado no canal
 	for drenando := true; drenando; {
 		select {
 		case <-s.cli.MensagensRecebidas:
@@ -102,7 +108,7 @@ func (s *sessao) trocar(req any, tipoEsperado string, destino any) error {
 				continue
 			}
 			if err := json.Unmarshal(linha, destino); err != nil {
-				return fmt.Errorf("resposta invalida do servidor: %w", err)
+				return fmt.Errorf("resposta inválida do servidor: %w", err)
 			}
 			return nil
 
@@ -116,30 +122,33 @@ func (s *sessao) trocar(req any, tipoEsperado string, destino any) error {
 }
 
 func (s *sessao) falhaDeConexao(causa error) error {
-	fmt.Printf("\n[AVISO] %v\n", causa)
+	visual.MensagemErro(fmt.Sprintf("%v", causa))
 	if err := s.reconectar(); err != nil {
 		return err
 	}
-	return errors.New("a resposta se perdeu; a operacao pode ter sido concluida, confira em 'Minhas caronas'")
+	return errors.New("a resposta se perdeu; a operação pode ter sido concluída, confira em 'Minhas caronas'")
 }
 
 func main() {
+	visual.ExibirCabecalho("VaiJunto - Terminal Motorista")
+
 	padrao := os.Getenv("SERVIDOR")
 	if padrao == "" {
-		padrao = conexao.EnderecoPadrao
+		padrao = "localhost:8081"
 	}
 	endereco := flag.String("servidor", padrao, "servidor da sua empresa (host:porta)")
 	flag.Parse()
 
-	cli, err := conexao.ConectarTCP(*endereco, 5*time.Second)
+	cli, err := cliente_servidor.ConectarTCP(*endereco, 5*time.Second)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(fmt.Sprintf("Falha ao conectar ao servidor em %s: %v", *endereco, err))
 		os.Exit(1)
 	}
 	s := &sessao{endereco: *endereco, cli: cli, teclado: bufio.NewReader(os.Stdin)}
 	defer func() { _ = s.cli.Fechar() }()
 
-	fmt.Printf("Conectado a %s\n", *endereco)
+	visual.MensagemSucesso(fmt.Sprintf("Conectado ao servidor %s com sucesso!", *endereco))
+
 	if !s.telaInicial() {
 		return
 	}
@@ -148,11 +157,13 @@ func main() {
 
 func (s *sessao) telaInicial() bool {
 	for {
-		fmt.Println("\n=== VAIJUNTO - MOTORISTA ===")
-		fmt.Println("1. Entrar")
-		fmt.Println("2. Cadastrar")
-		fmt.Println("0. Sair")
-		switch s.ler("Opcao: ") {
+		visual.LinhaDivisoria()
+		fmt.Println(visual.Negrito + "1." + visual.Reset + " Entrar")
+		fmt.Println(visual.Negrito + "2." + visual.Reset + " Cadastrar nova conta")
+		fmt.Println(visual.Negrito + "0." + visual.Reset + " Sair")
+		visual.LinhaDivisoria()
+
+		switch s.ler("Opção: ") {
 		case "1":
 			if s.entrar() {
 				return true
@@ -162,64 +173,88 @@ func (s *sessao) telaInicial() bool {
 		case "0":
 			return false
 		default:
-			fmt.Println("Opcao invalida.")
+			visual.MensagemAviso("Opção inválida.")
 		}
 	}
 }
 
 func (s *sessao) cadastrar() {
-	usuario, senha := s.ler("Novo usuario: "), s.ler("Senha: ")
+	visual.LinhaDivisoria()
+	fmt.Println(visual.Negrito + "--- Cadastro de Motorista ---" + visual.Reset)
+	usuario := s.ler("Novo usuário: ")
+	senha := s.ler("Senha: ")
+
 	if usuario == "" || senha == "" {
-		fmt.Println("Usuario e senha nao podem ser vazios.")
+		visual.MensagemErro("Usuário e senha não podem ser vazios.")
 		return
 	}
-	var resp protocolo.RespostaSimples
-	err := s.trocar(protocolo.RegistroUsuario{
-		Tipo:        protocolo.TipoCadastroReq,
-		Usuario:     usuario,
-		Senha:       senha,
-		TipoUsuario: protocolo.PerfilMotorista,
-	}, protocolo.TipoCadastroRes, &resp)
+
+	req := map[string]any{
+		"tipo":         cliente_servidor.TipoCadastroReq,
+		"nome":         usuario,
+		"login":        usuario,
+		"senha":        senha,
+		"tipo_usuario": string(modelos.UsuarioMotorista),
+	}
+
+	var resp cliente_servidor.RespostaSimples
+	err := s.trocar(req, cliente_servidor.TipoCadastroRes, &resp)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
-	fmt.Println(resp.Mensagem)
+
+	if resp.Sucesso {
+		visual.MensagemSucesso(resp.Mensagem)
+	} else {
+		visual.MensagemErro(resp.Mensagem)
+	}
 }
 
 func (s *sessao) entrar() bool {
-	usuario, senha := s.ler("Usuario: "), s.ler("Senha: ")
-	var resp protocolo.RespostaLogin
-	err := s.trocar(protocolo.CredencialLogin{
-		Tipo:    protocolo.TipoLoginReq,
-		Usuario: usuario,
-		Senha:   senha,
-	}, protocolo.TipoLoginRes, &resp)
+	visual.LinhaDivisoria()
+	fmt.Println(visual.Negrito + "--- Autenticação ---" + visual.Reset)
+	usuario := s.ler("Usuário: ")
+	senha := s.ler("Senha: ")
+
+	req := map[string]any{
+		"tipo":  cliente_servidor.TipoLoginReq,
+		"login": usuario,
+		"senha": senha,
+	}
+
+	var resp cliente_servidor.RespostaLogin
+	err := s.trocar(req, cliente_servidor.TipoLoginRes, &resp)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return false
 	}
 	if !resp.Sucesso {
-		fmt.Println("Falha no login:", resp.Mensagem)
+		visual.MensagemErro(fmt.Sprintf("Falha no login: %s", resp.Mensagem))
 		return false
 	}
-	if resp.TipoUsuario != protocolo.PerfilMotorista {
-		fmt.Printf("Acesso negado: esta conta e de '%s'. Use a aplicacao de passageiro.\n", resp.TipoUsuario)
+	if resp.TipoUsuario != string(modelos.UsuarioMotorista) {
+		visual.MensagemErro(fmt.Sprintf("Acesso negado: esta conta é de '%s'. Use a aplicação de passageiro.", resp.TipoUsuario))
 		return false
 	}
+
 	s.usuario = usuario
-	fmt.Println(resp.Mensagem)
+	visual.MensagemSucesso(fmt.Sprintf("Bem-vindo(a), %s!", s.usuario))
 	return true
 }
 
 func (s *sessao) menuPrincipal() {
 	for {
-		fmt.Printf("\n=== MOTORISTA: %s ===\n", s.usuario)
-		fmt.Println("1. Publicar carona")
-		fmt.Println("2. Minhas caronas")
-		fmt.Println("3. Cancelar carona")
-		fmt.Println("0. Sair")
-		switch s.ler("Opcao: ") {
+		visual.LinhaDivisoria()
+		fmt.Printf(visual.Negrito+"Painel do Motorista: %s%s\n", s.usuario, visual.Reset)
+		visual.LinhaDivisoria()
+		fmt.Println(visual.Negrito + "1." + visual.Reset + " Publicar carona")
+		fmt.Println(visual.Negrito + "2." + visual.Reset + " Minhas caronas")
+		fmt.Println(visual.Negrito + "3." + visual.Reset + " Cancelar carona")
+		fmt.Println(visual.Negrito + "0." + visual.Reset + " Sair")
+		visual.LinhaDivisoria()
+
+		switch s.ler("Opção: ") {
 		case "1":
 			s.publicar()
 		case "2":
@@ -227,10 +262,10 @@ func (s *sessao) menuPrincipal() {
 		case "3":
 			s.cancelar()
 		case "0":
-			fmt.Println("Ate logo!")
+			visual.MensagemAviso("Encerrando sessão. Até logo!")
 			return
 		default:
-			fmt.Println("Opcao invalida.")
+			visual.MensagemAviso("Opção inválida.")
 		}
 	}
 }
@@ -261,79 +296,85 @@ func lerRota(texto string) ([]string, error) {
 }
 
 func (s *sessao) publicar() {
-	fmt.Println("\n--- Publicar carona ---")
+	visual.LinhaDivisoria()
+	fmt.Println(visual.Negrito + "--- Publicar Nova Carona ---" + visual.Reset)
 
-	rota, err := lerRota(s.ler("Rota, cidades na ordem separadas por ';' (ex: Salvador;Feira de Santana;Serrinha): "))
+	rota, err := lerRota(s.ler("Rota (cidades separadas por ';' ou ','): "))
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
 
 	dataTxt := s.ler("Data da viagem (AAAA-MM-DD): ")
 	data, err := time.Parse("2006-01-02", dataTxt)
 	if err != nil {
-		fmt.Println("Data invalida. Use o formato AAAA-MM-DD.")
+		visual.MensagemErro("Data inválida. Use o formato AAAA-MM-DD.")
 		return
 	}
 	hoje := time.Now().Truncate(24 * time.Hour)
 	if data.Before(hoje.AddDate(0, 0, -1)) {
-		fmt.Println("A data da viagem ja passou.")
+		visual.MensagemErro("A data da viagem já passou.")
 		return
 	}
 
-	horaTxt := s.ler("Horario de saida (HH:MM): ")
+	horaTxt := s.ler("Horário de saída (HH:MM): ")
 	hora, err := time.Parse("15:04", horaTxt)
 	if err != nil {
-		fmt.Println("Horario invalido. Use o formato HH:MM.")
+		visual.MensagemErro("Horário inválido. Use o formato HH:MM.")
 		return
 	}
 
-	assentos, err := strconv.Atoi(s.ler("Assentos disponiveis: "))
+	assentos, err := strconv.Atoi(s.ler("Total de assentos disponíveis: "))
 	if err != nil || assentos <= 0 {
-		fmt.Println("Numero de assentos invalido (use um inteiro maior que zero).")
+		visual.MensagemErro("Número de assentos inválido (deve ser maior que zero).")
 		return
 	}
 
-	preco, err := strconv.ParseFloat(strings.ReplaceAll(s.ler("Preco por trecho (R$): "), ",", "."), 64)
+	preco, err := strconv.ParseFloat(strings.ReplaceAll(s.ler("Preço por trecho (R$): "), ",", "."), 64)
 	if err != nil || preco <= 0 {
-		fmt.Println("Preco invalido (use um numero maior que zero).")
+		visual.MensagemErro("Preço inválido (deve ser maior que zero).")
 		return
 	}
 
-	fmt.Printf("\nResumo: %s | %s as %s | %d assento(s) | R$ %.2f por trecho\n",
+	fmt.Printf("\nResumo: %s | %s às %s | %d vaga(s) | R$ %.2f por trecho\n",
 		strings.Join(rota, " -> "), data.Format("2006-01-02"), hora.Format("15:04"), assentos, preco)
-	if !s.confirmar("Confirmar publicacao?") {
-		fmt.Println("Publicacao cancelada.")
+	if !s.confirmar("Confirmar publicação?") {
+		visual.MensagemAviso("Publicação cancelada pelo usuário.")
 		return
 	}
 
-	var resp protocolo.RespostaPublicarCarona
-	err = s.trocar(protocolo.PublicacaoCarona{
-		Tipo:           protocolo.TipoPublicarCaronaReq,
-		Motorista:      s.usuario,
-		Rota:           rota,
-		Data:           data.Format("2006-01-02"),
-		Horario:        hora.Format("15:04"),
-		AssentosTotais: assentos,
-		PrecoPorTrecho: preco,
-	}, protocolo.TipoPublicarCaronaRes, &resp)
+	req := map[string]any{
+		"tipo":             cliente_servidor.TipoPublicarCaronaReq,
+		"motorista":        s.usuario,
+		"rota":             rota,
+		"data":             data.Format("2006-01-02"),
+		"horario":          hora.Format("15:04"),
+		"assentos_totais":  assentos,
+		"preco_por_trecho": preco,
+	}
+
+	var resp cliente_servidor.RespostaPublicarCarona
+	err = s.trocar(req, cliente_servidor.TipoPublicarCaronaRes, &resp)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
+
 	if resp.Sucesso {
-		fmt.Printf("%s (carona #%d)\n", resp.Mensagem, resp.CaronaID)
+		visual.MensagemSucesso(fmt.Sprintf("%s (Carona #%d anunciada com trechos contíguos)", resp.Mensagem, resp.CaronaID))
 	} else {
-		fmt.Println("Nao foi possivel publicar:", resp.Mensagem)
+		visual.MensagemErro(fmt.Sprintf("Não foi possível publicar: %s", resp.Mensagem))
 	}
 }
 
-func (s *sessao) buscarCaronas() ([]protocolo.Carona, error) {
-	var resp protocolo.RespostaConsultarCaronas
-	err := s.trocar(protocolo.ConsultaCaronasMotorista{
-		Tipo:      protocolo.TipoConsultarCaronasReq,
-		Motorista: s.usuario,
-	}, protocolo.TipoConsultarCaronasRes, &resp)
+func (s *sessao) buscarCaronas() ([]modelos.Carona, error) {
+	req := map[string]any{
+		"tipo":      cliente_servidor.TipoConsultarCaronasReq,
+		"motorista": s.usuario,
+	}
+
+	var resp cliente_servidor.RespostaConsultarCaronas
+	err := s.trocar(req, cliente_servidor.TipoConsultarCaronasRes, &resp)
 	if err != nil {
 		return nil, err
 	}
@@ -343,7 +384,7 @@ func (s *sessao) buscarCaronas() ([]protocolo.Carona, error) {
 	return resp.Caronas, nil
 }
 
-func passageirosDistintos(c protocolo.Carona) int {
+func passageirosDistintos(c modelos.Carona) int {
 	vistos := map[string]bool{}
 	for _, t := range c.Trechos {
 		for _, p := range t.Passageiros {
@@ -353,87 +394,98 @@ func passageirosDistintos(c protocolo.Carona) int {
 	return len(vistos)
 }
 
-func imprimirCarona(c protocolo.Carona) {
-	fmt.Printf("\nCarona #%d | %s as %s | %s\n", c.ID, c.Data, c.Horario, strings.Join(c.Rota, " -> "))
-	fmt.Printf("  %d assento(s) | R$ %.2f por trecho | %d passageiro(s)\n", c.AssentosTotais, c.PrecoPorTrecho, passageirosDistintos(c))
+func imprimirCaronaTabela(c modelos.Carona) {
+	fmt.Printf("\n"+visual.Negrito+"Carona #%d"+visual.Reset+" | %s às %s | %s\n", c.ID, c.Data, c.Horario, strings.Join(c.Rota, " -> "))
+	fmt.Printf("Vagas totais: %d | R$ %.2f por trecho | Passageiros confirmados: %d\n", c.AssentosTotais, c.PrecoPorTrecho, passageirosDistintos(c))
+
+	colunas := []string{"Origem", "Destino", "Ocupação", "Passageiros"}
+	larguras := []int{16, 16, 10, 30}
+	visual.TabelaCabecalho(colunas, larguras)
+
 	for _, t := range c.Trechos {
 		ocupados := c.AssentosTotais - t.AssentosLivres
-		linha := fmt.Sprintf("  - %s -> %s: %d/%d ocupado(s)", t.Origem, t.Destino, ocupados, c.AssentosTotais)
+		listaPassageiros := "-"
 		if len(t.Passageiros) > 0 {
-			linha += " [" + strings.Join(t.Passageiros, ", ") + "]"
+			listaPassageiros = strings.Join(t.Passageiros, ", ")
 		}
-		fmt.Println(linha)
+		visual.TabelaLinha([]string{
+			t.Origem,
+			t.Destino,
+			fmt.Sprintf("%d/%d", ocupados, c.AssentosTotais),
+			listaPassageiros,
+		}, larguras)
 	}
+	visual.TabelaRodape(larguras)
 }
 
 func (s *sessao) listar() {
 	caronas, err := s.buscarCaronas()
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
 	if len(caronas) == 0 {
-		fmt.Println("\nVoce nao tem caronas publicadas.")
+		visual.MensagemAviso("Você não tem caronas publicadas.")
 		return
 	}
 	for _, c := range caronas {
-		imprimirCarona(c)
+		imprimirCaronaTabela(c)
 	}
 }
 
 func (s *sessao) cancelar() {
 	caronas, err := s.buscarCaronas()
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
 	if len(caronas) == 0 {
-		fmt.Println("\nVoce nao tem caronas para cancelar.")
+		visual.MensagemAviso("Você não tem caronas para cancelar.")
 		return
 	}
 	for _, c := range caronas {
-		imprimirCarona(c)
+		imprimirCaronaTabela(c)
 	}
 
-	id, err := strconv.Atoi(s.ler("\nNumero da carona a cancelar (0 para voltar): "))
+	id, err := strconv.Atoi(s.ler("\nNúmero da carona a cancelar (0 para voltar): "))
 	if err != nil || id <= 0 {
 		return
 	}
-	var alvo *protocolo.Carona
+	var alvo *modelos.Carona
 	for i := range caronas {
 		if caronas[i].ID == id {
 			alvo = &caronas[i]
 		}
 	}
 	if alvo == nil {
-		fmt.Println("Carona nao encontrada entre as suas.")
+		visual.MensagemErro("Carona não encontrada entre as suas publicações.")
 		return
 	}
 
 	if n := passageirosDistintos(*alvo); n > 0 {
-		fmt.Printf("ATENCAO: %d passageiro(s) tem reserva nesta carona. O itinerario completo de cada um\n"+
-			"(inclusive trechos de outras empresas) sera cancelado e eles serao avisados.\n", n)
+		visual.MensagemAviso(fmt.Sprintf("ATENÇÃO: %d passageiro(s) possuem reserva nesta carona.\nO itinerário completo de cada um será cancelado e eles serão notificados.", n))
 	}
-	if !s.confirmar(fmt.Sprintf("Cancelar a carona #%d?", id)) {
-		fmt.Println("Cancelamento abortado.")
+	if !s.confirmar(fmt.Sprintf("Cancelar a carona #%d definitivamente?", id)) {
+		visual.MensagemAviso("Cancelamento abortado.")
 		return
 	}
 
-	var resp protocolo.RespostaSimples
-	err = s.trocar(protocolo.CancelamentoCarona{
-		Tipo:      protocolo.TipoCancelarCaronaReq,
-		CaronaID:  id,
-		Motorista: s.usuario,
-	}, protocolo.TipoCancelarCaronaRes, &resp)
+	req := map[string]any{
+		"tipo":      cliente_servidor.TipoCancelarCaronaReq,
+		"carona_id": id,
+		"motorista": s.usuario,
+	}
+
+	var resp cliente_servidor.RespostaSimples
+	err = s.trocar(req, cliente_servidor.TipoCancelarCaronaRes, &resp)
 	if err != nil {
-		fmt.Println("Erro:", err)
+		visual.MensagemErro(err.Error())
 		return
 	}
-	fmt.Println(resp.Mensagem)
-}
 
-const (
-	tentativasReconexao = 3
-	intervaloReconexao  = time.Second
-	timeoutResposta     = 10 * time.Second
-)
+	if resp.Sucesso {
+		visual.MensagemSucesso(resp.Mensagem)
+	} else {
+		visual.MensagemErro(resp.Mensagem)
+	}
+}

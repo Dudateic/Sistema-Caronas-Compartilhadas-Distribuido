@@ -15,9 +15,9 @@ import (
 	"syscall"
 	"time"
 
-	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/conexao"
-	"Sistema-Caronas-Compartilhadas-Distribuido/comunicacao/protocolo"
-	"Sistema-Caronas-Compartilhadas-Distribuido/service"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/servicos"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
 )
 
 func env(chave, padrao string) string {
@@ -37,7 +37,7 @@ func envDuracao(chave string, padrao time.Duration) time.Duration {
 }
 
 func main() {
-	tcp := flag.String("tcp", env("TCP_ADDR", conexao.EnderecoPadrao), "endereco TCP dos clientes (motorista/passageiro)")
+	tcp := flag.String("tcp", env("TCP_ADDR", cliente_servidor.EnderecoPadrao), "endereco TCP dos clientes (motorista/passageiro)")
 	httpAddr := flag.String("http", env("HTTP_ADDR", ":8080"), "endereco HTTP da API REST entre servidores")
 	empresa := flag.String("empresa", env("EMPRESA", "VAIJUNTO"), "nome desta empresa no consorcio")
 	pares := flag.String("pares", env("PARES", ""), "empresas parceiras: B=http://host:8080,C=http://host:8080")
@@ -45,74 +45,74 @@ func main() {
 	ttl := flag.Duration("ttl-bloqueio", envDuracao("TTL_BLOQUEIO", 30*time.Second), "tempo maximo de um assento bloqueado sem commit")
 	timeoutPar := flag.Duration("timeout-par", envDuracao("TIMEOUT_PAR", 3*time.Second), "timeout das chamadas HTTP as parceiras")
 	flag.Parse()
+
 	if flag.NArg() > 0 { // compatibilidade: go run ./aplicacao/servidor :8081
 		*tcp = flag.Arg(0)
 	}
 
-	mapaPares, err := service.ParsePares(*pares)
+	mapaPares, err := servicos.ParsePares(*pares)
 	if err != nil {
-		fmt.Printf("[ERRO] %v\n", err)
+		visual.MensagemErro(fmt.Sprintf("%v", err))
 		os.Exit(1)
 	}
-	service.Config = service.ConfigConsorcio{
+
+	servicos.Config = servicos.ConfigConsorcio{
 		Empresa:     *empresa,
 		Pares:       mapaPares,
 		TTLBloqueio: *ttl,
 		TimeoutPar:  *timeoutPar,
 	}
-	service.DiretorioDados = *dados
+	servicos.DiretorioDados = *dados
 
-	fmt.Println()
-	fmt.Printf("         VAIJUNTO   SERVIDOR  [empresa %s]\n", *empresa)
-	fmt.Println()
+	visual.ExibirCabecalho(fmt.Sprintf("VAIJUNTO - SERVIDOR [%s]", *empresa))
 
 	// Inicializa os dados persistidos do servidor
-	if err := service.InicializarCaronas(); err != nil {
-		fmt.Printf("[ERRO] Falha ao inicializar caronas: %v\n", err)
+	if err := servicos.InicializarCaronas(); err != nil {
+		visual.MensagemErro(fmt.Sprintf("Falha ao inicializar caronas: %v", err))
 		return
 	}
-	if err := service.InicializarReservas(); err != nil {
-		fmt.Printf("[ERRO] Falha ao inicializar reservas: %v\n", err)
+	if err := servicos.InicializarReservas(); err != nil {
+		visual.MensagemErro(fmt.Sprintf("Falha ao inicializar reservas: %v", err))
 		return
 	}
-	if err := service.InicializarTransacoes(); err != nil {
-		fmt.Printf("[ERRO] Falha ao inicializar transacoes: %v\n", err)
+	if err := servicos.InicializarTransacoes(); err != nil {
+		visual.MensagemErro(fmt.Sprintf("Falha ao inicializar transacoes: %v", err))
 		return
 	}
 
-	service.AoCancelarCarona = service.LimparReservasDaCarona
+	servicos.AoCancelarCarona = servicos.LimparReservasDaCarona
 
 	ctx, cancelar := context.WithCancel(context.Background())
 	defer cancelar()
-	service.IniciarLimpezaBloqueios(ctx)
+	servicos.IniciarLimpezaBloqueios(ctx)
 
 	// API REST entre servidores (2PC)
-	api := &http.Server{Addr: *httpAddr, Handler: service.NovoHandlerAPI(), ReadHeaderTimeout: 5 * time.Second}
+	api := &http.Server{Addr: *httpAddr, Handler: servicos.NovoHandlerAPI(), ReadHeaderTimeout: 5 * time.Second}
 	go func() {
 		if err := api.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
-			fmt.Printf("[ERRO] API REST encerrou: %v\n", err)
+			visual.MensagemErro(fmt.Sprintf("API REST encerrou inesperadamente: %v", err))
 			os.Exit(1)
 		}
 	}()
 
 	listener, err := net.Listen("tcp", *tcp)
 	if err != nil {
-		fmt.Printf("[ERRO] Nao foi possivel iniciar o servidor em %s: %v\n", *tcp, err)
+		visual.MensagemErro(fmt.Sprintf("Nao foi possivel iniciar o socket TCP em %s: %v", *tcp, err))
 		return
 	}
 	defer listener.Close()
 
-	fmt.Printf("Clientes (TCP) em %s | API REST em %s | parceiras: %d\n", *tcp, *httpAddr, len(mapaPares))
-	fmt.Println("Pressione Ctrl+C para encerrar o servico")
-	fmt.Println()
+	visual.MensagemSucesso(fmt.Sprintf("Clientes (TCP) em %s | API REST em %s | Parceiras ativas: %d", *tcp, *httpAddr, len(mapaPares)))
+	fmt.Println(visual.CinzaClaro + "Pressione Ctrl+C para encerrar o servico com seguranca." + visual.Reset)
+	visual.LinhaDivisoria()
 
-	// Captura interrupcoes do sistema para encerramento
+	// Captura interrupções do sistema operacional para encerramento gracioso
 	sinais := make(chan os.Signal, 1)
 	signal.Notify(sinais, os.Interrupt, syscall.SIGTERM)
 	go func() {
 		<-sinais
 		fmt.Println()
-		fmt.Println("Encerrando o servidor VAIJUNTO...")
+		visual.MensagemAviso("Encerrando o servidor VAIJUNTO...")
 		_ = listener.Close()
 		shutdownCtx, c := context.WithTimeout(context.Background(), 3*time.Second)
 		defer c()
@@ -125,22 +125,22 @@ func main() {
 			if errors.Is(err, net.ErrClosed) {
 				break
 			}
-			fmt.Printf("[ERRO] Falha ao aceitar conexao: %v\n", err)
+			visual.MensagemErro(fmt.Sprintf("Falha ao aceitar conexao: %v", err))
 			continue
 		}
 		go tratarCliente(conn)
 	}
 
-	fmt.Println("Servidor finalizado com sucesso. Ate logo!")
+	visual.MensagemSucesso("Servidor finalizado com sucesso. Ate logo!")
 }
 
-// tratarCliente atende continuamente as requisicoes de um cliente conectado.
+// tratarCliente atende continuamente as requisições de um cliente conectado via TCP.
 func tratarCliente(conn net.Conn) {
 	remoto := conn.RemoteAddr().String()
-	fmt.Printf("[CONEXAO] Novo cliente conectado: %s\n", remoto)
+	visual.MensagemAviso(fmt.Sprintf("Cliente conectado: %s", remoto))
 
 	defer func() {
-		fmt.Printf("[DESCONEXAO] Cliente desconectado: %s\n", remoto)
+		visual.MensagemAviso(fmt.Sprintf("Cliente desconectado: %s", remoto))
 		_ = conn.Close()
 	}()
 
@@ -157,50 +157,52 @@ func tratarCliente(conn net.Conn) {
 			continue
 		}
 
-		var base protocolo.MensagemBase
+		var base struct {
+			Tipo string `json:"tipo"`
+		}
 		if err := json.Unmarshal([]byte(linhaLimpa), &base); err != nil {
-			fmt.Printf("[ERRO] Payload malformado de %s: %v\n", remoto, err)
+			visual.MensagemErro(fmt.Sprintf("Payload malformado de %s: %v", remoto, err))
 			continue
 		}
 
-		service.RegistrarLog(conn, base.Tipo, linhaLimpa)
+		servicos.RegistrarLog(conn, base.Tipo, linhaLimpa)
 		rotearRequisicao(conn, base.Tipo, linhaLimpa, remoto)
 	}
 }
 
-// rotearRequisicao encaminha o JSON para a funcao de processamento.
+// rotearRequisicao encaminha o JSON para a função de processamento correspondente.
 func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto string) {
 	switch tipo {
 
-	// Usuarios
-	case protocolo.TipoCadastroReq:
-		service.ProcessarCadastro(conn, dadosBrutos)
-	case protocolo.TipoLoginReq:
-		service.ProcessarLogin(conn, dadosBrutos)
+	// Usuários
+	case cliente_servidor.TipoCadastroReq:
+		servicos.ProcessarCadastro(conn, dadosBrutos)
+	case cliente_servidor.TipoLoginReq:
+		servicos.ProcessarLogin(conn, dadosBrutos)
 
 	// Caronas (motorista)
-	case protocolo.TipoPublicarCaronaReq:
-		service.ProcessarPublicarCarona(conn, dadosBrutos)
-	case protocolo.TipoConsultarCaronasReq:
-		service.ProcessarConsultarCaronas(conn, dadosBrutos)
-	case protocolo.TipoCancelarCaronaReq:
-		service.ProcessarCancelarCarona(conn, dadosBrutos)
+	case cliente_servidor.TipoPublicarCaronaReq:
+		servicos.ProcessarPublicarCarona(conn, dadosBrutos)
+	case cliente_servidor.TipoConsultarCaronasReq:
+		servicos.ProcessarConsultarCaronas(conn, dadosBrutos)
+	case cliente_servidor.TipoCancelarCaronaReq:
+		servicos.ProcessarCancelarCarona(conn, dadosBrutos)
 
-	// Reservas e itinerarios (passageiro)
-	case protocolo.TipoBuscarItinerariosReq:
-		service.ProcessarBuscarItinerarios(conn, dadosBrutos)
-	case protocolo.TipoReservarItinerarioReq:
-		service.ProcessarReservarItinerario(conn, dadosBrutos)
-	case protocolo.TipoConsultarReservasReq:
-		service.ProcessarConsultarReservas(conn, dadosBrutos)
-	case protocolo.TipoCancelarReservaReq:
-		service.ProcessarCancelarReserva(conn, dadosBrutos)
+	// Reservas e itinerários (passageiro)
+	case cliente_servidor.TipoBuscarItinerariosReq:
+		servicos.ProcessarBuscarItinerarios(conn, dadosBrutos)
+	case cliente_servidor.TipoReservarItinerarioReq:
+		servicos.ProcessarReservarItinerario(conn, dadosBrutos)
+	case cliente_servidor.TipoConsultarReservasReq:
+		servicos.ProcessarConsultarReservas(conn, dadosBrutos)
+	case cliente_servidor.TipoCancelarReservaReq:
+		servicos.ProcessarCancelarReserva(conn, dadosBrutos)
 
-	// Notificacoes (passageiro)
-	case protocolo.TipoConsultarNotificacoesReq:
-		service.ProcessarConsultarNotificacoes(conn, dadosBrutos)
+	// Notificações (passageiro)
+	case cliente_servidor.TipoConsultarNotificacoesReq:
+		servicos.ProcessarConsultarNotificacoes(conn, dadosBrutos)
 
 	default:
-		fmt.Printf("[AVISO] Requisicao desconhecida recebida de %s: '%s'\n", remoto, tipo)
+		visual.MensagemAviso(fmt.Sprintf("Requisicao desconhecida recebida de %s: '%s'", remoto, tipo))
 	}
 }
