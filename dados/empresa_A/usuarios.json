@@ -1,1 +1,10 @@
-{}
+{
+  "Duda b": {
+    "id": "usr_1792700107118789851",
+    "nome": "Duda b",
+    "login": "Duda b",
+    "senha": "0804",
+    "tipo": "motorista",
+    "criado_em": "2026-10-22T17:15:07.118792757-03:00"
+  }
+}

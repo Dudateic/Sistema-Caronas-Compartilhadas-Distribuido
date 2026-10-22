@@ -19,5 +19,34 @@
         "passageiros": []
       }
     ]
+  },
+  {
+    "id": 2,
+    "motorista": "Duda b",
+    "data": "2026-10-25",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 10,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 10,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 10,
+        "passageiros": []
+      }
+    ]
   }
 ]

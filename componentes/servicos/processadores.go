@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net"
+	"strings"
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
@@ -121,27 +122,57 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 	var req struct {
 		Origem  string `json:"origem"`
 		Destino string `json:"destino"`
+		Data    string `json:"data"`
 	}
 	_ = json.Unmarshal([]byte(dados), &req)
 
-	trechos := InstanciaCaronas.BuscarTrechos(req.Origem, req.Destino)
+	origemDesejada := strings.ToUpper(strings.TrimSpace(req.Origem))
+	destinoDesejado := strings.ToUpper(strings.TrimSpace(req.Destino))
 
-	// Consulta nós parceiros via REST
+	todosTrechos := InstanciaCaronas.BuscarTrechos("", "")
 	for _, urlPar := range Config.Pares {
-		remotos, err := InstanciaClienteREST.ConsultarTrechos(urlPar, req.Origem, req.Destino)
+		remotos, err := InstanciaClienteREST.ConsultarTrechos(urlPar, "", "")
 		if err == nil {
-			trechos = append(trechos, remotos...)
+			todosTrechos = append(todosTrechos, remotos...)
 		}
 	}
 
 	var itinerarios []modelos.Itinerario
-	for _, t := range trechos {
-		itinerarios = append(itinerarios, modelos.Itinerario{
-			Data:       "2026-10-27",
-			PrecoTotal: t.Preco,
-			Trechos:    []modelos.TrechoViagem{t},
-		})
+	visitados := make(map[string]bool)
+
+	var dfs func(atual string, caminhoAtual []modelos.TrechoViagem, precoAcumulado float64)
+	dfs = func(atual string, caminhoAtual []modelos.TrechoViagem, precoAcumulado float64) {
+		if strings.EqualFold(atual, destinoDesejado) && len(caminhoAtual) > 0 {
+			copiaCaminho := make([]modelos.TrechoViagem, len(caminhoAtual))
+			copy(copiaCaminho, caminhoAtual)
+
+			dataViagem := req.Data
+			if dataViagem == "" && len(caminhoAtual) > 0 {
+				dataViagem = time.Now().Format("2006-01-02")
+			}
+
+			itinerarios = append(itinerarios, modelos.Itinerario{
+				Data:       dataViagem,
+				PrecoTotal: precoAcumulado,
+				Trechos:    copiaCaminho,
+			})
+			return
+		}
+
+		visitados[strings.ToUpper(atual)] = true
+		defer func() { visitados[strings.ToUpper(atual)] = false }()
+
+		for _, t := range todosTrechos {
+			tOrigem := strings.ToUpper(t.Origem)
+			tDestino := strings.ToUpper(t.Destino)
+
+			if strings.EqualFold(tOrigem, atual) && !visitados[tDestino] {
+				dfs(tDestino, append(caminhoAtual, t), precoAcumulado+t.Preco)
+			}
+		}
 	}
+
+	dfs(origemDesejada, nil, 0)
 
 	responderJSON(conn, cliente_servidor.RespostaBuscarItinerarios{
 		Tipo:        cliente_servidor.TipoBuscarItinerariosRes,

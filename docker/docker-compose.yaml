@@ -28,7 +28,6 @@ x-motorista: &motorista
   network_mode: "host"
 
 services:
-  # Servidor Empresa A
   empresa-a:
     <<: *servidor
     container_name: vaijunto-empresa-a
@@ -52,7 +51,6 @@ services:
              chmod -R 777 /app/dados;
              exec /app/servidor"
 
-  # Servidor Empresa B
   empresa-b:
     <<: *servidor
     container_name: vaijunto-empresa-b
@@ -76,7 +74,6 @@ services:
              chmod -R 777 /app/dados;
              exec /app/servidor"
 
-  # Servidor Empresa C
   empresa-c:
     <<: *servidor
     container_name: vaijunto-empresa-c
@@ -100,7 +97,6 @@ services:
              chmod -R 777 /app/dados;
              exec /app/servidor"
 
-  # Clientes Passageiro
   passageiro-a:
     <<: *passageiro
     container_name: vaijunto-passageiro-a
@@ -119,7 +115,6 @@ services:
     environment:
       SERVIDOR: "127.0.0.1:8080"
 
-  # Clientes Motorista
   motorista-a:
     <<: *motorista
     container_name: vaijunto-motorista-a
@@ -137,8 +132,6 @@ services:
     container_name: vaijunto-motorista-c
     environment:
       SERVIDOR: "127.0.0.1:8080"
-
-  # Simulador
   simulador:
     build:
       context: ..

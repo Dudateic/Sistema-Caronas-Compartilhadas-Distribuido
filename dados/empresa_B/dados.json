@@ -1,1 +1,31 @@
-[]
+[
+  {
+    "id": 1,
+    "motorista": "Duda a",
+    "data": "2026-10-25",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 12,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 12,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 12,
+        "passageiros": []
+      }
+    ]
+  }
+]

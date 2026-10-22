@@ -3,6 +3,7 @@ package servicos
 import (
 	"errors"
 	"fmt"
+	"os"
 	"path/filepath"
 	"strings"
 	"sync"
@@ -37,6 +38,10 @@ type GerenciadorCaronas struct {
 }
 
 func NovoGerenciadorCaronas(idEmpresa, diretorioDados string) (*GerenciadorCaronas, error) {
+	if err := os.MkdirAll(diretorioDados, 0755); err != nil {
+		return nil, fmt.Errorf("falha ao criar pasta de dados: %w", err)
+	}
+
 	caminhoCompleto := filepath.Join(diretorioDados, "dados.json")
 
 	gc := &GerenciadorCaronas{
@@ -48,7 +53,7 @@ func NovoGerenciadorCaronas(idEmpresa, diretorioDados string) (*GerenciadorCaron
 	}
 
 	_ = gc.carregarDoDisco()
-	_ = gc.salvarEmDisco() // Força a criação do ficheiro no disco logo no arranque!
+	_ = gc.salvarEmDisco()
 	return gc, nil
 }
 

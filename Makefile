@@ -5,6 +5,7 @@ BIN     ?= bin
 
 .PHONY: help build test \
         servidor-a servidor-b servidor-c \
+        run-servidor-a run-servidor-b run-servidor-c \
         up down restart logs \
         cliente-passageiro-a cliente-passageiro-b cliente-passageiro-c \
         cliente-motorista-a cliente-motorista-b cliente-motorista-c \
@@ -12,82 +13,95 @@ BIN     ?= bin
         down-a down-b down-c up-a up-b up-c \
         clean clean-data
 
-help: ## Lista os comandos disponíveis no Makefile
+help:
 	@grep -E '^[a-zA-Z0-9_-]+:.*?## ' $(MAKEFILE_LIST) | \
 		awk 'BEGIN {FS = ":.*?## "}; {printf "  \033[36m%-24s\033[0m %s\n", $$1, $$2}'
 
-build: ## Compila todos os binários localmente (servidor, clientes e simulador)
+build:
 	@mkdir -p $(BIN)
 	go build -o $(BIN)/servidor   ./aplicacao/servidor
 	go build -o $(BIN)/motorista  ./aplicacao/motorista
 	go build -o $(BIN)/passageiro ./aplicacao/passageiro
 	go build -o $(BIN)/simulador  ./aplicacao/simulador
 
-test: ## Executa todos os testes automatizados com cobertura
+test:
 	go test ./tests/... -v -count=1
 
-up: ## Sobe todos os 3 servidores do consórcio em segundo plano
+
+up:
 	$(COMPOSE) up -d --build empresa-a empresa-b empresa-c
 
-down: ## Encerra todos os contêineres do consórcio
+down:
 	$(COMPOSE) down
 
-restart: down up ## Reinicia todos os servidores do consórcio
+restart: down up
 
-logs: ## Exibe logs de todos os servidores em tempo real
+logs:
 	$(COMPOSE) logs -f --tail=100
 
-servidor-a: ## Sobe apenas o servidor da Empresa A (TCP 6060, HTTP 9091)
+servidor-a: ## TCP 6060, HTTP 9091
 	$(COMPOSE) up --build empresa-a
 
-servidor-b: ## Sobe apenas o servidor da Empresa B (TCP 7070, HTTP 9092)
+servidor-b: ## TCP 7070, HTTP 9092
 	$(COMPOSE) up --build empresa-b
 
-servidor-c: ## Sobe apenas o servidor da Empresa C (TCP 8080, HTTP 9093)
+servidor-c: ## TCP 8080, HTTP 9093
 	$(COMPOSE) up --build empresa-c
 
-cliente-passageiro-a: ## Abre terminal interativo do passageiro conectado à Empresa A
+run-servidor-a: build
+	@mkdir -p ./dados/empresa_A
+	./$(BIN)/servidor -empresa=A -tcp=:6060 -http=:9091 -dados=./dados/empresa_A -pares="B=http://localhost:9092,C=http://localhost:9093"
+
+run-servidor-b: build
+	@mkdir -p ./dados/empresa_B
+	./$(BIN)/servidor -empresa=B -tcp=:7070 -http=:9092 -dados=./dados/empresa_B -pares="A=http://localhost:9091,C=http://localhost:9093"
+
+run-servidor-c: build
+	@mkdir -p ./dados/empresa_C
+	./$(BIN)/servidor -empresa=C -tcp=:8080 -http=:9093 -dados=./dados/empresa_C -pares="A=http://localhost:9091,B=http://localhost:9092"
+
+cliente-passageiro-a:
 	$(COMPOSE) run --rm passageiro-a
 
-cliente-passageiro-b: ## Abre terminal interativo do passageiro conectado à Empresa B
+cliente-passageiro-b:
 	$(COMPOSE) run --rm passageiro-b
 
-cliente-passageiro-c: ## Abre terminal interativo do passageiro conectado à Empresa C
+cliente-passageiro-c:
 	$(COMPOSE) run --rm passageiro-c
 
-cliente-motorista-a: ## Abre terminal interativo do motorista conectado à Empresa A
+cliente-motorista-a:
 	$(COMPOSE) run --rm motorista-a
 
-cliente-motorista-b: ## Abre terminal interativo do motorista conectado à Empresa B
+cliente-motorista-b:
 	$(COMPOSE) run --rm motorista-b
 
-cliente-motorista-c: ## Abre terminal interativo do motorista conectado à Empresa C
+cliente-motorista-c:
 	$(COMPOSE) run --rm motorista-c
 
-simulador: ## Executa simulador de alta concorrência e carga no consórcio
+simulador:
 	$(COMPOSE) run --rm simulador
 
-down-a: ## Derruba o nó da Empresa A (injeção de falha)
+down-a:
 	$(COMPOSE) stop empresa-a
 
-down-b: ## Derruba o nó da Empresa B (injeção de falha)
+down-b:
 	$(COMPOSE) stop empresa-b
 
-down-c: ## Derruba o nó da Empresa C (injeção de falha)
+down-c:
 	$(COMPOSE) stop empresa-c
 
-up-a: ## Recupera o nó da Empresa A (validação de recuperação de estado)
+up-a:
 	$(COMPOSE) start empresa-a
 
-up-b: ## Recupera o nó da Empresa B (validação de recuperação de estado)
+up-b:
 	$(COMPOSE) start empresa-b
 
-up-c: ## Recupera o nó da Empresa C (validação de recuperação de estado)
+up-c:
 	$(COMPOSE) start empresa-c
 
-clean: ## Remove binários compilados e contêineres
+clean: ## Remove binários compilados e desliga contêineres Docker
 	rm -rf $(BIN)
 	$(COMPOSE) down -v
 
-clean-data: ## Limpa os volumes do Docker sem mexer em permissões locais
+clean-data: ## Limpa volumes do Docker mantendo a estrutura de diretórios
 	$(COMPOSE) down -v
