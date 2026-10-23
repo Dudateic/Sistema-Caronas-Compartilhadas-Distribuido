@@ -103,5 +103,6 @@ clean: ## Remove binários compilados e desliga contêineres Docker
 	rm -rf $(BIN)
 	$(COMPOSE) down -v
 
-clean-data: ## Limpa volumes do Docker mantendo a estrutura de diretórios
-	$(COMPOSE) down -v
+clean-data:
+	docker compose -f docker/docker-compose.yaml down -v
+	docker run --rm -v $(PWD)/dados:/dados alpine sh -c "rm -f /dados/*/*.log /dados/*/*.json /dados/*/reservas.json /dados/*/usuarios.json"

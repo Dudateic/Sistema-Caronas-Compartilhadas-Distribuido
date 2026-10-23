@@ -129,14 +129,15 @@ services:
     container_name: vaijunto-motorista-c
     environment:
       SERVIDOR: "127.0.0.1:8080"
+
   simulador:
     build:
       context: ..
       dockerfile: docker/Dockerfile
       target: simulador
-    profiles: ["testes"]
-    networks: [consorcio]
-    command: ["/app/simulador", "-passageiros=20", "-operacoes=5", "-alvo=empresa-a:6060"]
+    profiles: [ "testes" ]
+    networks: [ consorcio ]
+    command: [ "/app/simulador", "-total=10000", "-concorrencia=100", "-alvos=empresa-a:6060,empresa-b:7070,empresa-c:8080" ]
 
 networks:
   consorcio:
