@@ -46,7 +46,7 @@ func main() {
 	timeoutPar := flag.Duration("timeout-par", envDuracao("TIMEOUT_PAR", 3*time.Second), "timeout das chamadas HTTP as parceiras")
 	flag.Parse()
 
-	if flag.NArg() > 0 { // compatibilidade: go run ./aplicacao/servidor :8081
+	if flag.NArg() > 0 {
 		*tcp = flag.Arg(0)
 	}
 
@@ -66,7 +66,7 @@ func main() {
 
 	visual.ExibirCabecalho(fmt.Sprintf("VAIJUNTO - SERVIDOR [%s]", *empresa))
 
-	// Inicializa os dados persistidos do servidor
+	// Inicializa apenas os ficheiros JSON
 	if err := servicos.InicializarCaronas(); err != nil {
 		visual.MensagemErro(fmt.Sprintf("Falha ao inicializar caronas: %v", err))
 		return
@@ -86,7 +86,7 @@ func main() {
 	defer cancelar()
 	servicos.IniciarLimpezaBloqueios(ctx)
 
-	// API REST entre servidores (2PC)
+	// API REST entre servidores
 	api := &http.Server{Addr: *httpAddr, Handler: servicos.NovoHandlerAPI(), ReadHeaderTimeout: 5 * time.Second}
 	go func() {
 		if err := api.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
@@ -106,7 +106,6 @@ func main() {
 	fmt.Println(visual.CinzaClaro + "Pressione Ctrl+C para encerrar o servico com seguranca." + visual.Reset)
 	visual.LinhaDivisoria()
 
-	// Captura interrupções do sistema operacional para encerramento gracioso
 	sinais := make(chan os.Signal, 1)
 	signal.Notify(sinais, os.Interrupt, syscall.SIGTERM)
 	go func() {
@@ -134,7 +133,6 @@ func main() {
 	visual.MensagemSucesso("Servidor finalizado com sucesso. Ate logo!")
 }
 
-// tratarCliente atende continuamente as requisições de um cliente conectado via TCP.
 func tratarCliente(conn net.Conn) {
 	remoto := conn.RemoteAddr().String()
 	visual.MensagemAviso(fmt.Sprintf("Cliente conectado: %s", remoto))
@@ -165,12 +163,10 @@ func tratarCliente(conn net.Conn) {
 			continue
 		}
 
-		servicos.RegistrarLog(conn, base.Tipo, linhaLimpa)
 		rotearRequisicao(conn, base.Tipo, linhaLimpa, remoto)
 	}
 }
 
-// rotearRequisicao encaminha o JSON para a função de processamento correspondente.
 func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto string) {
 	switch tipo {
 
@@ -180,7 +176,7 @@ func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto str
 	case cliente_servidor.TipoLoginReq:
 		servicos.ProcessarLogin(conn, dadosBrutos)
 
-	// Caronas (motorista)
+	// Caronas
 	case cliente_servidor.TipoPublicarCaronaReq:
 		servicos.ProcessarPublicarCarona(conn, dadosBrutos)
 	case cliente_servidor.TipoConsultarCaronasReq:
@@ -188,7 +184,7 @@ func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto str
 	case cliente_servidor.TipoCancelarCaronaReq:
 		servicos.ProcessarCancelarCarona(conn, dadosBrutos)
 
-	// Reservas e itinerários (passageiro)
+	// Reservas e itinerários
 	case cliente_servidor.TipoBuscarItinerariosReq:
 		servicos.ProcessarBuscarItinerarios(conn, dadosBrutos)
 	case cliente_servidor.TipoReservarItinerarioReq:
@@ -198,7 +194,7 @@ func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto str
 	case cliente_servidor.TipoCancelarReservaReq:
 		servicos.ProcessarCancelarReserva(conn, dadosBrutos)
 
-	// Notificações (passageiro)
+	// Notificações
 	case cliente_servidor.TipoConsultarNotificacoesReq:
 		servicos.ProcessarConsultarNotificacoes(conn, dadosBrutos)
 

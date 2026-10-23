@@ -121,5 +121,5 @@ func truncarTexto(texto string, larguraMaxima int) string {
 		return string(runas[:larguraMaxima])
 	}
 
-	return ""
+	return string(runas[:larguraMaxima])
 }

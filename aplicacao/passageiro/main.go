@@ -353,8 +353,9 @@ func (s *sessaoPassageiro) acaoBuscarEReservar() {
 	visual.ExibirCabecalho("ITINERARIOS ENCONTRADOS")
 
 	colunas := []string{"Opcao", "Preco Total", "Qtd Trechos", "Composicao da Rota (Empresa / Trajeto)"}
-	larguras := []int{7, 13, 11, 48}
-	visual.TabelaCabecalho(colunas, larguras)
+
+	larguraRota := len(colunas[3])
+	linhasTabela := make([][]string, len(res.Itinerarios))
 
 	for i, itin := range res.Itinerarios {
 		var descTrechos []string
@@ -362,12 +363,23 @@ func (s *sessaoPassageiro) acaoBuscarEReservar() {
 			descTrechos = append(descTrechos, fmt.Sprintf("[%s] %s->%s (R$ %.2f)", tr.Empresa, tr.Origem, tr.Destino, tr.Preco))
 		}
 		rotaCompleta := strings.Join(descTrechos, " + ")
-		visual.TabelaLinha([]string{
+		if len([]rune(rotaCompleta)) > larguraRota {
+			larguraRota = len([]rune(rotaCompleta))
+		}
+
+		linhasTabela[i] = []string{
 			fmt.Sprintf("#%d", i+1),
 			fmt.Sprintf("R$ %.2f", itin.PrecoTotal),
 			strconv.Itoa(len(itin.Trechos)),
 			rotaCompleta,
-		}, larguras)
+		}
+	}
+
+	larguras := []int{7, 13, 11, larguraRota}
+
+	visual.TabelaCabecalho(colunas, larguras)
+	for _, linha := range linhasTabela {
+		visual.TabelaLinha(linha, larguras)
 	}
 	visual.TabelaRodape(larguras)
 

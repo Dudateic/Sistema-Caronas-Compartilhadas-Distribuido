@@ -1,4 +1,12 @@
 {
+  "Duda a": {
+    "id": "usr_1792788673653325039",
+    "nome": "Duda a",
+    "login": "Duda a",
+    "senha": "0804",
+    "tipo": "motorista",
+    "criado_em": "2026-10-23T17:51:13.653329781-03:00"
+  },
   "Duda b": {
     "id": "usr_1792700107118789851",
     "nome": "Duda b",
@@ -6,5 +14,13 @@
     "senha": "0804",
     "tipo": "motorista",
     "criado_em": "2026-10-22T17:15:07.118792757-03:00"
+  },
+  "pass a": {
+    "id": "usr_1792788708372434055",
+    "nome": "pass a",
+    "login": "pass a",
+    "senha": "0804",
+    "tipo": "passageiro",
+    "criado_em": "2026-10-23T17:51:48.372461434-03:00"
   }
 }

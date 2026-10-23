@@ -104,17 +104,27 @@ func ProcessarConsultarCaronas(conn net.Conn, dados string) {
 
 func ProcessarCancelarCarona(conn net.Conn, dados string) {
 	var req struct {
-		CaronaID int `json:"carona_id"`
+		CaronaID  int    `json:"carona_id"`
+		Motorista string `json:"motorista"`
 	}
 	_ = json.Unmarshal([]byte(dados), &req)
-	// Cancelamento de carona
-	if AoCancelarCarona != nil {
-		AoCancelarCarona(req.CaronaID)
+
+	err := InstanciaCaronas.CancelarCarona(req.CaronaID, req.Motorista)
+	if err == nil {
+		if AoCancelarCarona != nil {
+			AoCancelarCarona(req.CaronaID)
+		}
 	}
+
 	responderJSON(conn, cliente_servidor.RespostaSimples{
-		Tipo:     cliente_servidor.TipoCancelarCaronaRes,
-		Sucesso:  true,
-		Mensagem: "Carona cancelada com sucesso",
+		Tipo:    cliente_servidor.TipoCancelarCaronaRes,
+		Sucesso: err == nil,
+		Mensagem: func() string {
+			if err != nil {
+				return err.Error()
+			}
+			return "Carona cancelada com sucesso"
+		}(),
 	})
 }
 

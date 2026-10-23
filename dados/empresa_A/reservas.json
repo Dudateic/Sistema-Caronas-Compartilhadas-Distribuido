@@ -1,1 +1,29 @@
-{}
+{
+  "1": {
+    "id": 1,
+    "tx_id": "tx_A_1792791153248542836",
+    "passageiro": "pass a",
+    "data": "2026-10-23",
+    "preco_total": 13,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "Duda",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "10:20",
+        "preco": 1
+      },
+      {
+        "empresa": "B",
+        "carona_id": 1,
+        "motorista": "Duda a",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 12
+      }
+    ]
+  }
+}

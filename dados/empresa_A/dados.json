@@ -14,9 +14,11 @@
       {
         "origem": "SSA",
         "destino": "VIT",
-        "assentos_livres": 10,
+        "assentos_livres": 9,
         "preco": 1,
-        "passageiros": []
+        "passageiros": [
+          "pass a"
+        ]
       }
     ]
   },
@@ -44,6 +46,35 @@
         "origem": "FSA",
         "destino": "VIT",
         "assentos_livres": 5,
+        "preco": 10,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "motorista": "Duda a",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 2,
+    "preco_por_trecho": 10,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 2,
+        "preco": 10,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 2,
         "preco": 10,
         "passageiros": []
       }

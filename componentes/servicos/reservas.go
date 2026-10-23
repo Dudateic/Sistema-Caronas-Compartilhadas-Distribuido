@@ -16,7 +16,6 @@ var (
 	ErrReservaNaoEncontrada = errors.New("reserva nao localizada")
 )
 
-// GerenciadorReservas controla as reservas confirmadas e notificacoes aos passageiros
 type GerenciadorReservas struct {
 	idEmpresa           string
 	caminhoReservas     string
@@ -28,7 +27,6 @@ type GerenciadorReservas struct {
 	proximoID    int
 }
 
-// NovoGerenciadorReservas inicializa a memoria e restaura os bilhetes ja gravados em disco
 func NovoGerenciadorReservas(idEmpresa, diretorioDados string) *GerenciadorReservas {
 	caminhoRes := filepath.Join(diretorioDados, "reservas.json")
 	caminhoNot := filepath.Join(diretorioDados, "notificacoes.json")
@@ -46,7 +44,6 @@ func NovoGerenciadorReservas(idEmpresa, diretorioDados string) *GerenciadorReser
 	return gr
 }
 
-// CriarReservaConfirmada armazena o bilhete definitivo apos o GLOBAL COMMIT do 2PC
 func (gr *GerenciadorReservas) CriarReservaConfirmada(txID, passageiro string, itinerario modelos.Itinerario) modelos.Reserva {
 	gr.mu.Lock()
 	defer gr.mu.Unlock()
@@ -63,7 +60,6 @@ func (gr *GerenciadorReservas) CriarReservaConfirmada(txID, passageiro string, i
 	gr.reservas[gr.proximoID] = reserva
 	gr.proximoID++
 
-	// Emite aviso interno para a caixa de notificacoes do passageiro
 	msg := fmt.Sprintf("Itinerario confirmado com sucesso (TxID: %s, %d trechos). Boa viagem!", txID, len(itinerario.Trechos))
 	gr.adicionarNotificacaoSemLock(passageiro, msg)
 
@@ -71,7 +67,6 @@ func (gr *GerenciadorReservas) CriarReservaConfirmada(txID, passageiro string, i
 	return reserva
 }
 
-// ConsultarReservasPassageiro lista todos os bilhetes emitidos para o passageiro conectado
 func (gr *GerenciadorReservas) ConsultarReservasPassageiro(passageiro string) []modelos.Reserva {
 	gr.mu.RLock()
 	defer gr.mu.RUnlock()
@@ -85,7 +80,6 @@ func (gr *GerenciadorReservas) ConsultarReservasPassageiro(passageiro string) []
 	return lista
 }
 
-// CancelarReserva remove a reserva ativa e sinaliza o cancelamento
 func (gr *GerenciadorReservas) CancelarReserva(reservaID int, passageiro string) (*modelos.Reserva, error) {
 	gr.mu.Lock()
 	defer gr.mu.Unlock()
@@ -101,7 +95,6 @@ func (gr *GerenciadorReservas) CancelarReserva(reservaID int, passageiro string)
 	return &res, nil
 }
 
-// AdicionarNotificacao insere uma nova mensagem para um passageiro
 func (gr *GerenciadorReservas) AdicionarNotificacao(passageiro, mensagem string) {
 	gr.mu.Lock()
 	defer gr.mu.Unlock()
@@ -119,7 +112,6 @@ func (gr *GerenciadorReservas) adicionarNotificacaoSemLock(passageiro, mensagem 
 	gr.notificacoes[passageiro] = append(gr.notificacoes[passageiro], nova)
 }
 
-// ConsultarNotificacoes devolve os avisos do passageiro e esvazia a caixa pendente
 func (gr *GerenciadorReservas) ConsultarNotificacoes(passageiro string) []modelos.Notificacao {
 	gr.mu.Lock()
 	defer gr.mu.Unlock()
@@ -129,14 +121,12 @@ func (gr *GerenciadorReservas) ConsultarNotificacoes(passageiro string) []modelo
 		return []modelos.Notificacao{}
 	}
 
-	// Limpa apos a leitura pelo cliente
 	delete(gr.notificacoes, passageiro)
 	_ = gr.salvarNotificacoesEmDisco()
 
 	return mensagens
 }
 
-// Persistência em disco JSON
 func (gr *GerenciadorReservas) salvarEmDisco() error {
 	bytesDados, err := json.MarshalIndent(gr.reservas, "", "  ")
 	if err != nil {
@@ -154,7 +144,6 @@ func (gr *GerenciadorReservas) salvarNotificacoesEmDisco() error {
 }
 
 func (gr *GerenciadorReservas) carregarDoDisco() error {
-	// 1. Carrega Reservas
 	conteudoRes, err := os.ReadFile(gr.caminhoReservas)
 	if err == nil && len(conteudoRes) > 0 {
 		_ = json.Unmarshal(conteudoRes, &gr.reservas)
@@ -165,7 +154,6 @@ func (gr *GerenciadorReservas) carregarDoDisco() error {
 		}
 	}
 
-	// 2. Carrega Notificações
 	conteudoNot, err := os.ReadFile(gr.caminhoNotificacoes)
 	if err == nil && len(conteudoNot) > 0 {
 		_ = json.Unmarshal(conteudoNot, &gr.notificacoes)

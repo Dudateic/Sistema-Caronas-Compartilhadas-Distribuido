@@ -2,7 +2,7 @@ package servicos
 
 import (
 	"context"
-	"net"
+	"fmt"
 	"net/http"
 	"time"
 
@@ -15,7 +15,6 @@ var (
 	InstanciaCaronas      *GerenciadorCaronas
 	InstanciaReservas     *GerenciadorReservas
 	InstanciaUsuarios     *GerenciadorUsuarios
-	InstanciaWAL          *distribuido.LogTransacoes
 	InstanciaParticipante *distribuido.Participante2PC
 	InstanciaCoordenador  *distribuido.Coordenador2PC
 	InstanciaClienteREST  *rest.ClienteRESTInterEmpresas
@@ -35,12 +34,8 @@ func InicializarReservas() error {
 
 func InicializarTransacoes() error {
 	var err error
-	InstanciaWAL, err = distribuido.NovoLogTransacoes(DiretorioDados + "/log_transacoes.log")
-	if err != nil {
-		return err
-	}
 
-	InstanciaParticipante, err = distribuido.NovoParticipante2PC(Config.Empresa, InstanciaCaronas, InstanciaWAL)
+	InstanciaParticipante, err = distribuido.NovoParticipante2PC(Config.Empresa, InstanciaCaronas, nil)
 	if err != nil {
 		return err
 	}
@@ -48,9 +43,9 @@ func InicializarTransacoes() error {
 	InstanciaClienteREST = rest.NovoClienteREST(Config.TimeoutPar)
 	InstanciaCoordenador = distribuido.NovoCoordenador2PC(
 		Config.Empresa,
-		"", // URL local
+		"",
 		InstanciaClienteREST,
-		InstanciaWAL,
+		nil,
 		InstanciaParticipante,
 		Config.Pares,
 	)
@@ -59,7 +54,41 @@ func InicializarTransacoes() error {
 }
 
 func LimparReservasDaCarona(caronaID int) {
-	// Notifica e cancela eventuais reservas atreladas
+	if InstanciaReservas == nil {
+		return
+	}
+
+	InstanciaReservas.mu.Lock()
+	defer InstanciaReservas.mu.Unlock()
+
+	alterouReservas := false
+	alterouNotificacoes := false
+
+	for id, res := range InstanciaReservas.reservas {
+		afetada := false
+		for _, t := range res.Trechos {
+			if t.CaronaID == caronaID && (t.Empresa == Config.Empresa || t.Empresa == "") {
+				afetada = true
+				break
+			}
+		}
+
+		if afetada {
+			delete(InstanciaReservas.reservas, id)
+			alterouReservas = true
+
+			msg := fmt.Sprintf("Aviso: Sua reserva de bilhete #%d foi cancelada porque a carona #%d foi cancelada pelo motorista.", id, caronaID)
+			InstanciaReservas.adicionarNotificacaoSemLock(res.Passageiro, msg)
+			alterouNotificacoes = true
+		}
+	}
+
+	if alterouReservas {
+		_ = InstanciaReservas.salvarEmDisco()
+	}
+	if alterouNotificacoes {
+		_ = InstanciaReservas.salvarNotificacoesEmDisco()
+	}
 }
 
 func IniciarLimpezaBloqueios(ctx context.Context) {
@@ -81,11 +110,7 @@ func IniciarLimpezaBloqueios(ctx context.Context) {
 
 func NovoHandlerAPI() http.Handler {
 	mux := http.NewServeMux()
-	handlers := rest.NovoHandlersREST(Config.Empresa, InstanciaCaronas, InstanciaWAL)
+	handlers := rest.NovoHandlersREST(Config.Empresa, InstanciaCaronas, nil)
 	handlers.RegistrarRotas(mux)
 	return mux
-}
-
-func RegistrarLog(conn net.Conn, tipo, payload string) {
-	// Log de auditoria simples
 }
