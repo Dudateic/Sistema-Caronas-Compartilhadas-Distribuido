@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"strings"
 	"sync"
+	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 )
@@ -98,29 +99,22 @@ func (gc *GerenciadorCaronas) BloquearAssentoProvisorio(caronaID int, origem, de
 	gc.mu.Lock()
 	defer gc.mu.Unlock()
 
-	chave := fmt.Sprintf("%d:%s:%s:%s", caronaID, origem, destino, passageiro)
-	if _, jaBloqueou := gc.bloqueiosAtivos[chave]; jaBloqueou {
-		return ErrPassageiroJaInscrito
-	}
-
 	for i := range gc.caronas {
 		if gc.caronas[i].ID == caronaID {
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
 				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
-					// Verifica se o passageiro já tem reserva confirmada
-					for _, p := range t.Passageiros {
-						if p == passageiro {
-							return ErrPassageiroJaInscrito
-						}
-					}
 
+					// Verifica apenas se ainda há assentos disponíveis
 					if t.AssentosLivres <= 0 {
 						return ErrSemAssentosLivres
 					}
 
 					// Bloqueia temporariamente 1 assento
 					t.AssentosLivres--
+
+					// Gera uma chave única que permite múltiplos bloqueios para o mesmo passageiro
+					chave := fmt.Sprintf("%d:%s:%s:%s:%d", caronaID, origem, destino, passageiro, time.Now().UnixNano())
 					gc.bloqueiosAtivos[chave] = bloqueioItem{
 						caronaID:   caronaID,
 						origem:     origem,
@@ -142,11 +136,13 @@ func (gc *GerenciadorCaronas) LiberarAssentoProvisorio(caronaID int, origem, des
 	gc.mu.Lock()
 	defer gc.mu.Unlock()
 
-	chave := fmt.Sprintf("%d:%s:%s:%s", caronaID, origem, destino, passageiro)
-	if _, existe := gc.bloqueiosAtivos[chave]; !existe {
-		return nil // Já liberado ou nunca bloqueado (idempotência)
+	for chave, item := range gc.bloqueiosAtivos {
+		if item.caronaID == caronaID && item.passageiro == passageiro &&
+			strings.EqualFold(item.origem, origem) && strings.EqualFold(item.destino, destino) {
+			delete(gc.bloqueiosAtivos, chave)
+			break
+		}
 	}
-	delete(gc.bloqueiosAtivos, chave)
 
 	for i := range gc.caronas {
 		if gc.caronas[i].ID == caronaID {
@@ -169,8 +165,13 @@ func (gc *GerenciadorCaronas) ConfirmarAssentoDefinitivo(caronaID int, origem, d
 	gc.mu.Lock()
 	defer gc.mu.Unlock()
 
-	chave := fmt.Sprintf("%d:%s:%s:%s", caronaID, origem, destino, passageiro)
-	delete(gc.bloqueiosAtivos, chave)
+	for chave, item := range gc.bloqueiosAtivos {
+		if item.caronaID == caronaID && item.passageiro == passageiro &&
+			strings.EqualFold(item.origem, origem) && strings.EqualFold(item.destino, destino) {
+			delete(gc.bloqueiosAtivos, chave)
+			break
+		}
+	}
 
 	for i := range gc.caronas {
 		if gc.caronas[i].ID == caronaID {
