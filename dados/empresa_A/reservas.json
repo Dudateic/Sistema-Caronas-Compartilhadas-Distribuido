@@ -1,28 +1,6301 @@
 {
   "1": {
     "id": 1,
-    "tx_id": "tx_A_1792791153248542836",
-    "passageiro": "pass a",
+    "tx_id": "tx_A_1792792833675753652",
+    "passageiro": "sim_worker_5",
     "data": "2026-10-23",
-    "preco_total": 13,
+    "preco_total": 15,
     "trechos": [
       {
         "empresa": "A",
         "carona_id": 1,
-        "motorista": "Duda",
+        "motorista": "motorista_seed_1",
         "origem": "SSA",
         "destino": "VIT",
-        "horario": "10:20",
-        "preco": 1
-      },
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "10": {
+    "id": 10,
+    "tx_id": "tx_A_1792792833688280333",
+    "passageiro": "sim_worker_15",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
       {
-        "empresa": "B",
-        "carona_id": 1,
-        "motorista": "Duda a",
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "100": {
+    "id": 100,
+    "tx_id": "tx_A_1792792833709309625",
+    "passageiro": "sim_worker_23",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "101": {
+    "id": 101,
+    "tx_id": "tx_A_1792792833709899019",
+    "passageiro": "sim_worker_92",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
         "origem": "VIT",
         "destino": "CLE",
         "horario": "12:00",
-        "preco": 12
+        "preco": 15
+      }
+    ]
+  },
+  "102": {
+    "id": 102,
+    "tx_id": "tx_A_1792792833710803540",
+    "passageiro": "sim_worker_67",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "103": {
+    "id": 103,
+    "tx_id": "tx_A_1792792833710808360",
+    "passageiro": "sim_worker_32",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "104": {
+    "id": 104,
+    "tx_id": "tx_A_1792792833704935791",
+    "passageiro": "sim_worker_41",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "105": {
+    "id": 105,
+    "tx_id": "tx_A_1792792833705412493",
+    "passageiro": "sim_worker_46",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "106": {
+    "id": 106,
+    "tx_id": "tx_A_1792792833711753765",
+    "passageiro": "sim_worker_58",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "107": {
+    "id": 107,
+    "tx_id": "tx_A_1792792833711781270",
+    "passageiro": "sim_worker_21",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "108": {
+    "id": 108,
+    "tx_id": "tx_A_1792792833711788842",
+    "passageiro": "sim_worker_0",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "109": {
+    "id": 109,
+    "tx_id": "tx_A_1792792833712873357",
+    "passageiro": "sim_worker_73",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "11": {
+    "id": 11,
+    "tx_id": "tx_A_1792792833683080867",
+    "passageiro": "sim_worker_81",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "110": {
+    "id": 110,
+    "tx_id": "tx_A_1792792833705463113",
+    "passageiro": "sim_worker_78",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "111": {
+    "id": 111,
+    "tx_id": "tx_A_1792792833713060495",
+    "passageiro": "sim_worker_42",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "112": {
+    "id": 112,
+    "tx_id": "tx_A_1792792833713414783",
+    "passageiro": "sim_worker_39",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "113": {
+    "id": 113,
+    "tx_id": "tx_A_1792792833714786457",
+    "passageiro": "sim_worker_98",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "114": {
+    "id": 114,
+    "tx_id": "tx_A_1792792833714831445",
+    "passageiro": "sim_worker_33",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "115": {
+    "id": 115,
+    "tx_id": "tx_A_1792792833714791374",
+    "passageiro": "sim_worker_29",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "116": {
+    "id": 116,
+    "tx_id": "tx_A_1792792833714851698",
+    "passageiro": "sim_worker_84",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "117": {
+    "id": 117,
+    "tx_id": "tx_A_1792792833714850243",
+    "passageiro": "sim_worker_76",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "118": {
+    "id": 118,
+    "tx_id": "tx_A_1792792833714862035",
+    "passageiro": "sim_worker_60",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "119": {
+    "id": 119,
+    "tx_id": "tx_A_1792792833714901042",
+    "passageiro": "sim_worker_89",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "12": {
+    "id": 12,
+    "tx_id": "tx_A_1792792833682833622",
+    "passageiro": "sim_worker_63",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "120": {
+    "id": 120,
+    "tx_id": "tx_A_1792792833717075183",
+    "passageiro": "sim_worker_99",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "121": {
+    "id": 121,
+    "tx_id": "tx_A_1792792833718083943",
+    "passageiro": "sim_worker_96",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "122": {
+    "id": 122,
+    "tx_id": "tx_A_1792792833718252617",
+    "passageiro": "sim_worker_49",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "123": {
+    "id": 123,
+    "tx_id": "tx_A_1792792833719307568",
+    "passageiro": "sim_worker_35",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "124": {
+    "id": 124,
+    "tx_id": "tx_A_1792792833719656305",
+    "passageiro": "sim_worker_15",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "125": {
+    "id": 125,
+    "tx_id": "tx_A_1792792833720732682",
+    "passageiro": "sim_worker_69",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "126": {
+    "id": 126,
+    "tx_id": "tx_A_1792792833720716887",
+    "passageiro": "sim_worker_57",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "127": {
+    "id": 127,
+    "tx_id": "tx_A_1792792833720743880",
+    "passageiro": "sim_worker_65",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "128": {
+    "id": 128,
+    "tx_id": "tx_A_1792792833717767809",
+    "passageiro": "sim_worker_93",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "129": {
+    "id": 129,
+    "tx_id": "tx_A_1792792833722083287",
+    "passageiro": "sim_worker_48",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "13": {
+    "id": 13,
+    "tx_id": "tx_A_1792792833684662883",
+    "passageiro": "sim_worker_44",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "130": {
+    "id": 130,
+    "tx_id": "tx_A_1792792833721966828",
+    "passageiro": "sim_worker_8",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "131": {
+    "id": 131,
+    "tx_id": "tx_A_1792792833722118816",
+    "passageiro": "sim_worker_22",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "132": {
+    "id": 132,
+    "tx_id": "tx_A_1792792833722070039",
+    "passageiro": "sim_worker_51",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "133": {
+    "id": 133,
+    "tx_id": "tx_A_1792792833722965449",
+    "passageiro": "sim_worker_34",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "134": {
+    "id": 134,
+    "tx_id": "tx_A_1792792833723826538",
+    "passageiro": "sim_worker_85",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "135": {
+    "id": 135,
+    "tx_id": "tx_A_1792792833724189858",
+    "passageiro": "sim_worker_61",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "136": {
+    "id": 136,
+    "tx_id": "tx_A_1792792833724891951",
+    "passageiro": "sim_worker_59",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "137": {
+    "id": 137,
+    "tx_id": "tx_A_1792792833725255907",
+    "passageiro": "sim_worker_75",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "138": {
+    "id": 138,
+    "tx_id": "tx_A_1792792833726219718",
+    "passageiro": "sim_worker_53",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "139": {
+    "id": 139,
+    "tx_id": "tx_A_1792792833726274878",
+    "passageiro": "sim_worker_4",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "14": {
+    "id": 14,
+    "tx_id": "tx_A_1792792833684480675",
+    "passageiro": "sim_worker_31",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "140": {
+    "id": 140,
+    "tx_id": "tx_A_1792792833727664885",
+    "passageiro": "sim_worker_11",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "141": {
+    "id": 141,
+    "tx_id": "tx_A_1792792833727631518",
+    "passageiro": "sim_worker_25",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "142": {
+    "id": 142,
+    "tx_id": "tx_A_1792792833728516623",
+    "passageiro": "sim_worker_88",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "143": {
+    "id": 143,
+    "tx_id": "tx_A_1792792833728736775",
+    "passageiro": "sim_worker_62",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "144": {
+    "id": 144,
+    "tx_id": "tx_A_1792792833728703217",
+    "passageiro": "sim_worker_6",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "145": {
+    "id": 145,
+    "tx_id": "tx_A_1792792833729005212",
+    "passageiro": "sim_worker_5",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "146": {
+    "id": 146,
+    "tx_id": "tx_A_1792792833730090272",
+    "passageiro": "sim_worker_70",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "147": {
+    "id": 147,
+    "tx_id": "tx_A_1792792833730118831",
+    "passageiro": "sim_worker_24",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "148": {
+    "id": 148,
+    "tx_id": "tx_A_1792792833730116086",
+    "passageiro": "sim_worker_30",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "149": {
+    "id": 149,
+    "tx_id": "tx_A_1792792833730476683",
+    "passageiro": "sim_worker_91",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "15": {
+    "id": 15,
+    "tx_id": "tx_A_1792792833687592545",
+    "passageiro": "sim_worker_7",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "150": {
+    "id": 150,
+    "tx_id": "tx_A_1792792833730525756",
+    "passageiro": "sim_worker_71",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "151": {
+    "id": 151,
+    "tx_id": "tx_A_1792792833732027898",
+    "passageiro": "sim_worker_2",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "152": {
+    "id": 152,
+    "tx_id": "tx_A_1792792833739895504",
+    "passageiro": "sim_worker_95",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "153": {
+    "id": 153,
+    "tx_id": "tx_A_1792792833732269273",
+    "passageiro": "sim_worker_36",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "154": {
+    "id": 154,
+    "tx_id": "tx_A_1792792833732308123",
+    "passageiro": "sim_worker_17",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "155": {
+    "id": 155,
+    "tx_id": "tx_A_1792792833732698518",
+    "passageiro": "sim_worker_54",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "156": {
+    "id": 156,
+    "tx_id": "tx_A_1792792833732827309",
+    "passageiro": "sim_worker_66",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "157": {
+    "id": 157,
+    "tx_id": "tx_A_1792792833732726518",
+    "passageiro": "sim_worker_47",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "158": {
+    "id": 158,
+    "tx_id": "tx_A_1792792833733971233",
+    "passageiro": "sim_worker_16",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "159": {
+    "id": 159,
+    "tx_id": "tx_A_1792792833734007687",
+    "passageiro": "sim_worker_13",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "16": {
+    "id": 16,
+    "tx_id": "tx_A_1792792833687658829",
+    "passageiro": "sim_worker_94",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "160": {
+    "id": 160,
+    "tx_id": "tx_A_1792792833737906651",
+    "passageiro": "sim_worker_7",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "161": {
+    "id": 161,
+    "tx_id": "tx_A_1792792833738469899",
+    "passageiro": "sim_worker_19",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "162": {
+    "id": 162,
+    "tx_id": "tx_A_1792792833735739108",
+    "passageiro": "sim_worker_81",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "163": {
+    "id": 163,
+    "tx_id": "tx_A_1792792833736527583",
+    "passageiro": "sim_worker_90",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "164": {
+    "id": 164,
+    "tx_id": "tx_A_1792792833737873381",
+    "passageiro": "sim_worker_14",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "165": {
+    "id": 165,
+    "tx_id": "tx_A_1792792833737918378",
+    "passageiro": "sim_worker_50",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "166": {
+    "id": 166,
+    "tx_id": "tx_A_1792792833738490482",
+    "passageiro": "sim_worker_56",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "167": {
+    "id": 167,
+    "tx_id": "tx_A_1792792833738536221",
+    "passageiro": "sim_worker_97",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "168": {
+    "id": 168,
+    "tx_id": "tx_A_1792792833740834933",
+    "passageiro": "sim_worker_44",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "169": {
+    "id": 169,
+    "tx_id": "tx_A_1792792833740819296",
+    "passageiro": "sim_worker_10",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "17": {
+    "id": 17,
+    "tx_id": "tx_A_1792792833687697073",
+    "passageiro": "sim_worker_52",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "170": {
+    "id": 170,
+    "tx_id": "tx_A_1792792833740832083",
+    "passageiro": "sim_worker_63",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "171": {
+    "id": 171,
+    "tx_id": "tx_A_1792792833739401318",
+    "passageiro": "sim_worker_28",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "172": {
+    "id": 172,
+    "tx_id": "tx_A_1792792833738536576",
+    "passageiro": "sim_worker_43",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "173": {
+    "id": 173,
+    "tx_id": "tx_A_1792792833739367609",
+    "passageiro": "sim_worker_94",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "174": {
+    "id": 174,
+    "tx_id": "tx_A_1792792833743685693",
+    "passageiro": "sim_worker_31",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "175": {
+    "id": 175,
+    "tx_id": "tx_A_1792792833738438322",
+    "passageiro": "sim_worker_9",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "176": {
+    "id": 176,
+    "tx_id": "tx_A_1792792833747321507",
+    "passageiro": "sim_worker_1",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "177": {
+    "id": 177,
+    "tx_id": "tx_A_1792792833746265816",
+    "passageiro": "sim_worker_74",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "178": {
+    "id": 178,
+    "tx_id": "tx_A_1792792833746277013",
+    "passageiro": "sim_worker_77",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "179": {
+    "id": 179,
+    "tx_id": "tx_A_1792792833747863449",
+    "passageiro": "sim_worker_3",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "18": {
+    "id": 18,
+    "tx_id": "tx_A_1792792833687671505",
+    "passageiro": "sim_worker_3",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "180": {
+    "id": 180,
+    "tx_id": "tx_A_1792792833748016060",
+    "passageiro": "sim_worker_40",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "181": {
+    "id": 181,
+    "tx_id": "tx_A_1792792833748056918",
+    "passageiro": "sim_worker_38",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "182": {
+    "id": 182,
+    "tx_id": "tx_A_1792792833748079942",
+    "passageiro": "sim_worker_20",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "183": {
+    "id": 183,
+    "tx_id": "tx_A_1792792833749149620",
+    "passageiro": "sim_worker_37",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "184": {
+    "id": 184,
+    "tx_id": "tx_A_1792792833750683431",
+    "passageiro": "sim_worker_92",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "185": {
+    "id": 185,
+    "tx_id": "tx_A_1792792833750185039",
+    "passageiro": "sim_worker_64",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "186": {
+    "id": 186,
+    "tx_id": "tx_A_1792792833750710248",
+    "passageiro": "sim_worker_26",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "187": {
+    "id": 187,
+    "tx_id": "tx_A_1792792833751186746",
+    "passageiro": "sim_worker_80",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "188": {
+    "id": 188,
+    "tx_id": "tx_A_1792792833752703806",
+    "passageiro": "sim_worker_55",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "189": {
+    "id": 189,
+    "tx_id": "tx_A_1792792833751324585",
+    "passageiro": "sim_worker_79",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "19": {
+    "id": 19,
+    "tx_id": "tx_A_1792792833682819509",
+    "passageiro": "sim_worker_56",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "190": {
+    "id": 190,
+    "tx_id": "tx_A_1792792833752125811",
+    "passageiro": "sim_worker_86",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "191": {
+    "id": 191,
+    "tx_id": "tx_A_1792792833751904717",
+    "passageiro": "sim_worker_87",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "192": {
+    "id": 192,
+    "tx_id": "tx_A_1792792833752654381",
+    "passageiro": "sim_worker_12",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "193": {
+    "id": 193,
+    "tx_id": "tx_A_1792792833755417001",
+    "passageiro": "sim_worker_68",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "194": {
+    "id": 194,
+    "tx_id": "tx_A_1792792833752851759",
+    "passageiro": "sim_worker_32",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "195": {
+    "id": 195,
+    "tx_id": "tx_A_1792792833753072831",
+    "passageiro": "sim_worker_23",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "196": {
+    "id": 196,
+    "tx_id": "tx_A_1792792833754888033",
+    "passageiro": "sim_worker_58",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "197": {
+    "id": 197,
+    "tx_id": "tx_A_1792792833753881516",
+    "passageiro": "sim_worker_41",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "198": {
+    "id": 198,
+    "tx_id": "tx_A_1792792833754803992",
+    "passageiro": "sim_worker_0",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "199": {
+    "id": 199,
+    "tx_id": "tx_A_1792792833757103990",
+    "passageiro": "sim_worker_72",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "2": {
+    "id": 2,
+    "tx_id": "tx_A_1792792833676976337",
+    "passageiro": "sim_worker_68",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "20": {
+    "id": 20,
+    "tx_id": "tx_A_1792792833687830397",
+    "passageiro": "sim_worker_74",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "200": {
+    "id": 200,
+    "tx_id": "tx_A_1792792833758656516",
+    "passageiro": "sim_worker_46",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "201": {
+    "id": 201,
+    "tx_id": "tx_A_1792792833758671631",
+    "passageiro": "sim_worker_78",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "202": {
+    "id": 202,
+    "tx_id": "tx_A_1792792833760463472",
+    "passageiro": "sim_worker_52",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "203": {
+    "id": 203,
+    "tx_id": "tx_A_1792792833760525933",
+    "passageiro": "sim_worker_83",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "204": {
+    "id": 204,
+    "tx_id": "tx_A_1792792833761137522",
+    "passageiro": "sim_worker_98",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "205": {
+    "id": 205,
+    "tx_id": "tx_A_1792792833761011798",
+    "passageiro": "sim_worker_73",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "206": {
+    "id": 206,
+    "tx_id": "tx_A_1792792833761150545",
+    "passageiro": "sim_worker_45",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "207": {
+    "id": 207,
+    "tx_id": "tx_A_1792792833761198986",
+    "passageiro": "sim_worker_82",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "208": {
+    "id": 208,
+    "tx_id": "tx_A_1792792833762272695",
+    "passageiro": "sim_worker_33",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "209": {
+    "id": 209,
+    "tx_id": "tx_A_1792792833762285922",
+    "passageiro": "sim_worker_39",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "21": {
+    "id": 21,
+    "tx_id": "tx_A_1792792833683249322",
+    "passageiro": "sim_worker_59",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "210": {
+    "id": 210,
+    "tx_id": "tx_A_1792792833764014623",
+    "passageiro": "sim_worker_18",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "211": {
+    "id": 211,
+    "tx_id": "tx_A_1792792833764443492",
+    "passageiro": "sim_worker_76",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "212": {
+    "id": 212,
+    "tx_id": "tx_A_1792792833766210834",
+    "passageiro": "sim_worker_42",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "213": {
+    "id": 213,
+    "tx_id": "tx_A_1792792833766767331",
+    "passageiro": "sim_worker_29",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "214": {
+    "id": 214,
+    "tx_id": "tx_A_1792792833766856089",
+    "passageiro": "sim_worker_67",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "215": {
+    "id": 215,
+    "tx_id": "tx_A_1792792833767284871",
+    "passageiro": "sim_worker_60",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "216": {
+    "id": 216,
+    "tx_id": "tx_A_1792792833767405670",
+    "passageiro": "sim_worker_89",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "217": {
+    "id": 217,
+    "tx_id": "tx_A_1792792833767359862",
+    "passageiro": "sim_worker_99",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "218": {
+    "id": 218,
+    "tx_id": "tx_A_1792792833767412538",
+    "passageiro": "sim_worker_84",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "219": {
+    "id": 219,
+    "tx_id": "tx_A_1792792833769856934",
+    "passageiro": "sim_worker_27",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "22": {
+    "id": 22,
+    "tx_id": "tx_A_1792792833682858548",
+    "passageiro": "sim_worker_23",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "220": {
+    "id": 220,
+    "tx_id": "tx_A_1792792833769849617",
+    "passageiro": "sim_worker_35",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "221": {
+    "id": 221,
+    "tx_id": "tx_A_1792792833770776289",
+    "passageiro": "sim_worker_15",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "222": {
+    "id": 222,
+    "tx_id": "tx_A_1792792833771441880",
+    "passageiro": "sim_worker_49",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "223": {
+    "id": 223,
+    "tx_id": "tx_A_1792792833771589850",
+    "passageiro": "sim_worker_21",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "224": {
+    "id": 224,
+    "tx_id": "tx_A_1792792833771970184",
+    "passageiro": "sim_worker_65",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "225": {
+    "id": 225,
+    "tx_id": "tx_A_1792792833772741385",
+    "passageiro": "sim_worker_96",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "226": {
+    "id": 226,
+    "tx_id": "tx_A_1792792833773752018",
+    "passageiro": "sim_worker_93",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "227": {
+    "id": 227,
+    "tx_id": "tx_A_1792792833775069343",
+    "passageiro": "sim_worker_48",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "228": {
+    "id": 228,
+    "tx_id": "tx_A_1792792833775384745",
+    "passageiro": "sim_worker_22",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "229": {
+    "id": 229,
+    "tx_id": "tx_A_1792792833776734953",
+    "passageiro": "sim_worker_8",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "23": {
+    "id": 23,
+    "tx_id": "tx_A_1792792833682892668",
+    "passageiro": "sim_worker_32",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "230": {
+    "id": 230,
+    "tx_id": "tx_A_1792792833776744151",
+    "passageiro": "sim_worker_85",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "231": {
+    "id": 231,
+    "tx_id": "tx_A_1792792833776948330",
+    "passageiro": "sim_worker_69",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "232": {
+    "id": 232,
+    "tx_id": "tx_A_1792792833776968854",
+    "passageiro": "sim_worker_34",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "233": {
+    "id": 233,
+    "tx_id": "tx_A_1792792833777673299",
+    "passageiro": "sim_worker_51",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "234": {
+    "id": 234,
+    "tx_id": "tx_A_1792792833778725918",
+    "passageiro": "sim_worker_57",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "235": {
+    "id": 235,
+    "tx_id": "tx_A_1792792833778760754",
+    "passageiro": "sim_worker_59",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "236": {
+    "id": 236,
+    "tx_id": "tx_A_1792792833779406787",
+    "passageiro": "sim_worker_75",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "237": {
+    "id": 237,
+    "tx_id": "tx_A_1792792833780906355",
+    "passageiro": "sim_worker_61",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "238": {
+    "id": 238,
+    "tx_id": "tx_A_1792792833780954990",
+    "passageiro": "sim_worker_53",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "239": {
+    "id": 239,
+    "tx_id": "tx_A_1792792833782880206",
+    "passageiro": "sim_worker_88",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "24": {
+    "id": 24,
+    "tx_id": "tx_A_1792792833683253094",
+    "passageiro": "sim_worker_54",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "240": {
+    "id": 240,
+    "tx_id": "tx_A_1792792833782914240",
+    "passageiro": "sim_worker_25",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "241": {
+    "id": 241,
+    "tx_id": "tx_A_1792792833782965975",
+    "passageiro": "sim_worker_11",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "242": {
+    "id": 242,
+    "tx_id": "tx_A_1792792833785603295",
+    "passageiro": "sim_worker_4",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "243": {
+    "id": 243,
+    "tx_id": "tx_A_1792792833785621425",
+    "passageiro": "sim_worker_70",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "244": {
+    "id": 244,
+    "tx_id": "tx_A_1792792833786473100",
+    "passageiro": "sim_worker_24",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "245": {
+    "id": 245,
+    "tx_id": "tx_A_1792792833786907189",
+    "passageiro": "sim_worker_6",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "246": {
+    "id": 246,
+    "tx_id": "tx_A_1792792833787124640",
+    "passageiro": "sim_worker_5",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "247": {
+    "id": 247,
+    "tx_id": "tx_A_1792792833787735215",
+    "passageiro": "sim_worker_91",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "248": {
+    "id": 248,
+    "tx_id": "tx_A_1792792833787920745",
+    "passageiro": "sim_worker_30",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "249": {
+    "id": 249,
+    "tx_id": "tx_A_1792792833789068259",
+    "passageiro": "sim_worker_2",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "25": {
+    "id": 25,
+    "tx_id": "tx_A_1792792833688285772",
+    "passageiro": "sim_worker_17",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "250": {
+    "id": 250,
+    "tx_id": "tx_A_1792792833789378570",
+    "passageiro": "sim_worker_71",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "251": {
+    "id": 251,
+    "tx_id": "tx_A_1792792833790002772",
+    "passageiro": "sim_worker_62",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "252": {
+    "id": 252,
+    "tx_id": "tx_A_1792792833790980991",
+    "passageiro": "sim_worker_17",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "253": {
+    "id": 253,
+    "tx_id": "tx_A_1792792833792617182",
+    "passageiro": "sim_worker_36",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "254": {
+    "id": 254,
+    "tx_id": "tx_A_1792792833792638486",
+    "passageiro": "sim_worker_95",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "255": {
+    "id": 255,
+    "tx_id": "tx_A_1792792833794137128",
+    "passageiro": "sim_worker_54",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "256": {
+    "id": 256,
+    "tx_id": "tx_A_1792792833795452820",
+    "passageiro": "sim_worker_47",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "257": {
+    "id": 257,
+    "tx_id": "tx_A_1792792833795482062",
+    "passageiro": "sim_worker_16",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "258": {
+    "id": 258,
+    "tx_id": "tx_A_1792792833795517415",
+    "passageiro": "sim_worker_7",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "259": {
+    "id": 259,
+    "tx_id": "tx_A_1792792833795605160",
+    "passageiro": "sim_worker_66",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "26": {
+    "id": 26,
+    "tx_id": "tx_A_1792792833683216046",
+    "passageiro": "sim_worker_78",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "260": {
+    "id": 260,
+    "tx_id": "tx_A_1792792833796797106",
+    "passageiro": "sim_worker_19",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "261": {
+    "id": 261,
+    "tx_id": "tx_A_1792792833798074778",
+    "passageiro": "sim_worker_81",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "262": {
+    "id": 262,
+    "tx_id": "tx_A_1792792833798745642",
+    "passageiro": "sim_worker_13",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "263": {
+    "id": 263,
+    "tx_id": "tx_A_1792792833799354162",
+    "passageiro": "sim_worker_90",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "264": {
+    "id": 264,
+    "tx_id": "tx_A_1792792833799354847",
+    "passageiro": "sim_worker_14",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "265": {
+    "id": 265,
+    "tx_id": "tx_A_1792792833803315058",
+    "passageiro": "sim_worker_10",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "266": {
+    "id": 266,
+    "tx_id": "tx_A_1792792833803417157",
+    "passageiro": "sim_worker_56",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "267": {
+    "id": 267,
+    "tx_id": "tx_A_1792792833804997319",
+    "passageiro": "sim_worker_43",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "268": {
+    "id": 268,
+    "tx_id": "tx_A_1792792833806448949",
+    "passageiro": "sim_worker_44",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "269": {
+    "id": 269,
+    "tx_id": "tx_A_1792792833806489889",
+    "passageiro": "sim_worker_63",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "27": {
+    "id": 27,
+    "tx_id": "tx_A_1792792833683141614",
+    "passageiro": "sim_worker_62",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "270": {
+    "id": 270,
+    "tx_id": "tx_A_1792792833807148219",
+    "passageiro": "sim_worker_31",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "271": {
+    "id": 271,
+    "tx_id": "tx_A_1792792833807162762",
+    "passageiro": "sim_worker_94",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "272": {
+    "id": 272,
+    "tx_id": "tx_A_1792792833807224378",
+    "passageiro": "sim_worker_28",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "273": {
+    "id": 273,
+    "tx_id": "tx_A_1792792833807246509",
+    "passageiro": "sim_worker_97",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "274": {
+    "id": 274,
+    "tx_id": "tx_A_1792792833807298865",
+    "passageiro": "sim_worker_50",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "275": {
+    "id": 275,
+    "tx_id": "tx_A_1792792833808986464",
+    "passageiro": "sim_worker_9",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "276": {
+    "id": 276,
+    "tx_id": "tx_A_1792792833809480418",
+    "passageiro": "sim_worker_74",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "277": {
+    "id": 277,
+    "tx_id": "tx_A_1792792833809750991",
+    "passageiro": "sim_worker_77",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "278": {
+    "id": 278,
+    "tx_id": "tx_A_1792792833811857170",
+    "passageiro": "sim_worker_3",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "279": {
+    "id": 279,
+    "tx_id": "tx_A_1792792833812186418",
+    "passageiro": "sim_worker_40",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "28": {
+    "id": 28,
+    "tx_id": "tx_A_1792792833683076743",
+    "passageiro": "sim_worker_21",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "280": {
+    "id": 280,
+    "tx_id": "tx_A_1792792833812927547",
+    "passageiro": "sim_worker_38",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "281": {
+    "id": 281,
+    "tx_id": "tx_A_1792792833814271901",
+    "passageiro": "sim_worker_20",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "282": {
+    "id": 282,
+    "tx_id": "tx_A_1792792833815572936",
+    "passageiro": "sim_worker_64",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "283": {
+    "id": 283,
+    "tx_id": "tx_A_1792792833815631176",
+    "passageiro": "sim_worker_1",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "284": {
+    "id": 284,
+    "tx_id": "tx_A_1792792833816769316",
+    "passageiro": "sim_worker_37",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "285": {
+    "id": 285,
+    "tx_id": "tx_A_1792792833816799355",
+    "passageiro": "sim_worker_26",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "286": {
+    "id": 286,
+    "tx_id": "tx_A_1792792833817541927",
+    "passageiro": "sim_worker_80",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "287": {
+    "id": 287,
+    "tx_id": "tx_A_1792792833819633614",
+    "passageiro": "sim_worker_87",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "288": {
+    "id": 288,
+    "tx_id": "tx_A_1792792833819640646",
+    "passageiro": "sim_worker_55",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "289": {
+    "id": 289,
+    "tx_id": "tx_A_1792792833820141257",
+    "passageiro": "sim_worker_12",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "29": {
+    "id": 29,
+    "tx_id": "tx_A_1792792833683227178",
+    "passageiro": "sim_worker_79",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "290": {
+    "id": 290,
+    "tx_id": "tx_A_1792792833820149483",
+    "passageiro": "sim_worker_86",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "291": {
+    "id": 291,
+    "tx_id": "tx_A_1792792833820473608",
+    "passageiro": "sim_worker_92",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "292": {
+    "id": 292,
+    "tx_id": "tx_A_1792792833820508291",
+    "passageiro": "sim_worker_79",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "293": {
+    "id": 293,
+    "tx_id": "tx_A_1792792833821126875",
+    "passageiro": "sim_worker_68",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "294": {
+    "id": 294,
+    "tx_id": "tx_A_1792792833821756728",
+    "passageiro": "sim_worker_32",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "295": {
+    "id": 295,
+    "tx_id": "tx_A_1792792833822218495",
+    "passageiro": "sim_worker_23",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "296": {
+    "id": 296,
+    "tx_id": "tx_A_1792792833824069086",
+    "passageiro": "sim_worker_58",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "297": {
+    "id": 297,
+    "tx_id": "tx_A_1792792833824678962",
+    "passageiro": "sim_worker_0",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "298": {
+    "id": 298,
+    "tx_id": "tx_A_1792792833826563136",
+    "passageiro": "sim_worker_46",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "299": {
+    "id": 299,
+    "tx_id": "tx_A_1792792833828148649",
+    "passageiro": "sim_worker_52",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "3": {
+    "id": 3,
+    "tx_id": "tx_A_1792792833676986379",
+    "passageiro": "sim_worker_20",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "30": {
+    "id": 30,
+    "tx_id": "tx_A_1792792833683190378",
+    "passageiro": "sim_worker_92",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "300": {
+    "id": 300,
+    "tx_id": "tx_A_1792792833828644666",
+    "passageiro": "sim_worker_41",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "301": {
+    "id": 301,
+    "tx_id": "tx_A_1792792833828949463",
+    "passageiro": "sim_worker_72",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "302": {
+    "id": 302,
+    "tx_id": "tx_A_1792792833829821621",
+    "passageiro": "sim_worker_83",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "303": {
+    "id": 303,
+    "tx_id": "tx_A_1792792833830090459",
+    "passageiro": "sim_worker_73",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "304": {
+    "id": 304,
+    "tx_id": "tx_A_1792792833830564422",
+    "passageiro": "sim_worker_82",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "305": {
+    "id": 305,
+    "tx_id": "tx_A_1792792833830973297",
+    "passageiro": "sim_worker_78",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "306": {
+    "id": 306,
+    "tx_id": "tx_A_1792792833831290262",
+    "passageiro": "sim_worker_45",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "307": {
+    "id": 307,
+    "tx_id": "tx_A_1792792833833511921",
+    "passageiro": "sim_worker_76",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "308": {
+    "id": 308,
+    "tx_id": "tx_A_1792792833833480497",
+    "passageiro": "sim_worker_18",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "309": {
+    "id": 309,
+    "tx_id": "tx_A_1792792833833604136",
+    "passageiro": "sim_worker_39",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "31": {
+    "id": 31,
+    "tx_id": "tx_A_1792792833688320665",
+    "passageiro": "sim_worker_71",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "310": {
+    "id": 310,
+    "tx_id": "tx_A_1792792833834264188",
+    "passageiro": "sim_worker_98",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "311": {
+    "id": 311,
+    "tx_id": "tx_A_1792792833834264182",
+    "passageiro": "sim_worker_33",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "312": {
+    "id": 312,
+    "tx_id": "tx_A_1792792833834895886",
+    "passageiro": "sim_worker_42",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "313": {
+    "id": 313,
+    "tx_id": "tx_A_1792792833834897785",
+    "passageiro": "sim_worker_29",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "314": {
+    "id": 314,
+    "tx_id": "tx_A_1792792833837124239",
+    "passageiro": "sim_worker_67",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "315": {
+    "id": 315,
+    "tx_id": "tx_A_1792792833838229759",
+    "passageiro": "sim_worker_84",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "316": {
+    "id": 316,
+    "tx_id": "tx_A_1792792833839573787",
+    "passageiro": "sim_worker_27",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "317": {
+    "id": 317,
+    "tx_id": "tx_A_1792792833840435741",
+    "passageiro": "sim_worker_99",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "318": {
+    "id": 318,
+    "tx_id": "tx_A_1792792833840623460",
+    "passageiro": "sim_worker_15",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "319": {
+    "id": 319,
+    "tx_id": "tx_A_1792792833840441426",
+    "passageiro": "sim_worker_35",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "32": {
+    "id": 32,
+    "tx_id": "tx_A_1792792833683290736",
+    "passageiro": "sim_worker_61",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "320": {
+    "id": 320,
+    "tx_id": "tx_A_1792792833841496390",
+    "passageiro": "sim_worker_49",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "321": {
+    "id": 321,
+    "tx_id": "tx_A_1792792833841472069",
+    "passageiro": "sim_worker_89",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "322": {
+    "id": 322,
+    "tx_id": "tx_A_1792792833842626217",
+    "passageiro": "sim_worker_21",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "323": {
+    "id": 323,
+    "tx_id": "tx_A_1792792833845132614",
+    "passageiro": "sim_worker_65",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "324": {
+    "id": 324,
+    "tx_id": "tx_A_1792792833845142431",
+    "passageiro": "sim_worker_93",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "325": {
+    "id": 325,
+    "tx_id": "tx_A_1792792833846609127",
+    "passageiro": "sim_worker_48",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "326": {
+    "id": 326,
+    "tx_id": "tx_A_1792792833847489735",
+    "passageiro": "sim_worker_96",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "327": {
+    "id": 327,
+    "tx_id": "tx_A_1792792833847506185",
+    "passageiro": "sim_worker_22",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "328": {
+    "id": 328,
+    "tx_id": "tx_A_1792792833847551214",
+    "passageiro": "sim_worker_60",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "329": {
+    "id": 329,
+    "tx_id": "tx_A_1792792833848107699",
+    "passageiro": "sim_worker_8",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "33": {
+    "id": 33,
+    "tx_id": "tx_A_1792792833683718129",
+    "passageiro": "sim_worker_82",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "330": {
+    "id": 330,
+    "tx_id": "tx_A_1792792833849622495",
+    "passageiro": "sim_worker_85",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "331": {
+    "id": 331,
+    "tx_id": "tx_A_1792792833849640560",
+    "passageiro": "sim_worker_69",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "332": {
+    "id": 332,
+    "tx_id": "tx_A_1792792833851390450",
+    "passageiro": "sim_worker_51",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "333": {
+    "id": 333,
+    "tx_id": "tx_A_1792792833851732948",
+    "passageiro": "sim_worker_57",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "334": {
+    "id": 334,
+    "tx_id": "tx_A_1792792833853463971",
+    "passageiro": "sim_worker_59",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "335": {
+    "id": 335,
+    "tx_id": "tx_A_1792792833853487806",
+    "passageiro": "sim_worker_34",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "336": {
+    "id": 336,
+    "tx_id": "tx_A_1792792833854858568",
+    "passageiro": "sim_worker_53",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "337": {
+    "id": 337,
+    "tx_id": "tx_A_1792792833854874471",
+    "passageiro": "sim_worker_61",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "338": {
+    "id": 338,
+    "tx_id": "tx_A_1792792833856189341",
+    "passageiro": "sim_worker_75",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "339": {
+    "id": 339,
+    "tx_id": "tx_A_1792792833857308039",
+    "passageiro": "sim_worker_88",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "34": {
+    "id": 34,
+    "tx_id": "tx_A_1792792833684476357",
+    "passageiro": "sim_worker_30",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "340": {
+    "id": 340,
+    "tx_id": "tx_A_1792792833857315920",
+    "passageiro": "sim_worker_11",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "341": {
+    "id": 341,
+    "tx_id": "tx_A_1792792833857497026",
+    "passageiro": "sim_worker_25",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "342": {
+    "id": 342,
+    "tx_id": "tx_A_1792792833859923079",
+    "passageiro": "sim_worker_70",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "343": {
+    "id": 343,
+    "tx_id": "tx_A_1792792833860703189",
+    "passageiro": "sim_worker_6",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "344": {
+    "id": 344,
+    "tx_id": "tx_A_1792792833862175503",
+    "passageiro": "sim_worker_24",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "345": {
+    "id": 345,
+    "tx_id": "tx_A_1792792833862856012",
+    "passageiro": "sim_worker_5",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "346": {
+    "id": 346,
+    "tx_id": "tx_A_1792792833863307481",
+    "passageiro": "sim_worker_91",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "347": {
+    "id": 347,
+    "tx_id": "tx_A_1792792833867099559",
+    "passageiro": "sim_worker_71",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "348": {
+    "id": 348,
+    "tx_id": "tx_A_1792792833867114314",
+    "passageiro": "sim_worker_17",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "349": {
+    "id": 349,
+    "tx_id": "tx_A_1792792833867282755",
+    "passageiro": "sim_worker_62",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "35": {
+    "id": 35,
+    "tx_id": "tx_A_1792792833684432283",
+    "passageiro": "sim_worker_26",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "350": {
+    "id": 350,
+    "tx_id": "tx_A_1792792833868055766",
+    "passageiro": "sim_worker_4",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "36": {
+    "id": 36,
+    "tx_id": "tx_A_1792792833684467810",
+    "passageiro": "sim_worker_84",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "37": {
+    "id": 37,
+    "tx_id": "tx_A_1792792833684587234",
+    "passageiro": "sim_worker_42",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "38": {
+    "id": 38,
+    "tx_id": "tx_A_1792792833686106689",
+    "passageiro": "sim_worker_39",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "39": {
+    "id": 39,
+    "tx_id": "tx_A_1792792833684628683",
+    "passageiro": "sim_worker_89",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "4": {
+    "id": 4,
+    "tx_id": "tx_A_1792792833682731805",
+    "passageiro": "sim_worker_58",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "40": {
+    "id": 40,
+    "tx_id": "tx_A_1792792833686212107",
+    "passageiro": "sim_worker_29",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "41": {
+    "id": 41,
+    "tx_id": "tx_A_1792792833685790423",
+    "passageiro": "sim_worker_60",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "42": {
+    "id": 42,
+    "tx_id": "tx_A_1792792833685905438",
+    "passageiro": "sim_worker_98",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "43": {
+    "id": 43,
+    "tx_id": "tx_A_1792792833684512837",
+    "passageiro": "sim_worker_47",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "44": {
+    "id": 44,
+    "tx_id": "tx_A_1792792833684368166",
+    "passageiro": "sim_worker_99",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "45": {
+    "id": 45,
+    "tx_id": "tx_A_1792792833684632758",
+    "passageiro": "sim_worker_57",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "46": {
+    "id": 46,
+    "tx_id": "tx_A_1792792833684673384",
+    "passageiro": "sim_worker_66",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "47": {
+    "id": 47,
+    "tx_id": "tx_A_1792792833684325305",
+    "passageiro": "sim_worker_8",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "48": {
+    "id": 48,
+    "tx_id": "tx_A_1792792833684670278",
+    "passageiro": "sim_worker_35",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "49": {
+    "id": 49,
+    "tx_id": "tx_A_1792792833684557814",
+    "passageiro": "sim_worker_69",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "5": {
+    "id": 5,
+    "tx_id": "tx_A_1792792833682962835",
+    "passageiro": "sim_worker_97",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "50": {
+    "id": 50,
+    "tx_id": "tx_A_1792792833687714022",
+    "passageiro": "sim_worker_65",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "51": {
+    "id": 51,
+    "tx_id": "tx_A_1792792833687771956",
+    "passageiro": "sim_worker_22",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "52": {
+    "id": 52,
+    "tx_id": "tx_A_1792792833687921664",
+    "passageiro": "sim_worker_48",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 4,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "53": {
+    "id": 53,
+    "tx_id": "tx_A_1792792833687967245",
+    "passageiro": "sim_worker_34",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "54": {
+    "id": 54,
+    "tx_id": "tx_A_1792792833688224543",
+    "passageiro": "sim_worker_37",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "55": {
+    "id": 55,
+    "tx_id": "tx_A_1792792833688352536",
+    "passageiro": "sim_worker_85",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "56": {
+    "id": 56,
+    "tx_id": "tx_A_1792792833689527783",
+    "passageiro": "sim_worker_9",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "57": {
+    "id": 57,
+    "tx_id": "tx_A_1792792833689578564",
+    "passageiro": "sim_worker_10",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "58": {
+    "id": 58,
+    "tx_id": "tx_A_1792792833689812666",
+    "passageiro": "sim_worker_11",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "59": {
+    "id": 59,
+    "tx_id": "tx_A_1792792833691321760",
+    "passageiro": "sim_worker_72",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "6": {
+    "id": 6,
+    "tx_id": "tx_A_1792792833682770167",
+    "passageiro": "sim_worker_38",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "60": {
+    "id": 60,
+    "tx_id": "tx_A_1792792833690606997",
+    "passageiro": "sim_worker_6",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "61": {
+    "id": 61,
+    "tx_id": "tx_A_1792792833690594629",
+    "passageiro": "sim_worker_86",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "62": {
+    "id": 62,
+    "tx_id": "tx_A_1792792833691435872",
+    "passageiro": "sim_worker_43",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "63": {
+    "id": 63,
+    "tx_id": "tx_A_1792792833691315218",
+    "passageiro": "sim_worker_97",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "64": {
+    "id": 64,
+    "tx_id": "tx_A_1792792833686166321",
+    "passageiro": "sim_worker_53",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "65": {
+    "id": 65,
+    "tx_id": "tx_A_1792792833691974483",
+    "passageiro": "sim_worker_4",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "66": {
+    "id": 66,
+    "tx_id": "tx_A_1792792833692486004",
+    "passageiro": "sim_worker_88",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "67": {
+    "id": 67,
+    "tx_id": "tx_A_1792792833692798906",
+    "passageiro": "sim_worker_5",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "68": {
+    "id": 68,
+    "tx_id": "tx_A_1792792833692771800",
+    "passageiro": "sim_worker_38",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "69": {
+    "id": 69,
+    "tx_id": "tx_A_1792792833692916913",
+    "passageiro": "sim_worker_36",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "7": {
+    "id": 7,
+    "tx_id": "tx_A_1792792833683631814",
+    "passageiro": "sim_worker_36",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "70": {
+    "id": 70,
+    "tx_id": "tx_A_1792792833692117712",
+    "passageiro": "sim_worker_24",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "71": {
+    "id": 71,
+    "tx_id": "tx_A_1792792833704854665",
+    "passageiro": "sim_worker_87",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "72": {
+    "id": 72,
+    "tx_id": "tx_A_1792792833705415531",
+    "passageiro": "sim_worker_70",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "73": {
+    "id": 73,
+    "tx_id": "tx_A_1792792833711745208",
+    "passageiro": "sim_worker_16",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "74": {
+    "id": 74,
+    "tx_id": "tx_A_1792792833705501799",
+    "passageiro": "sim_worker_74",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "75": {
+    "id": 75,
+    "tx_id": "tx_A_1792792833688081225",
+    "passageiro": "sim_worker_2",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "76": {
+    "id": 76,
+    "tx_id": "tx_A_1792792833693527213",
+    "passageiro": "sim_worker_20",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "77": {
+    "id": 77,
+    "tx_id": "tx_A_1792792833697039202",
+    "passageiro": "sim_worker_40",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "78": {
+    "id": 78,
+    "tx_id": "tx_A_1792792833707909753",
+    "passageiro": "sim_worker_54",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "79": {
+    "id": 79,
+    "tx_id": "tx_A_1792792833698491882",
+    "passageiro": "sim_worker_13",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "8": {
+    "id": 8,
+    "tx_id": "tx_A_1792792833684782708",
+    "passageiro": "sim_worker_24",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "80": {
+    "id": 80,
+    "tx_id": "tx_A_1792792833699459567",
+    "passageiro": "sim_worker_7",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "81": {
+    "id": 81,
+    "tx_id": "tx_A_1792792833698567010",
+    "passageiro": "sim_worker_45",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "82": {
+    "id": 82,
+    "tx_id": "tx_A_1792792833699457021",
+    "passageiro": "sim_worker_90",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "83": {
+    "id": 83,
+    "tx_id": "tx_A_1792792833699470171",
+    "passageiro": "sim_worker_19",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "84": {
+    "id": 84,
+    "tx_id": "tx_A_1792792833701826916",
+    "passageiro": "sim_worker_12",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "85": {
+    "id": 85,
+    "tx_id": "tx_A_1792792833701680320",
+    "passageiro": "sim_worker_95",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "86": {
+    "id": 86,
+    "tx_id": "tx_A_1792792833701709405",
+    "passageiro": "sim_worker_50",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "87": {
+    "id": 87,
+    "tx_id": "tx_A_1792792833701809701",
+    "passageiro": "sim_worker_94",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "88": {
+    "id": 88,
+    "tx_id": "tx_A_1792792833704773969",
+    "passageiro": "sim_worker_44",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "89": {
+    "id": 89,
+    "tx_id": "tx_A_1792792833704761831",
+    "passageiro": "sim_worker_55",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "9": {
+    "id": 9,
+    "tx_id": "tx_A_1792792833687791518",
+    "passageiro": "sim_worker_5",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "90": {
+    "id": 90,
+    "tx_id": "tx_A_1792792833704793880",
+    "passageiro": "sim_worker_63",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "91": {
+    "id": 91,
+    "tx_id": "tx_A_1792792833704827755",
+    "passageiro": "sim_worker_31",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "92": {
+    "id": 92,
+    "tx_id": "tx_A_1792792833704854588",
+    "passageiro": "sim_worker_83",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "93": {
+    "id": 93,
+    "tx_id": "tx_A_1792792833705431698",
+    "passageiro": "sim_worker_1",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 1,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "94": {
+    "id": 94,
+    "tx_id": "tx_A_1792792833705454962",
+    "passageiro": "sim_worker_52",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "95": {
+    "id": 95,
+    "tx_id": "tx_A_1792792833707883725",
+    "passageiro": "sim_worker_77",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "96": {
+    "id": 96,
+    "tx_id": "tx_A_1792792833708023481",
+    "passageiro": "sim_worker_3",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "SSA",
+        "destino": "FSA",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "97": {
+    "id": 97,
+    "tx_id": "tx_A_1792792833708925106",
+    "passageiro": "sim_worker_79",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "98": {
+    "id": 98,
+    "tx_id": "tx_A_1792792833708097311",
+    "passageiro": "sim_worker_18",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 2,
+        "motorista": "motorista_seed_1",
+        "origem": "FSA",
+        "destino": "VIT",
+        "horario": "12:00",
+        "preco": 15
+      }
+    ]
+  },
+  "99": {
+    "id": 99,
+    "tx_id": "tx_A_1792792833707837711",
+    "passageiro": "sim_worker_64",
+    "data": "2026-10-23",
+    "preco_total": 15,
+    "trechos": [
+      {
+        "empresa": "A",
+        "carona_id": 3,
+        "motorista": "motorista_seed_1",
+        "origem": "VIT",
+        "destino": "CLE",
+        "horario": "12:00",
+        "preco": 15
       }
     ]
   }
