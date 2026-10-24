@@ -35,3 +35,19 @@ type DecisaoRequest struct {
 	TxID      string `json:"tx_id"`
 	Confirmar bool   `json:"confirmar"`
 }
+
+type TrechoOcupadoInfo struct {
+	CaronaID   int    `json:"carona_id"`
+	Origem     string `json:"origem"`
+	Destino    string `json:"destino"`
+	Passageiro string `json:"passageiro"`
+}
+
+type SyncStatusRequest struct {
+	EmpresaSolitante string              `json:"empresa_solicitante"`
+	TrechosAtivos    []TrechoOcupadoInfo `json:"trechos_ativos"`
+}
+
+type SyncStatusResponse struct {
+	TrechosParaLiberar []TrechoOcupadoInfo `json:"trechos_para_liberar"`
+}

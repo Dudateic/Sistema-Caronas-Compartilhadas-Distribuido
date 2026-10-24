@@ -2,6 +2,7 @@ package main
 
 import (
 	"bufio"
+	"bytes"
 	"context"
 	"encoding/json"
 	"errors"
@@ -16,6 +17,7 @@ import (
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/servicos"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
 )
@@ -95,6 +97,9 @@ func main() {
 		}
 	}()
 
+	// Dispara o handshake de reconciliação em segundo plano com os nós parceiros
+	go executarAntiEntropia(*empresa, mapaPares)
+
 	listener, err := net.Listen("tcp", *tcp)
 	if err != nil {
 		visual.MensagemErro(fmt.Sprintf("Nao foi possivel iniciar o socket TCP em %s: %v", *tcp, err))
@@ -131,6 +136,46 @@ func main() {
 	}
 
 	visual.MensagemSucesso("Servidor finalizado com sucesso. Ate logo!")
+}
+
+// executarAntiEntropia realiza o handshake de reconciliação com os servidores do consórcio
+func executarAntiEntropia(empresaLocal string, pares map[string]string) {
+	// Breve pausa para dar tempo aos contêineres e redes de subirem
+	time.Sleep(1 * time.Second)
+
+	ocupados := servicos.InstanciaCaronas.ObterTrechosOcupados()
+	if len(ocupados) == 0 {
+		return
+	}
+
+	clienteHTTP := &http.Client{Timeout: 3 * time.Second}
+	corpoReq, err := json.Marshal(modelos.SyncStatusRequest{
+		EmpresaSolitante: empresaLocal,
+		TrechosAtivos:    ocupados,
+	})
+	if err != nil {
+		visual.MensagemErro(fmt.Sprintf("[Anti-Entropia] Erro ao serializar handshake: %v", err))
+		return
+	}
+
+	for parNome, urlBase := range pares {
+		urlAlvo := fmt.Sprintf("%s/api/v1/sync/status", strings.TrimRight(urlBase, "/"))
+		resp, err := clienteHTTP.Post(urlAlvo, "application/json", bytes.NewReader(corpoReq))
+		if err != nil {
+			// Se o nó estiver indisponível no momento, segue para o próximo par
+			continue
+		}
+
+		var syncResp modelos.SyncStatusResponse
+		if err := json.NewDecoder(resp.Body).Decode(&syncResp); err == nil && len(syncResp.TrechosParaLiberar) > 0 {
+			qtd := servicos.InstanciaCaronas.LiberarTrechosEmLote(syncResp.TrechosParaLiberar)
+			visual.MensagemSucesso(fmt.Sprintf(
+				"[Anti-Entropia] Sincronizado com %s: %d trecho(s) cancelado(s) liberado(s) com sucesso!",
+				parNome, qtd,
+			))
+		}
+		_ = resp.Body.Close()
+	}
 }
 
 func tratarCliente(conn net.Conn) {

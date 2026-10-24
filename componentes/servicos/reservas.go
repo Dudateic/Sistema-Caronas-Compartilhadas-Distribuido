@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"os"
 	"path/filepath"
+	"strings"
 	"sync"
 	"time"
 
@@ -22,9 +23,10 @@ type GerenciadorReservas struct {
 	caminhoNotificacoes string
 	mu                  sync.RWMutex
 
-	reservas     map[int]modelos.Reserva          // ReservaID -> Reserva
-	notificacoes map[string][]modelos.Notificacao // Passageiro -> lista de notificacoes
-	proximoID    int
+	reservas      map[int]modelos.Reserva          // ReservaID -> Reserva
+	notificacoes  map[string][]modelos.Notificacao // Passageiro -> lista de notificacoes
+	proximoID     int
+	cancelamentos []modelos.TrechoViagem // histórico de trechos cancelados
 }
 
 func NovoGerenciadorReservas(idEmpresa, diretorioDados string) *GerenciadorReservas {
@@ -89,10 +91,37 @@ func (gr *GerenciadorReservas) CancelarReserva(reservaID int, passageiro string)
 		return nil, ErrReservaNaoEncontrada
 	}
 
+	// Guarda os trechos cancelados para responder ao que caiu
+	for _, t := range res.Trechos {
+		gr.cancelamentos = append(gr.cancelamentos, t)
+	}
+
 	delete(gr.reservas, reservaID)
 	_ = gr.salvarEmDisco()
 
 	return &res, nil
+}
+
+// VerificarTrechosCancelados identifica quais trechos de uma empresa já foram cancelados
+func (gr *GerenciadorReservas) VerificarTrechosCancelados(empresaAlvo string, ativos []modelos.TrechoOcupadoInfo) []modelos.TrechoOcupadoInfo {
+	gr.mu.RLock()
+	defer gr.mu.RUnlock()
+
+	var paraLiberar []modelos.TrechoOcupadoInfo
+
+	for _, item := range ativos {
+		for _, canc := range gr.cancelamentos {
+			if strings.EqualFold(canc.Empresa, empresaAlvo) &&
+				canc.CaronaID == item.CaronaID &&
+				strings.EqualFold(canc.Origem, item.Origem) &&
+				strings.EqualFold(canc.Destino, item.Destino) {
+				paraLiberar = append(paraLiberar, item)
+				break
+			}
+		}
+	}
+
+	return paraLiberar
 }
 
 func (gr *GerenciadorReservas) AdicionarNotificacao(passageiro, mensagem string) {
