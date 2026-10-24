@@ -3,15 +3,15 @@ package distribuido
 type TipoMensagemRA string
 
 const (
-	MsgRequest RA_Tipo = "REQUEST"
-	MsgReply   RA_Tipo = "REPLY"
+	MsgRequest TipoMensagemRA = "REQUEST"
+	MsgReply   TipoMensagemRA = "REPLY"
+	MsgPing    TipoMensagemRA = "PING"
+	MsgPong    TipoMensagemRA = "PONG"
 )
 
-type RA_Tipo string
-
 type MensagemDistribuida struct {
-	Tipo      RA_Tipo `json:"tipo"`      // "REQUEST" ou "REPLY"
-	OrigemID  string  `json:"origem_id"` // Identificador da empresa (ex: "empresa_A")
-	Timestamp int64   `json:"Lamport"`
-	RecursoID string  `json:"recurso_id"` // Identificador do recurso disputado (ex: "carona_12_trecho_1")
+	Tipo      TipoMensagemRA `json:"tipo"`
+	OrigemID  string         `json:"origem_id"`
+	Timestamp int64          `json:"Lamport"`
+	RecursoID string         `json:"recurso_id,omitempty"`
 }
