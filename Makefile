@@ -9,7 +9,7 @@ BIN     ?= bin
         up down restart logs \
         cliente-passageiro-a cliente-passageiro-b cliente-passageiro-c \
         cliente-motorista-a cliente-motorista-b cliente-motorista-c \
-        simulador \
+        simulador simulador-todos simulador-contencao simulador-cancelamento simulador-motorista simulador-busca \
         down-a down-b down-c up-a up-b up-c \
         clean clean-data
 
@@ -26,7 +26,6 @@ build:
 
 test:
 	go test ./tests/... -v -count=1
-
 
 up:
 	$(COMPOSE) up -d --build empresa-a empresa-b empresa-c
@@ -78,8 +77,19 @@ cliente-motorista-b:
 cliente-motorista-c:
 	$(COMPOSE) run --rm motorista-c
 
-simulador:
-	$(COMPOSE) run --rm simulador
+simulador-contencao:
+	$(COMPOSE) run --rm simulador -total=5000 -concorrencia=50 -alvos="empresa-a:6060,empresa-b:7070,empresa-c:8080" -cenario=contencao -assentos=5
+
+simulador-cancelamento:
+	$(COMPOSE) run --rm simulador -total=4000 -concorrencia=40 -alvos="empresa-a:6060,empresa-b:7070,empresa-c:8080" -cenario=cancelamento
+
+simulador-motorista:
+	$(COMPOSE) run --rm simulador -total=1000 -concorrencia=20 -alvos="empresa-a:6060,empresa-b:7070,empresa-c:8080" -cenario=motorista
+
+simulador-busca:
+	$(COMPOSE) run --rm simulador -total=10000 -concorrencia=80 -alvos="empresa-a:6060,empresa-b:7070,empresa-c:8080" -cenario=busca
+
+simulador: simulador-contencao simulador-cancelamento simulador-motorista simulador-busca
 
 down-a:
 	$(COMPOSE) stop empresa-a
@@ -99,7 +109,7 @@ up-b:
 up-c:
 	$(COMPOSE) start empresa-c
 
-clean: ## Remove binários compilados e desliga contêineres Docker
+clean:
 	rm -rf $(BIN)
 	$(COMPOSE) down -v
 
