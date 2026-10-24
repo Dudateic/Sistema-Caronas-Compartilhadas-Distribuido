@@ -73,7 +73,6 @@ func (gc *GerenciadorCaronas) BuscarTrechos(origem, destino string) []modelos.Tr
 			tOrigem := strings.ToUpper(trecho.Origem)
 			tDestino := strings.ToUpper(trecho.Destino)
 
-			// Se origem ou destino forem vazios, devolve todos os trechos livres para montagem via grafo (DFS)
 			origemOk := origemFiltro == "" || tOrigem == origemFiltro
 			destinoOk := destinoFiltro == "" || tDestino == destinoFiltro
 
@@ -84,6 +83,7 @@ func (gc *GerenciadorCaronas) BuscarTrechos(origem, destino string) []modelos.Tr
 					Motorista: carona.Motorista,
 					Origem:    trecho.Origem,
 					Destino:   trecho.Destino,
+					Data:      carona.Data,
 					Horario:   carona.Horario,
 					Preco:     trecho.Preco,
 				})
@@ -104,8 +104,7 @@ func (gc *GerenciadorCaronas) BloquearAssentoProvisorio(caronaID int, origem, de
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
 				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
-
-					// Verifica apenas se ainda há assentos disponíveis
+					// Verifica se há assentos disponíveis
 					if t.AssentosLivres <= 0 {
 						return ErrSemAssentosLivres
 					}
@@ -113,14 +112,15 @@ func (gc *GerenciadorCaronas) BloquearAssentoProvisorio(caronaID int, origem, de
 					// Bloqueia temporariamente 1 assento
 					t.AssentosLivres--
 
-					// Gera uma chave única que permite múltiplos bloqueios para o mesmo passageiro
-					chave := fmt.Sprintf("%d:%s:%s:%s:%d", caronaID, origem, destino, passageiro, time.Now().UnixNano())
+					chave := fmt.Sprintf("%d:%s:%s:%s:%d", caronaID, strings.ToUpper(origem), strings.ToUpper(destino), passageiro, time.Now().UnixNano())
 					gc.bloqueiosAtivos[chave] = bloqueioItem{
 						caronaID:   caronaID,
-						origem:     origem,
-						destino:    destino,
+						origem:     strings.ToUpper(origem),
+						destino:    strings.ToUpper(destino),
 						passageiro: passageiro,
 					}
+
+					_ = gc.salvarEmDisco()
 					return nil
 				}
 			}
@@ -136,8 +136,9 @@ func (gc *GerenciadorCaronas) LiberarAssentoProvisorio(caronaID int, origem, des
 	gc.mu.Lock()
 	defer gc.mu.Unlock()
 
+	// Remove o bloqueio ativo correspondente
 	for chave, item := range gc.bloqueiosAtivos {
-		if item.caronaID == caronaID && item.passageiro == passageiro &&
+		if item.caronaID == caronaID && strings.EqualFold(item.passageiro, passageiro) &&
 			strings.EqualFold(item.origem, origem) && strings.EqualFold(item.destino, destino) {
 			delete(gc.bloqueiosAtivos, chave)
 			break
@@ -150,6 +151,7 @@ func (gc *GerenciadorCaronas) LiberarAssentoProvisorio(caronaID int, origem, des
 				t := &gc.caronas[i].Trechos[j]
 				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
 					t.AssentosLivres++
+					_ = gc.salvarEmDisco()
 					return nil
 				}
 			}
@@ -165,21 +167,67 @@ func (gc *GerenciadorCaronas) ConfirmarAssentoDefinitivo(caronaID int, origem, d
 	gc.mu.Lock()
 	defer gc.mu.Unlock()
 
+	// 1. Limpa o registo do bloqueio provisório
 	for chave, item := range gc.bloqueiosAtivos {
-		if item.caronaID == caronaID && item.passageiro == passageiro &&
+		if item.caronaID == caronaID && strings.EqualFold(item.passageiro, passageiro) &&
 			strings.EqualFold(item.origem, origem) && strings.EqualFold(item.destino, destino) {
 			delete(gc.bloqueiosAtivos, chave)
 			break
 		}
 	}
 
+	// 2. Regista o passageiro no trecho
 	for i := range gc.caronas {
 		if gc.caronas[i].ID == caronaID {
 			for j := range gc.caronas[i].Trechos {
 				t := &gc.caronas[i].Trechos[j]
 				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
 					t.Passageiros = append(t.Passageiros, passageiro)
-					_ = gc.salvarEmDisco()
+
+					if err := gc.salvarEmDisco(); err != nil {
+						return fmt.Errorf("falha ao persistir confirmacao em disco: %w", err)
+					}
+					return nil
+				}
+			}
+			return ErrTrechoNaoEncontrado
+		}
+	}
+
+	return ErrCaronaNaoEncontrada
+}
+
+// LiberarAssentoConfirmado é acionado no cancelamento definitivo de uma reserva confirmada
+func (gc *GerenciadorCaronas) LiberarAssentoConfirmado(caronaID int, origem, destino, passageiro string) error {
+	gc.mu.Lock()
+	defer gc.mu.Unlock()
+
+	for i := range gc.caronas {
+		if gc.caronas[i].ID == caronaID {
+			for j := range gc.caronas[i].Trechos {
+				t := &gc.caronas[i].Trechos[j]
+				if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
+					novo := make([]string, 0, len(t.Passageiros))
+					encontrou := false
+
+					for _, p := range t.Passageiros {
+						if strings.EqualFold(p, passageiro) && !encontrou {
+							encontrou = true
+							continue // Remove o passageiro
+						}
+						novo = append(novo, p)
+					}
+
+					if !encontrou {
+						return errors.New("passageiro nao encontrado no trecho indicado")
+					}
+
+					t.Passageiros = novo
+					t.AssentosLivres++
+
+					if err := gc.salvarEmDisco(); err != nil {
+						return fmt.Errorf("falha ao persistir desocupacao em disco: %w", err)
+					}
 					return nil
 				}
 			}
@@ -216,7 +264,6 @@ func (gc *GerenciadorCaronas) PublicarCarona(motorista, data, horario string, ro
 		})
 	}
 
-	// Normaliza as cidades da rota
 	rotaNormalizada := make([]string, len(rota))
 	for i, c := range rota {
 		rotaNormalizada[i] = strings.ToUpper(strings.TrimSpace(c))
@@ -248,7 +295,7 @@ func (gc *GerenciadorCaronas) ObterCaronasMotorista(motorista string) []modelos.
 
 	var resultado []modelos.Carona
 	for _, c := range gc.caronas {
-		if c.Motorista == motorista {
+		if strings.EqualFold(c.Motorista, motorista) {
 			resultado = append(resultado, c)
 		}
 	}
@@ -263,7 +310,7 @@ func (gc *GerenciadorCaronas) CancelarCarona(caronaID int, motorista string) err
 	indice := -1
 	for i, c := range gc.caronas {
 		if c.ID == caronaID {
-			if c.Motorista != motorista {
+			if !strings.EqualFold(c.Motorista, motorista) {
 				return ErrPermissaoNegada
 			}
 			indice = i
@@ -278,4 +325,68 @@ func (gc *GerenciadorCaronas) CancelarCarona(caronaID int, motorista string) err
 	gc.caronas = append(gc.caronas[:indice], gc.caronas[indice+1:]...)
 	_ = gc.salvarEmDisco()
 	return nil
+}
+
+// ObterTrechosOcupados retorna todos os passageiros alocados em trechos desta empresa
+func (gc *GerenciadorCaronas) ObterTrechosOcupados() []modelos.TrechoOcupadoInfo {
+	gc.mu.RLock()
+	defer gc.mu.RUnlock()
+
+	var ocupados []modelos.TrechoOcupadoInfo
+	for _, c := range gc.caronas {
+		for _, t := range c.Trechos {
+			for _, pass := range t.Passageiros {
+				ocupados = append(ocupados, modelos.TrechoOcupadoInfo{
+					CaronaID:   c.ID,
+					Origem:     t.Origem,
+					Destino:    t.Destino,
+					Passageiro: pass,
+				})
+			}
+		}
+	}
+	return ocupados
+}
+
+// LiberarTrechosEmLote remove passageiros cancelados e devolve os assentos livres
+func (gc *GerenciadorCaronas) LiberarTrechosEmLote(itens []modelos.TrechoOcupadoInfo) int {
+	if len(itens) == 0 {
+		return 0
+	}
+
+	gc.mu.Lock()
+	defer gc.mu.Unlock()
+
+	alterados := 0
+	for _, item := range itens {
+		for i := range gc.caronas {
+			if gc.caronas[i].ID == item.CaronaID {
+				for j := range gc.caronas[i].Trechos {
+					t := &gc.caronas[i].Trechos[j]
+					if strings.EqualFold(t.Origem, item.Origem) && strings.EqualFold(t.Destino, item.Destino) {
+						novoSlice := make([]string, 0, len(t.Passageiros))
+						encontrou := false
+						for _, p := range t.Passageiros {
+							if strings.EqualFold(p, item.Passageiro) && !encontrou {
+								encontrou = true
+								continue
+							}
+							novoSlice = append(novoSlice, p)
+						}
+
+						if encontrou {
+							t.Passageiros = novoSlice
+							t.AssentosLivres++
+							alterados++
+						}
+					}
+				}
+			}
+		}
+	}
+
+	if alterados > 0 {
+		_ = gc.salvarEmDisco()
+	}
+	return alterados
 }
