@@ -1,0 +1,26 @@
+[
+  {
+    "carona_id": 1,
+    "origem": "SSA",
+    "destino": "FSA",
+    "passageiro": "PASS C"
+  },
+  {
+    "carona_id": 1,
+    "origem": "FSA",
+    "destino": "VIT",
+    "passageiro": "PASS C"
+  },
+  {
+    "carona_id": 1,
+    "origem": "VIT",
+    "destino": "BRU",
+    "passageiro": "PASS C"
+  },
+  {
+    "carona_id": 1,
+    "origem": "BRU",
+    "destino": "CLE",
+    "passageiro": "PASS C"
+  }
+]

@@ -44,6 +44,7 @@ services:
       - ../dados/empresa_A:/app/dados
     command: >
       sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/cancelamentos.json ] && echo '[]' > /app/dados/cancelamentos.json;
              [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
              [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
              [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
@@ -66,6 +67,7 @@ services:
       - ../dados/empresa_B:/app/dados
     command: >
       sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/cancelamentos.json ] && echo '[]' > /app/dados/cancelamentos.json;
              [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
              [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
              [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
@@ -88,6 +90,7 @@ services:
       - ../dados/empresa_C:/app/dados
     command: >
       sh -c "mkdir -p /app/dados &&
+             [ ! -f /app/dados/cancelamentos.json ] && echo '[]' > /app/dados/cancelamentos.json;
              [ ! -f /app/dados/dados.json ] && echo '[]' > /app/dados/dados.json;
              [ ! -f /app/dados/usuarios.json ] && echo '{}' > /app/dados/usuarios.json;
              [ ! -f /app/dados/reservas.json ] && echo '{}' > /app/dados/reservas.json;
