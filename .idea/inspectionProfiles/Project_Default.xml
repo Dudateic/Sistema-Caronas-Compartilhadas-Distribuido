@@ -1,0 +1,11 @@
+<component name="InspectionProjectProfileManager">
+  <profile version="1.0">
+    <option name="myName" value="Project Default" />
+    <inspection_tool class="GoDfaErrorMayBeNotNil" enabled="true" level="WARNING" enabled_by_default="true">
+      <methods>
+        <method importPath="Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido" receiver="*Participante2PC" name="ProcessarPrepare" />
+        <method importPath="Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido" receiver="ClienteConsorcio" name="EnviarPrepare" />
+      </methods>
+    </inspection_tool>
+  </profile>
+</component>

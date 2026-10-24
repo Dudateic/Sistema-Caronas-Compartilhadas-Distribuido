@@ -88,7 +88,12 @@ func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
 		}
 		return nil, fmt.Errorf("falha ao abrir log para leitura de recuperacao: %w", err)
 	}
-	defer fLeitura.Close()
+	defer func(fLeitura *os.File) {
+		err := fLeitura.Close()
+		if err != nil {
+
+		}
+	}(fLeitura)
 
 	estadoTransacoes := make(map[string]TipoRegistroLog)
 	scanner := bufio.NewScanner(fLeitura)

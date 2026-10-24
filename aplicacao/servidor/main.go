@@ -105,7 +105,12 @@ func main() {
 		visual.MensagemErro(fmt.Sprintf("Nao foi possivel iniciar o socket TCP em %s: %v", *tcp, err))
 		return
 	}
-	defer listener.Close()
+	defer func(listener net.Listener) {
+		err := listener.Close()
+		if err != nil {
+
+		}
+	}(listener)
 
 	visual.MensagemSucesso(fmt.Sprintf("Clientes (TCP) em %s | API REST em %s | Parceiras ativas: %d", *tcp, *httpAddr, len(mapaPares)))
 	fmt.Println(visual.CinzaClaro + "Pressione Ctrl+C para encerrar o servico com seguranca." + visual.Reset)
