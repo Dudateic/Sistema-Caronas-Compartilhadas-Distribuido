@@ -27,7 +27,8 @@ type Participante2PC struct {
 	wal       *LogTransacoes
 	mu        sync.Mutex
 
-	transacoes map[string]*TransacaoLocal
+	// Mapeia TxID para a lista de trechos daquela transação
+	transacoes map[string][]*TransacaoLocal
 }
 
 type TransacaoLocal struct {
@@ -47,7 +48,7 @@ func NovoParticipante2PC(idEmpresa string, servico ServicoAssentosLocal, wal *Lo
 		idEmpresa:  idEmpresa,
 		servico:    servico,
 		wal:        wal,
-		transacoes: make(map[string]*TransacaoLocal),
+		transacoes: make(map[string][]*TransacaoLocal),
 	}
 
 	if err := p.RecuperarAposFalha(); err != nil {
@@ -61,14 +62,6 @@ func NovoParticipante2PC(idEmpresa string, servico ServicoAssentosLocal, wal *Lo
 func (p *Participante2PC) ProcessarPrepare(req modelos.PrepareRequest) (modelos.PrepareResponse, error) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
-
-	if _, existe := p.transacoes[req.TxID]; existe {
-		return modelos.PrepareResponse{
-			TxID:    req.TxID,
-			VotoSim: false,
-			Motivo:  "transacao ja existente no participante",
-		}, ErrTransacaoJaExiste
-	}
 
 	recursoID := fmt.Sprintf("carona_%d_%s_%s", req.CaronaID, req.Origem, req.Destino)
 
@@ -84,7 +77,6 @@ func (p *Participante2PC) ProcessarPrepare(req modelos.PrepareRequest) (modelos.
 	if p.wal != nil {
 		detalhes := fmt.Sprintf("passageiro=%s", req.Passageiro)
 		if errWal := p.wal.Gravar(req.TxID, LogPrepare, recursoID, detalhes); errWal != nil {
-			// Em caso de falha de I/O em disco, desfaz o bloqueio em memoria e vota NAO
 			_ = p.servico.LiberarAssentoProvisorio(req.CaronaID, req.Origem, req.Destino, req.Passageiro)
 			return modelos.PrepareResponse{
 				TxID:    req.TxID,
@@ -94,7 +86,7 @@ func (p *Participante2PC) ProcessarPrepare(req modelos.PrepareRequest) (modelos.
 		}
 	}
 
-	p.transacoes[req.TxID] = &TransacaoLocal{
+	novoTrecho := &TransacaoLocal{
 		TxID:       req.TxID,
 		Estado:     modelos.TxPreparada,
 		CaronaID:   req.CaronaID,
@@ -105,65 +97,67 @@ func (p *Participante2PC) ProcessarPrepare(req modelos.PrepareRequest) (modelos.
 		Timestamp:  time.Now(),
 	}
 
+	p.transacoes[req.TxID] = append(p.transacoes[req.TxID], novoTrecho)
+
 	return modelos.PrepareResponse{
 		TxID:    req.TxID,
 		VotoSim: true,
 	}, nil
 }
 
-// ProcessarCommit efetiva a reserva definitivamente e persiste COMMIT no WAL
+// ProcessarCommit efetiva a reserva definitivamente e persiste COMMIT no WAL para todos os trechos
 func (p *Participante2PC) ProcessarCommit(txID string) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	tx, existe := p.transacoes[txID]
-	if !existe {
+	lista, existe := p.transacoes[txID]
+	if !existe || len(lista) == 0 {
 		return ErrTransacaoNaoEncontrada
 	}
 
-	if tx.Estado != modelos.TxPreparada {
-		return fmt.Errorf("%w: esperado PREPARADA, atual %s", ErrEstadoInvalido, tx.Estado)
+	for _, tx := range lista {
+		if tx.Estado != modelos.TxPreparada {
+			return fmt.Errorf("%w: esperado PREPARADA, atual %s", ErrEstadoInvalido, tx.Estado)
+		}
+
+		if p.wal != nil {
+			_ = p.wal.Gravar(txID, LogCommit, tx.RecursoID, "commit_efetivado")
+		}
+
+		_ = p.servico.ConfirmarAssentoDefinitivo(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
+		tx.Estado = modelos.TxConfirmada
 	}
 
-	if p.wal != nil {
-		_ = p.wal.Gravar(txID, LogCommit, tx.RecursoID, "commit_efetivado")
-	}
-
-	_ = p.servico.ConfirmarAssentoDefinitivo(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
-
-	tx.Estado = modelos.TxConfirmada
 	delete(p.transacoes, txID)
-
 	return nil
 }
 
-// ProcessarAbort desfaz o bloqueio temporario e persiste ABORT no WAL
+// ProcessarAbort desfaz o bloqueio temporário e persiste ABORT no WAL para todos os trechos
 func (p *Participante2PC) ProcessarAbort(txID string) error {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
-	tx, existe := p.transacoes[txID]
-	if !existe {
-		// Se o no nao possui a transacao, grava abort
+	lista, existe := p.transacoes[txID]
+	if !existe || len(lista) == 0 {
 		if p.wal != nil {
 			_ = p.wal.Gravar(txID, LogAbort, "", "abort_transacao_desconhecida")
 		}
 		return nil
 	}
 
-	if p.wal != nil {
-		_ = p.wal.Gravar(txID, LogAbort, tx.RecursoID, "abort_solicitado")
+	for _, tx := range lista {
+		if p.wal != nil {
+			_ = p.wal.Gravar(txID, LogAbort, tx.RecursoID, "abort_solicitado")
+		}
+		_ = p.servico.LiberarAssentoProvisorio(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
+		tx.Estado = modelos.TxAbortada
 	}
 
-	_ = p.servico.LiberarAssentoProvisorio(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
-
-	tx.Estado = modelos.TxAbortada
 	delete(p.transacoes, txID)
-
 	return nil
 }
 
-// RecuperarAposFalha reconstitui o estado de transacoes ativas lendo o WAL apos o no religar
+// RecuperarAposFalha reconstitui o estado de transações ativas lendo o WAL após o nó religar
 func (p *Participante2PC) RecuperarAposFalha() error {
 	if p.wal == nil {
 		return nil
@@ -180,12 +174,11 @@ func (p *Participante2PC) RecuperarAposFalha() error {
 	for txID, ultimoEstado := range historico {
 		switch ultimoEstado {
 		case LogPrepare:
-			// mantem em estado preparado
-			p.transacoes[txID] = &TransacaoLocal{
+			p.transacoes[txID] = append(p.transacoes[txID], &TransacaoLocal{
 				TxID:      txID,
 				Estado:    modelos.TxPreparada,
 				Timestamp: time.Now(),
-			}
+			})
 		case LogCommit, LogAbort:
 			delete(p.transacoes, txID)
 		}
@@ -194,18 +187,28 @@ func (p *Participante2PC) RecuperarAposFalha() error {
 	return nil
 }
 
-// LimparTransacoesExpiradas liberta assentos de preparacoes orfas cujo coordenador desapareceu
+// LimparTransacoesExpiradas liberta assentos de preparações órfãs cujo coordenador desapareceu
 func (p *Participante2PC) LimparTransacoesExpiradas(timeout time.Duration) {
 	p.mu.Lock()
 	defer p.mu.Unlock()
 
 	agora := time.Now()
-	for txID, tx := range p.transacoes {
-		if tx.Estado == modelos.TxPreparada && agora.Sub(tx.Timestamp) > timeout {
-			if p.wal != nil {
-				_ = p.wal.Gravar(txID, LogAbort, tx.RecursoID, "abort_por_timeout_expirado")
+	for txID, lista := range p.transacoes {
+		precisaAbortar := false
+		for _, tx := range lista {
+			if tx.Estado == modelos.TxPreparada && agora.Sub(tx.Timestamp) > timeout {
+				precisaAbortar = true
+				break
 			}
-			_ = p.servico.LiberarAssentoProvisorio(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
+		}
+
+		if precisaAbortar {
+			for _, tx := range lista {
+				if p.wal != nil {
+					_ = p.wal.Gravar(txID, LogAbort, tx.RecursoID, "abort_por_timeout_expirado")
+				}
+				_ = p.servico.LiberarAssentoProvisorio(tx.CaronaID, tx.Origem, tx.Destino, tx.Passageiro)
+			}
 			delete(p.transacoes, txID)
 		}
 	}

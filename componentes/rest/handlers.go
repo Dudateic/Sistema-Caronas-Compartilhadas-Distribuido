@@ -25,11 +25,12 @@ type HandlersREST struct {
 	idEmpresa        string
 	servico          ServicoCaronas
 	verifReservas    VerificadorCancelamentos
-	aoCancelarRemoto func(empresa string, caronaID int) // Callback injetado sem importar servicos
+	aoCancelarRemoto func(empresa string, caronaID int)
 	wal              *distribuido.LogTransacoes
 	mu               sync.Mutex
 
-	transacoesAtivas map[string]modelos.PrepareRequest
+	// Mapeia TxID para todos os trechos preparados naquela transação
+	transacoesAtivas map[string][]modelos.PrepareRequest
 }
 
 func NovoHandlersREST(
@@ -45,7 +46,7 @@ func NovoHandlersREST(
 		verifReservas:    verif,
 		aoCancelarRemoto: aoCancelarRemoto,
 		wal:              wal,
-		transacoesAtivas: make(map[string]modelos.PrepareRequest),
+		transacoesAtivas: make(map[string][]modelos.PrepareRequest),
 	}
 }
 
@@ -56,7 +57,6 @@ func (h *HandlersREST) RegistrarRotas(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/transacoes/abort", h.HandleAbort)
 	mux.HandleFunc("/api/v1/trechos/cancelar", h.HandleCancelarTrechoRemoto)
 	mux.HandleFunc("/api/v1/sync/status", h.HandleSyncStatus)
-	mux.HandleFunc("/api/v1/caronas/cancelada", h.HandleNotificarCaronaCancelada)
 	mux.HandleFunc("/api/v1/caronas/cancelada", h.HandleNotificarCaronaCancelada)
 }
 
@@ -122,7 +122,8 @@ func (h *HandlersREST) HandlePrepare(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	h.transacoesAtivas[req.TxID] = req
+	// Adiciona ao slice para suportar múltiplos trechos na mesma transação
+	h.transacoesAtivas[req.TxID] = append(h.transacoesAtivas[req.TxID], req)
 
 	responderJSON(w, http.StatusOK, modelos.PrepareResponse{
 		TxID:    req.TxID,
@@ -144,23 +145,21 @@ func (h *HandlersREST) HandleCommit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.mu.Lock()
-	dadosPrep, existe := h.transacoesAtivas[req.TxID]
+	listaPrep, existe := h.transacoesAtivas[req.TxID]
+	if existe {
+		delete(h.transacoesAtivas, req.TxID)
+	}
 	h.mu.Unlock()
 
-	recursoID := ""
+	// Confirma todos os trechos associados a esse TxID
 	if existe {
-		recursoID = fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
-	}
-
-	if h.wal != nil {
-		_ = h.wal.Gravar(req.TxID, distribuido.LogCommit, recursoID, "reserva_confirmada")
-	}
-
-	if existe {
-		_ = h.servico.ConfirmarAssentoDefinitivo(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
-		h.mu.Lock()
-		delete(h.transacoesAtivas, req.TxID)
-		h.mu.Unlock()
+		for _, dadosPrep := range listaPrep {
+			recursoID := fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
+			if h.wal != nil {
+				_ = h.wal.Gravar(req.TxID, distribuido.LogCommit, recursoID, "reserva_confirmada")
+			}
+			_ = h.servico.ConfirmarAssentoDefinitivo(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
+		}
 	}
 
 	responderJSON(w, http.StatusOK, map[string]any{
@@ -185,20 +184,21 @@ func (h *HandlersREST) HandleAbort(w http.ResponseWriter, r *http.Request) {
 	}
 
 	h.mu.Lock()
-	dadosPrep, existe := h.transacoesAtivas[req.TxID]
+	listaPrep, existe := h.transacoesAtivas[req.TxID]
+	if existe {
+		delete(h.transacoesAtivas, req.TxID)
+	}
 	h.mu.Unlock()
 
-	recursoID := ""
+	// Libera todos os trechos bloqueados associados a esse TxID
 	if existe {
-		recursoID = fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
-		_ = h.servico.LiberarAssentoProvisorio(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
-		h.mu.Lock()
-		delete(h.transacoesAtivas, req.TxID)
-		h.mu.Unlock()
-	}
-
-	if h.wal != nil {
-		_ = h.wal.Gravar(req.TxID, distribuido.LogAbort, recursoID, "reserva_abortada")
+		for _, dadosPrep := range listaPrep {
+			recursoID := fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
+			_ = h.servico.LiberarAssentoProvisorio(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
+			if h.wal != nil {
+				_ = h.wal.Gravar(req.TxID, distribuido.LogAbort, recursoID, "reserva_abortada")
+			}
+		}
 	}
 
 	responderJSON(w, http.StatusOK, map[string]any{
