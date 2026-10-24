@@ -3,6 +3,7 @@ package distribuido
 import (
 	"errors"
 	"fmt"
+	"strings"
 	"sync"
 	"time"
 
@@ -71,7 +72,27 @@ func (c *Coordenador2PC) ExecutarReservaAtomica(txID string, passageiro string, 
 		_ = c.wal.Gravar(txID, LogPrepare, recursoDesc, fmt.Sprintf("iniciando_coordenacao_passageiro=%s", passageiro))
 	}
 
-	// fase 1
+	// Pré-mapeia todos os participantes envolvidos no itinerário
+	// para garantir que mesmo em caso de timeout todos recebam ABORT
+	enderecosParticipantes := make(map[string]string) // empresaID -> enderecoBase
+	for _, t := range itinerario.Trechos {
+		emp := strings.ToUpper(strings.TrimSpace(t.Empresa))
+		if emp == "" || strings.EqualFold(emp, c.idEmpresaLocal) {
+			enderecosParticipantes[c.idEmpresaLocal] = c.enderecoLocal
+			continue
+		}
+
+		c.mu.RLock()
+		for nomePar, urlPar := range c.tabelaEnderecos {
+			if strings.EqualFold(nomePar, emp) {
+				enderecosParticipantes[emp] = urlPar
+				break
+			}
+		}
+		c.mu.RUnlock()
+	}
+
+	// Fase 1: Coleta de Votos (PREPARE)
 	canalVotos := make(chan resultadoVoto, len(itinerario.Trechos))
 	var wg sync.WaitGroup
 
@@ -90,7 +111,6 @@ func (c *Coordenador2PC) ExecutarReservaAtomica(txID string, passageiro string, 
 
 	todosVotaramSim := true
 	var motivoFalha string
-	enderecosParticipantes := make(map[string]string) // empresaID -> enderecoBase
 
 	limiteTempo := time.After(c.timeoutFasePrepare)
 	respostasColetadas := 0
@@ -103,7 +123,10 @@ loopVotos:
 				break loopVotos
 			}
 			respostasColetadas++
-			enderecosParticipantes[v.empresaID] = v.endereco
+
+			if v.endereco != "" {
+				enderecosParticipantes[v.empresaID] = v.endereco
+			}
 
 			if !v.sucesso {
 				todosVotaramSim = false
@@ -119,7 +142,7 @@ loopVotos:
 		}
 	}
 
-	// fase 2
+	// Fase 2: Decisão Global (COMMIT ou ABORT)
 	if todosVotaramSim && respostasColetadas == len(itinerario.Trechos) {
 		if c.wal != nil {
 			_ = c.wal.Gravar(txID, LogCommit, recursoDesc, "global_commit_aprovado")
@@ -133,6 +156,7 @@ loopVotos:
 		_ = c.wal.Gravar(txID, LogAbort, recursoDesc, fmt.Sprintf("global_abort_motivo=%s", motivoFalha))
 	}
 
+	// Dispara ABORT para todos os participantes que foram mapeados
 	c.dispararFase2(txID, enderecosParticipantes, false)
 	return false, motivoFalha, ErrVotoNaoRecebido
 }
@@ -154,8 +178,10 @@ func (c *Coordenador2PC) coletarVotoPrepare(
 		Timestamp:  timestampLamport,
 	}
 
+	empresaTrecho := strings.ToUpper(strings.TrimSpace(trecho.Empresa))
+
 	// Caso o trecho pertença à própria empresa coordenadora: atalho local em memória
-	if trecho.Empresa == c.idEmpresaLocal {
+	if empresaTrecho == "" || strings.EqualFold(empresaTrecho, c.idEmpresaLocal) {
 		resp, err := c.participanteLocal.ProcessarPrepare(req)
 		canal <- resultadoVoto{
 			empresaID: c.idEmpresaLocal,
@@ -167,9 +193,17 @@ func (c *Coordenador2PC) coletarVotoPrepare(
 		return
 	}
 
-	// Caso pertença a outra empresa do consórcio: chamada HTTP REST
+	// Caso pertença a outra empresa do consórcio: busca URL no mapa de parceiros
 	c.mu.RLock()
-	enderecoBase, existe := c.tabelaEnderecos[trecho.Empresa]
+	var enderecoBase string
+	var existe bool
+	for nomePar, urlPar := range c.tabelaEnderecos {
+		if strings.EqualFold(nomePar, empresaTrecho) {
+			enderecoBase = urlPar
+			existe = true
+			break
+		}
+	}
 	c.mu.RUnlock()
 
 	if !existe {
@@ -201,7 +235,7 @@ func (c *Coordenador2PC) dispararFase2(txID string, participantes map[string]str
 		go func(id, end string) {
 			defer wg.Done()
 
-			if id == c.idEmpresaLocal {
+			if strings.EqualFold(id, c.idEmpresaLocal) {
 				if confirmar {
 					_ = c.participanteLocal.ProcessarCommit(txID)
 				} else {
