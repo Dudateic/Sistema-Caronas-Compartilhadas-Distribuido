@@ -89,13 +89,19 @@ func ProcessarPublicarCarona(conn net.Conn, dados string) {
 }
 
 func ProcessarConsultarCaronas(conn net.Conn, dados string) {
-	trechos := InstanciaCaronas.BuscarTrechos("", "")
-	var caronas []modelos.Carona
-	// Devolve as caronas ativas da empresa
-	for _, c := range InstanciaCaronas.caronas {
-		caronas = append(caronas, c)
+	var req struct {
+		Motorista string `json:"motorista"`
 	}
-	_ = trechos
+	_ = json.Unmarshal([]byte(dados), &req)
+
+	var caronas []modelos.Carona
+	// Filtra as caronas pertencentes ao motorista solicitante (ou todas se não informado)
+	for _, c := range InstanciaCaronas.caronas {
+		if req.Motorista == "" || strings.EqualFold(c.Motorista, req.Motorista) {
+			caronas = append(caronas, c)
+		}
+	}
+
 	responderJSON(conn, cliente_servidor.RespostaConsultarCaronas{
 		Tipo:     cliente_servidor.TipoConsultarCaronasRes,
 		Sucesso:  true,
@@ -113,10 +119,12 @@ func ProcessarCancelarCarona(conn net.Conn, dados string) {
 
 	err := InstanciaCaronas.CancelarCarona(req.CaronaID, req.Motorista)
 	if err == nil {
+		// 1. Limpa reservas e notifica passageiros locais
 		if AoCancelarCarona != nil {
 			AoCancelarCarona(req.CaronaID)
 		}
 
+		// 2. Notifica todos os servidores parceiros do consórcio
 		go notificarConsorcioCaronaCancelada(Config.Empresa, req.CaronaID)
 	}
 
@@ -162,6 +170,7 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 
 	origemDesejada := strings.ToUpper(strings.TrimSpace(req.Origem))
 	destinoDesejado := strings.ToUpper(strings.TrimSpace(req.Destino))
+	dataDesejada := strings.TrimSpace(req.Data)
 
 	todosTrechos := InstanciaCaronas.BuscarTrechos("", "")
 	for _, urlPar := range Config.Pares {
@@ -180,9 +189,12 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 			copiaCaminho := make([]modelos.TrechoViagem, len(caminhoAtual))
 			copy(copiaCaminho, caminhoAtual)
 
-			dataViagem := req.Data
+			dataViagem := dataDesejada
 			if dataViagem == "" && len(caminhoAtual) > 0 {
-				dataViagem = time.Now().Format("2006-01-02")
+				dataViagem = copiaCaminho[0].Data
+				if dataViagem == "" {
+					dataViagem = time.Now().Format("2006-01-02")
+				}
 			}
 
 			itinerarios = append(itinerarios, modelos.Itinerario{
@@ -199,6 +211,11 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 		for _, t := range todosTrechos {
 			tOrigem := strings.ToUpper(t.Origem)
 			tDestino := strings.ToUpper(t.Destino)
+
+			// Valida se o trecho coincide com a data solicitada pelo passageiro
+			if dataDesejada != "" && t.Data != "" && !strings.EqualFold(t.Data, dataDesejada) {
+				continue
+			}
 
 			if strings.EqualFold(tOrigem, atual) && !visitados[tDestino] {
 				dfs(tDestino, append(caminhoAtual, t), precoAcumulado+t.Preco)
@@ -300,7 +317,6 @@ func ProcessarCancelarReserva(conn net.Conn, dados string) {
 			continue
 		}
 
-		// Dispara o cancelamento via REST para o servidor parceiro
 		errRemoto := InstanciaClienteREST.EnviarCancelamentoTrecho(
 			urlPar,
 			trecho.CaronaID,

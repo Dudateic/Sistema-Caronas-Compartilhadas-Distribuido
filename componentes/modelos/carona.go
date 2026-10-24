@@ -25,6 +25,7 @@ type TrechoViagem struct {
 	Motorista string  `json:"motorista"`
 	Origem    string  `json:"origem"`
 	Destino   string  `json:"destino"`
+	Data      string  `json:"data"`
 	Horario   string  `json:"horario"`
 	Preco     float64 `json:"preco"`
 }
