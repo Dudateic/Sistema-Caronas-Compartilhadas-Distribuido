@@ -1,9 +1,11 @@
 package servicos
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"net"
+	"net/http"
 	"strings"
 	"time"
 
@@ -114,6 +116,8 @@ func ProcessarCancelarCarona(conn net.Conn, dados string) {
 		if AoCancelarCarona != nil {
 			AoCancelarCarona(req.CaronaID)
 		}
+
+		go notificarConsorcioCaronaCancelada(Config.Empresa, req.CaronaID)
 	}
 
 	responderJSON(conn, cliente_servidor.RespostaSimples{
@@ -126,6 +130,26 @@ func ProcessarCancelarCarona(conn net.Conn, dados string) {
 			return "Carona cancelada com sucesso"
 		}(),
 	})
+}
+
+func notificarConsorcioCaronaCancelada(empresaOrigem string, caronaID int) {
+	clienteHTTP := &http.Client{Timeout: 3 * time.Second}
+	payload, _ := json.Marshal(map[string]any{
+		"empresa":   empresaOrigem,
+		"carona_id": caronaID,
+	})
+
+	for _, urlBase := range Config.Pares {
+		urlAlvo := fmt.Sprintf("%s/api/v1/caronas/cancelada", strings.TrimRight(urlBase, "/"))
+		req, err := http.NewRequest(http.MethodPost, urlAlvo, bytes.NewReader(payload))
+		if err == nil {
+			req.Header.Set("Content-Type", "application/json")
+			resp, errDo := clienteHTTP.Do(req)
+			if errDo == nil {
+				_ = resp.Body.Close()
+			}
+		}
+	}
 }
 
 func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
@@ -238,17 +262,70 @@ func ProcessarCancelarReserva(conn net.Conn, dados string) {
 		ReservaID  int    `json:"reserva_id"`
 		Passageiro string `json:"passageiro"`
 	}
-	_ = json.Unmarshal([]byte(dados), &req)
-	_, err := InstanciaReservas.CancelarReserva(req.ReservaID, req.Passageiro)
-	responderJSON(conn, cliente_servidor.RespostaSimples{
-		Tipo:    cliente_servidor.TipoCancelarReservaRes,
-		Sucesso: err == nil,
-		Mensagem: func() string {
-			if err != nil {
-				return err.Error()
+	if err := json.Unmarshal([]byte(dados), &req); err != nil {
+		responderJSON(conn, cliente_servidor.RespostaSimples{
+			Tipo:     cliente_servidor.TipoCancelarReservaRes,
+			Sucesso:  false,
+			Mensagem: "Payload invalido",
+		})
+		return
+	}
+
+	// 1. Cancela localmente e recupera os trechos da reserva
+	reservaCancelada, err := InstanciaReservas.CancelarReserva(req.ReservaID, req.Passageiro)
+	if err != nil {
+		responderJSON(conn, cliente_servidor.RespostaSimples{
+			Tipo:     cliente_servidor.TipoCancelarReservaRes,
+			Sucesso:  false,
+			Mensagem: err.Error(),
+		})
+		return
+	}
+
+	// 2. Avisa os servidores de cada trecho do itinerário
+	var servidoresComFalha []string
+
+	for _, trecho := range reservaCancelada.Trechos {
+		// Se o trecho for desta própria empresa:
+		if strings.EqualFold(trecho.Empresa, Config.Empresa) || trecho.Empresa == "" {
+			if InstanciaCaronas != nil {
+				_ = InstanciaCaronas.LiberarAssentoConfirmado(trecho.CaronaID, trecho.Origem, trecho.Destino, req.Passageiro)
 			}
-			return "Reserva cancelada"
-		}(),
+			continue
+		}
+
+		// Se o trecho for de um servidor parceiro:
+		urlPar, existe := Config.Pares[trecho.Empresa]
+		if !existe {
+			continue
+		}
+
+		// Dispara o cancelamento via REST para o servidor parceiro
+		errRemoto := InstanciaClienteREST.EnviarCancelamentoTrecho(
+			urlPar,
+			trecho.CaronaID,
+			trecho.Origem,
+			trecho.Destino,
+			req.Passageiro,
+		)
+
+		if errRemoto != nil {
+			servidoresComFalha = append(servidoresComFalha, trecho.Empresa)
+		}
+	}
+
+	msgRetorno := "Reserva cancelada com sucesso em todos os servidores"
+	if len(servidoresComFalha) > 0 {
+		msgRetorno = fmt.Sprintf(
+			"Reserva cancelada localmente. O(s) servidor(es) %v estavam inacessiveis e serao atualizados automaticamente ao religarem.",
+			servidoresComFalha,
+		)
+	}
+
+	responderJSON(conn, cliente_servidor.RespostaSimples{
+		Tipo:     cliente_servidor.TipoCancelarReservaRes,
+		Sucesso:  true,
+		Mensagem: msgRetorno,
 	})
 }
 

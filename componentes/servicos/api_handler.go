@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido"
@@ -11,13 +12,14 @@ import (
 )
 
 var (
-	AoCancelarCarona      func(caronaID int)
-	InstanciaCaronas      *GerenciadorCaronas
-	InstanciaReservas     *GerenciadorReservas
-	InstanciaUsuarios     *GerenciadorUsuarios
-	InstanciaParticipante *distribuido.Participante2PC
-	InstanciaCoordenador  *distribuido.Coordenador2PC
-	InstanciaClienteREST  *rest.ClienteRESTInterEmpresas
+	AoCancelarCarona       func(caronaID int)
+	AoCancelarCaronaRemota func(empresa string, caronaID int)
+	InstanciaCaronas       *GerenciadorCaronas
+	InstanciaReservas      *GerenciadorReservas
+	InstanciaUsuarios      *GerenciadorUsuarios
+	InstanciaParticipante  *distribuido.Participante2PC
+	InstanciaCoordenador   *distribuido.Coordenador2PC
+	InstanciaClienteREST   *rest.ClienteRESTInterEmpresas
 )
 
 func InicializarCaronas() error {
@@ -29,6 +31,7 @@ func InicializarCaronas() error {
 func InicializarReservas() error {
 	InstanciaReservas = NovoGerenciadorReservas(Config.Empresa, DiretorioDados)
 	InstanciaUsuarios = NovoGerenciadorUsuarios(DiretorioDados)
+	AoCancelarCaronaRemota = LimparReservasDeCaronaExterna
 	return nil
 }
 
@@ -108,9 +111,53 @@ func IniciarLimpezaBloqueios(ctx context.Context) {
 	}()
 }
 
+func LimparReservasDeCaronaExterna(empresaOrigem string, caronaID int) {
+	if InstanciaReservas == nil {
+		return
+	}
+
+	InstanciaReservas.mu.Lock()
+	defer InstanciaReservas.mu.Unlock()
+
+	alterouReservas := false
+	alterouNotificacoes := false
+
+	for id, res := range InstanciaReservas.reservas {
+		afetada := false
+		for _, t := range res.Trechos {
+			if t.CaronaID == caronaID && strings.EqualFold(t.Empresa, empresaOrigem) {
+				afetada = true
+				break
+			}
+		}
+
+		if afetada {
+			delete(InstanciaReservas.reservas, id)
+			alterouReservas = true
+
+			msg := fmt.Sprintf("Aviso: Sua reserva de bilhete #%d foi cancelada porque a carona #%d da Empresa %s foi cancelada pelo motorista.", id, caronaID, empresaOrigem)
+			InstanciaReservas.adicionarNotificacaoSemLock(res.Passageiro, msg)
+			alterouNotificacoes = true
+		}
+	}
+
+	if alterouReservas {
+		_ = InstanciaReservas.salvarEmDisco()
+	}
+	if alterouNotificacoes {
+		_ = InstanciaReservas.salvarNotificacoesEmDisco()
+	}
+}
+
 func NovoHandlerAPI() http.Handler {
 	mux := http.NewServeMux()
-	handlers := rest.NovoHandlersREST(Config.Empresa, InstanciaCaronas, nil)
+	handlers := rest.NovoHandlersREST(
+		Config.Empresa,
+		InstanciaCaronas,
+		nil,
+		InstanciaReservas,
+		LimparReservasDeCaronaExterna,
+	)
 	handlers.RegistrarRotas(mux)
 	return mux
 }

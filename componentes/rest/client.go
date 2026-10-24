@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strings"
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
@@ -145,6 +146,44 @@ func (c *ClienteRESTInterEmpresas) enviarDecisaoFase2(enderecoBase, txID, endpoi
 
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("empresa respondeu com HTTP %d para a decisao", resp.StatusCode)
+	}
+
+	return nil
+}
+
+// EnviarCancelamentoTrecho avisa o servidor parceiro para liberar o assento de uma carona confirmada
+func (c *ClienteRESTInterEmpresas) EnviarCancelamentoTrecho(enderecoBase string, caronaID int, origem, destino, passageiro string) error {
+	urlAlvo := fmt.Sprintf("%s/api/v1/trechos/cancelar", strings.TrimRight(enderecoBase, "/"))
+
+	payload := map[string]any{
+		"carona_id":  caronaID,
+		"origem":     origem,
+		"destino":    destino,
+		"passageiro": passageiro,
+	}
+
+	payloadBytes, err := json.Marshal(payload)
+	if err != nil {
+		return fmt.Errorf("erro ao serializar cancelamento: %w", err)
+	}
+
+	ctx, cancel := context.WithTimeout(context.Background(), TimeoutPadraoHTTP)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost, urlAlvo, bytes.NewBuffer(payloadBytes))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("falha ao conectar em %s: %w", enderecoBase, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("servidor respondeu com HTTP %d ao cancelar trecho", resp.StatusCode)
 	}
 
 	return nil
