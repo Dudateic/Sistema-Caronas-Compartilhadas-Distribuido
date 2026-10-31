@@ -11,6 +11,7 @@ import (
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
 )
 
 func responderJSON(conn net.Conn, v any) {
@@ -173,11 +174,13 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 	dataDesejada := strings.TrimSpace(req.Data)
 
 	todosTrechos := InstanciaCaronas.BuscarTrechos("", "")
-	for _, urlPar := range Config.Pares {
+	for nomePar, urlPar := range Config.Pares {
 		remotos, err := InstanciaClienteREST.ConsultarTrechos(urlPar, "", "")
-		if err == nil {
-			todosTrechos = append(todosTrechos, remotos...)
+		if err != nil {
+			visual.MensagemErro(fmt.Sprintf("[Busca] Falha ao consultar a empresa %s em %s: %v", nomePar, urlPar, err))
+			continue
 		}
+		todosTrechos = append(todosTrechos, remotos...)
 	}
 
 	var itinerarios []modelos.Itinerario

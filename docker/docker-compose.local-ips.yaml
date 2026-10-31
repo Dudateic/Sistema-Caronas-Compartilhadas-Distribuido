@@ -1,0 +1,29 @@
+# Override para testar os 3 servidores na MESMA maquina, cada um com seu IP fixo.
+# Uso: make up-local  (ou: docker compose -f docker/docker-compose.yaml -f docker/docker-compose.local-ips.yaml up -d --build empresa-a empresa-b empresa-c)
+# Os containers se falam direto pela rede Docker, entao a porta REST e a interna (9090).
+networks:
+  consorcio:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.16.201.0/24
+
+services:
+  empresa-a:
+    networks:
+      consorcio:
+        ipv4_address: 172.16.201.9
+    environment:
+      PARES: "B=http://172.16.201.11:9090,C=http://172.16.201.12:9090"
+  empresa-b:
+    networks:
+      consorcio:
+        ipv4_address: 172.16.201.11
+    environment:
+      PARES: "A=http://172.16.201.9:9090,C=http://172.16.201.12:9090"
+  empresa-c:
+    networks:
+      consorcio:
+        ipv4_address: 172.16.201.12
+    environment:
+      PARES: "A=http://172.16.201.9:9090,B=http://172.16.201.11:9090"

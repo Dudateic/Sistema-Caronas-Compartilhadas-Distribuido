@@ -1,0 +1,39 @@
+[
+  {
+    "id": 1,
+    "motorista": "duda a",
+    "data": "2026-11-11",
+    "horario": "08:00",
+    "assentos_totais": 2,
+    "preco_por_trecho": 10,
+    "rota": [
+      "SSA",
+      "FSA",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 2,
+        "preco": 10,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "BRU",
+        "assentos_livres": 2,
+        "preco": 10,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 2,
+        "preco": 10,
+        "passageiros": []
+      }
+    ]
+  }
+]

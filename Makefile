@@ -1,9 +1,13 @@
 COMPOSE ?= docker compose -f docker/docker-compose.yaml
+COMPOSE_LOCAL ?= docker compose -f docker/docker-compose.yaml -f docker/docker-compose.local-ips.yaml
 BIN     ?= bin
+IP_A    ?= 172.16.201.9
+IP_B    ?= 172.16.201.11
+IP_C    ?= 172.16.201.12
 
 .DEFAULT_GOAL := help
 
-.PHONY: help build test \
+.PHONY: up-local down-local help build test \
         servidor-a servidor-b servidor-c \
         run-servidor-a run-servidor-b run-servidor-c \
         up down restart logs \
@@ -30,6 +34,12 @@ test:
 up:
 	$(COMPOSE) up -d --build empresa-a empresa-b empresa-c
 
+up-local: ## 3 servidores na mesma maquina, IPs fixos 172.16.201.9/.11/.12
+	$(COMPOSE_LOCAL) up -d --build empresa-a empresa-b empresa-c
+
+down-local:
+	$(COMPOSE_LOCAL) down
+
 down:
 	$(COMPOSE) down
 
@@ -49,15 +59,15 @@ servidor-c: ## TCP 8080, HTTP 9093
 
 run-servidor-a: build
 	@mkdir -p ./dados/empresa_A
-	./$(BIN)/servidor -empresa=A -tcp=:6060 -http=:9091 -dados=./dados/empresa_A -pares="B=http://localhost:9092,C=http://localhost:9093"
+	./$(BIN)/servidor -empresa=A -tcp=:6060 -http=:9091 -dados=./dados/empresa_A -pares="B=http://$(IP_B):9092,C=http://$(IP_C):9093"
 
 run-servidor-b: build
 	@mkdir -p ./dados/empresa_B
-	./$(BIN)/servidor -empresa=B -tcp=:7070 -http=:9092 -dados=./dados/empresa_B -pares="A=http://localhost:9091,C=http://localhost:9093"
+	./$(BIN)/servidor -empresa=B -tcp=:7070 -http=:9092 -dados=./dados/empresa_B -pares="A=http://$(IP_A):9091,C=http://$(IP_C):9093"
 
 run-servidor-c: build
 	@mkdir -p ./dados/empresa_C
-	./$(BIN)/servidor -empresa=C -tcp=:8080 -http=:9093 -dados=./dados/empresa_C -pares="A=http://localhost:9091,B=http://localhost:9092"
+	./$(BIN)/servidor -empresa=C -tcp=:8080 -http=:9093 -dados=./dados/empresa_C -pares="A=http://$(IP_A):9091,B=http://$(IP_B):9092"
 
 cliente-passageiro-a:
 	$(COMPOSE) run --rm passageiro-a
