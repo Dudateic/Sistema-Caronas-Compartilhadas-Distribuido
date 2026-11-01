@@ -43,13 +43,17 @@ func ChaveTrecho(caronaID int, origem, destino string) string {
 // ConsultaDecisao pergunta ao coordenador (pelo nome da empresa) o destino de uma transação.
 type ConsultaDecisao func(coordenador, txID string) (string, error)
 
+// ConsultaEstadoPar pergunta a outra empresa participante em que estado ela está na transação.
+type ConsultaEstadoPar func(empresa, txID string) (string, error)
+
 type Participante2PC struct {
-	idEmpresa string
-	servico   ServicoAssentosLocal
-	wal       *LogTransacoes
-	relogio   *RelogioLamport
-	consulta  ConsultaDecisao
-	mu        sync.Mutex
+	idEmpresa   string
+	servico     ServicoAssentosLocal
+	wal         *LogTransacoes
+	relogio     *RelogioLamport
+	consulta    ConsultaDecisao
+	consultaPar ConsultaEstadoPar
+	mu          sync.Mutex
 
 	// Transações com voto SIM e sem decisão ainda: TxID -> trechos preparados
 	transacoes map[string][]*TransacaoLocal
@@ -66,7 +70,9 @@ type TransacaoLocal struct {
 	Passageiro  string
 	RecursoID   string
 	Coordenador string
-	Timestamp   time.Time
+	// Participantes são as empresas da transação (para a terminação cooperativa)
+	Participantes []string
+	Timestamp     time.Time
 }
 
 // NovoParticipante2PC inicializa a cohorte e recupera o estado persistido no log
@@ -91,6 +97,41 @@ func (p *Participante2PC) DefinirConsultaDecisao(c ConsultaDecisao) {
 	p.mu.Lock()
 	p.consulta = c
 	p.mu.Unlock()
+}
+
+// DefinirConsultaPares configura a terminação cooperativa: como perguntar o estado
+// de uma transação às outras empresas participantes quando o coordenador não responde.
+func (p *Participante2PC) DefinirConsultaPares(c ConsultaEstadoPar) {
+	p.mu.Lock()
+	p.consultaPar = c
+	p.mu.Unlock()
+}
+
+// ConsultarEstado informa o estado local de uma transação a outro participante.
+//
+// Se a transação é DESCONHECIDA aqui, este participante nunca votou SIM nela. Como o
+// coordenador só decide COMMIT com o voto SIM de todos, ele jamais poderá confirmá-la:
+// registramos o ABORT agora (e portanto recusaremos qualquer PREPARE que chegue atrasado),
+// o que torna seguro para quem perguntou abortar também.
+func (p *Participante2PC) ConsultarEstado(txID string) string {
+	p.mu.Lock()
+	if estado, ok := p.decididas[txID]; ok {
+		p.mu.Unlock()
+		if estado == modelos.TxConfirmada {
+			return modelos.EstadoConfirmada
+		}
+		return modelos.EstadoAbortada
+	}
+	if len(p.transacoes[txID]) > 0 {
+		p.mu.Unlock()
+		return modelos.EstadoPreparada
+	}
+	p.mu.Unlock()
+
+	if err := p.ProcessarAbort(txID); err != nil {
+		return modelos.EstadoDesconhecida // não conseguiu registrar a promessa: não afirma nada
+	}
+	return modelos.EstadoAbortada
 }
 
 // Relogio expõe o relógio lógico desta empresa.
@@ -145,15 +186,16 @@ func (p *Participante2PC) ProcessarPrepare(req modelos.PrepareRequest) (modelos.
 	}
 
 	p.transacoes[req.TxID] = append(p.transacoes[req.TxID], &TransacaoLocal{
-		TxID:        req.TxID,
-		Estado:      modelos.TxPreparada,
-		CaronaID:    req.CaronaID,
-		Origem:      req.Origem,
-		Destino:     req.Destino,
-		Passageiro:  req.Passageiro,
-		RecursoID:   recursoID,
-		Coordenador: req.Coordenador,
-		Timestamp:   time.Now(),
+		TxID:          req.TxID,
+		Estado:        modelos.TxPreparada,
+		CaronaID:      req.CaronaID,
+		Origem:        req.Origem,
+		Destino:       req.Destino,
+		Passageiro:    req.Passageiro,
+		RecursoID:     recursoID,
+		Coordenador:   req.Coordenador,
+		Participantes: req.Participantes,
+		Timestamp:     time.Now(),
 	})
 
 	return resposta(true, ""), nil
@@ -293,15 +335,16 @@ func (p *Participante2PC) RecuperarAposFalha() error {
 		case len(st.prepares) > 0:
 			for _, req := range st.prepares {
 				p.transacoes[txID] = append(p.transacoes[txID], &TransacaoLocal{
-					TxID:        txID,
-					Estado:      modelos.TxPreparada,
-					CaronaID:    req.CaronaID,
-					Origem:      req.Origem,
-					Destino:     req.Destino,
-					Passageiro:  req.Passageiro,
-					RecursoID:   recursoIDDe(req.CaronaID, req.Origem, req.Destino),
-					Coordenador: req.Coordenador,
-					Timestamp:   time.Now(),
+					TxID:          txID,
+					Estado:        modelos.TxPreparada,
+					CaronaID:      req.CaronaID,
+					Origem:        req.Origem,
+					Destino:       req.Destino,
+					Passageiro:    req.Passageiro,
+					RecursoID:     recursoIDDe(req.CaronaID, req.Origem, req.Destino),
+					Coordenador:   req.Coordenador,
+					Participantes: req.Participantes,
+					Timestamp:     time.Now(),
 				})
 				pendentes[ChaveTrecho(req.CaronaID, req.Origem, req.Destino)]++
 			}
@@ -316,22 +359,31 @@ func (p *Participante2PC) RecuperarAposFalha() error {
 
 // LimparTransacoesExpiradas resolve preparações que passaram do tempo limite.
 // Um participante que votou SIM não pode abortar sozinho (o coordenador pode ter
-// decidido COMMIT), então pergunta a decisão ao coordenador:
+// decidido COMMIT), então segue a terminação em duas etapas:
 //
-//	COMMIT -> confirma | ABORT -> libera | EM_ANDAMENTO ou coordenador fora do ar -> tenta de novo no próximo ciclo.
+//  1. pergunta a decisão ao coordenador: COMMIT -> confirma | ABORT -> libera |
+//     EM_ANDAMENTO -> espera o próximo ciclo;
+//  2. se o coordenador está inalcançável, pergunta às OUTRAS empresas participantes
+//     (terminação cooperativa): qualquer uma CONFIRMADA -> confirma; qualquer uma
+//     ABORTADA (inclui as que nunca votaram) -> libera; todas PREPARADAS ou
+//     inalcançáveis -> continua bloqueado até alguém saber a decisão.
 //
 // Sem função de consulta configurada, aborta direto (uso em testes unitários).
 func (p *Participante2PC) LimparTransacoesExpiradas(timeout time.Duration) {
-	type candidato struct{ txID, coordenador string }
+	type candidato struct {
+		txID, coordenador string
+		participantes     []string
+	}
 
 	p.mu.Lock()
 	consulta := p.consulta
+	consultaPar := p.consultaPar
 	agora := time.Now()
 	var expiradas []candidato
 	for txID, lista := range p.transacoes {
 		for _, tx := range lista {
 			if tx.Estado == modelos.TxPreparada && agora.Sub(tx.Timestamp) > timeout {
-				expiradas = append(expiradas, candidato{txID, tx.Coordenador})
+				expiradas = append(expiradas, candidato{txID, tx.Coordenador, tx.Participantes})
 				break
 			}
 		}
@@ -344,14 +396,39 @@ func (p *Participante2PC) LimparTransacoesExpiradas(timeout time.Duration) {
 			continue
 		}
 		decisao, err := consulta(c.coordenador, c.txID)
-		if err != nil {
-			continue // coordenador inalcançável: mantém o bloqueio e tenta depois
+		if err == nil {
+			switch decisao {
+			case modelos.DecisaoCommit:
+				_ = p.ProcessarCommit(c.txID)
+			case modelos.DecisaoAbort:
+				_ = p.ProcessarAbort(c.txID)
+			}
+			continue
 		}
-		switch decisao {
-		case modelos.DecisaoCommit:
-			_ = p.ProcessarCommit(c.txID)
-		case modelos.DecisaoAbort:
-			_ = p.ProcessarAbort(c.txID)
+		p.terminacaoCooperativa(c.txID, c.coordenador, c.participantes, consultaPar)
+	}
+}
+
+// terminacaoCooperativa tenta decidir a transação perguntando aos demais participantes.
+func (p *Participante2PC) terminacaoCooperativa(txID, coordenador string, participantes []string, consultaPar ConsultaEstadoPar) {
+	if consultaPar == nil {
+		return
+	}
+	for _, outro := range participantes {
+		if strings.EqualFold(outro, p.idEmpresa) || strings.EqualFold(outro, coordenador) {
+			continue
+		}
+		estado, err := consultaPar(outro, txID)
+		if err != nil {
+			continue
+		}
+		switch estado {
+		case modelos.EstadoConfirmada:
+			_ = p.ProcessarCommit(txID)
+			return
+		case modelos.EstadoAbortada:
+			_ = p.ProcessarAbort(txID)
+			return
 		}
 	}
 }

@@ -221,3 +221,30 @@ func (c *ClienteRESTInterEmpresas) ConsultarDecisao(enderecoBase, txID string) (
 	}
 	return d.Decisao, nil
 }
+
+// ConsultarEstado pergunta a outro participante o estado de uma transação.
+func (c *ClienteRESTInterEmpresas) ConsultarEstado(enderecoBase, txID string) (string, error) {
+	urlAlvo := fmt.Sprintf("%s/api/v1/transacoes/estado?tx_id=%s", strings.TrimRight(enderecoBase, "/"), url.QueryEscape(txID))
+
+	ctx, cancel := context.WithTimeout(context.Background(), TimeoutPadraoHTTP)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, urlAlvo, nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("falha ao consultar estado em %s: %w", enderecoBase, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("participante respondeu HTTP %d", resp.StatusCode)
+	}
+	var e modelos.EstadoResponse
+	if err := json.NewDecoder(resp.Body).Decode(&e); err != nil {
+		return "", fmt.Errorf("resposta invalida do participante: %w", err)
+	}
+	return e.Estado, nil
+}

@@ -49,7 +49,43 @@ func ConectarTCP(endereco string, timeout ...time.Duration) (*ClienteTCP, error)
 
 	go cliente.loopLeitura()
 
+	// Abrir o socket não prova que há um servidor VaiJunto do outro lado: um proxy do Docker,
+	// um firewall ou um servidor travado aceitam a conexão TCP e não respondem nada.
+	// Só consideramos "conectado" depois de o servidor responder a um handshake.
+	if err := cliente.handshake(limite); err != nil {
+		_ = cliente.Fechar()
+		return nil, fmt.Errorf("falha ao conectar a %s: %w", endereco, err)
+	}
+
 	return cliente, nil
+}
+
+// handshake envia um ping e espera a resposta do servidor.
+func (c *ClienteTCP) handshake(limite time.Duration) error {
+	if limite > 3*time.Second {
+		limite = 3 * time.Second
+	}
+	if err := c.EnviarJSON(map[string]any{"tipo": TipoPingReq}); err != nil {
+		return fmt.Errorf("servidor nao aceitou o handshake: %w", err)
+	}
+
+	prazo := time.NewTimer(limite)
+	defer prazo.Stop()
+	for {
+		select {
+		case linha := <-c.MensagensRecebidas:
+			var base struct {
+				Tipo string `json:"tipo"`
+			}
+			if json.Unmarshal(linha, &base) == nil && base.Tipo == TipoPingRes {
+				return nil
+			}
+		case err := <-c.Erros:
+			return fmt.Errorf("a conexao foi encerrada pelo outro lado: %w", err)
+		case <-prazo.C:
+			return fmt.Errorf("o servidor nao respondeu ao handshake em %s (porta aberta, mas sem servidor VaiJunto respondendo)", limite)
+		}
+	}
 }
 
 func (c *ClienteTCP) EnviarJSON(dados any) error {

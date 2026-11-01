@@ -111,6 +111,13 @@ func (n *no) iniciar(t *testing.T) {
 		}
 		return n.cliente.ConsultarDecisao(u, txID)
 	})
+	n.part.DefinirConsultaPares(func(empresa, txID string) (string, error) {
+		u, ok := n.pares[empresa]
+		if !ok {
+			return "", fmt.Errorf("empresa desconhecida")
+		}
+		return n.cliente.ConsultarEstado(u, txID)
+	})
 	if err := n.coord.Recuperar(); err != nil {
 		t.Fatalf("recuperar coordenador %s: %v", n.id, err)
 	}

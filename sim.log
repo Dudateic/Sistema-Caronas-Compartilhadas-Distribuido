@@ -1,0 +1,278 @@
+COMPOSE_PARALLEL_LIMIT=1 docker compose -f docker/docker-compose.yaml -f docker/docker-compose.local-ips.yaml up -d --build empresa-a empresa-b empresa-c
+time="2026-11-01T12:53:47-03:00" level=warning msg="Docker Compose is configured to build using Bake, but buildx isn't installed"
+#0 building with "default" instance using docker driver
+
+#1 [empresa-b internal] load build definition from Dockerfile
+#1 transferring dockerfile: 1.13kB done
+#1 DONE 0.0s
+
+#2 [empresa-b internal] load metadata for docker.io/library/alpine:3.19
+#2 DONE 0.0s
+
+#3 [empresa-b internal] load metadata for docker.io/library/golang:1.22-alpine
+#3 DONE 0.0s
+
+#4 [empresa-b internal] load .dockerignore
+#4 transferring context: 2B done
+#4 DONE 0.0s
+
+#5 [empresa-b builder 1/9] FROM docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052
+#5 resolve docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052 0.0s done
+#5 DONE 0.0s
+
+#6 [empresa-b servidor 1/3] FROM docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1
+#6 resolve docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1 0.0s done
+#6 DONE 0.0s
+
+#7 [empresa-b internal] load build context
+#7 transferring context: 337.47kB 0.1s done
+#7 DONE 0.1s
+
+#8 [empresa-b builder 2/9] WORKDIR /build
+#8 CACHED
+
+#9 [empresa-b builder 3/9] COPY go.mod go.sum* ./
+#9 CACHED
+
+#10 [empresa-b builder 4/9] RUN go mod download
+#10 CACHED
+
+#11 [empresa-b builder 5/9] COPY . .
+#11 DONE 0.1s
+
+#12 [empresa-b builder 6/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/servidor ./aplicacao/servidor
+#12 DONE 4.1s
+
+#13 [empresa-b builder 7/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/passageiro ./aplicacao/passageiro
+#13 DONE 0.4s
+
+#14 [empresa-b builder 8/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/motorista ./aplicacao/motorista
+#14 DONE 0.3s
+
+#15 [empresa-b builder 9/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/simulador ./aplicacao/simulador
+#15 DONE 0.2s
+
+#16 [empresa-b servidor 2/3] WORKDIR /app
+#16 CACHED
+
+#17 [empresa-b servidor 3/3] COPY --from=builder /build/bin/servidor /app/servidor
+#17 CACHED
+
+#18 [empresa-b] exporting to image
+#18 exporting layers done
+#18 exporting manifest sha256:86c536f4ffc831af0475408756325cc402e419dacc075306e33effe328ba6a0b done
+#18 exporting config sha256:b3412e3ed6bb378dbbe2df3ad7399917dc3e3115a56842a49f343c6b372511e7 done
+#18 exporting attestation manifest sha256:02f3d6957c9f2112647a0beafb97a215b2b2dbdc3b18660dd98bcc1f3804c94d 0.0s done
+#18 exporting manifest list sha256:817080e36a9016ab5c438729db8b9825cae8a3595259fe25cbcfed0a41c403d7 done
+#18 naming to docker.io/library/docker-empresa-b:latest done
+#18 unpacking to docker.io/library/docker-empresa-b:latest done
+#18 DONE 0.1s
+
+#19 [empresa-b] resolving provenance for metadata file
+#19 DONE 0.0s
+
+#20 [empresa-a internal] load build definition from Dockerfile
+#20 transferring dockerfile: 1.13kB done
+#20 DONE 0.0s
+
+#3 [empresa-a internal] load metadata for docker.io/library/golang:1.22-alpine
+#3 DONE 0.0s
+
+#2 [empresa-a internal] load metadata for docker.io/library/alpine:3.19
+#2 DONE 0.0s
+
+#21 [empresa-a internal] load .dockerignore
+#21 transferring context: 2B done
+#21 DONE 0.0s
+
+#22 [empresa-a internal] load build context
+#22 DONE 0.0s
+
+#5 [empresa-a builder 1/9] FROM docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052
+#5 resolve docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052 0.0s done
+#5 DONE 0.1s
+
+#6 [empresa-a servidor 1/3] FROM docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1
+#6 resolve docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1 0.0s done
+#6 DONE 0.1s
+
+#22 [empresa-a internal] load build context
+#22 transferring context: 56.45kB 0.0s done
+#22 DONE 0.0s
+
+#8 [empresa-a builder 2/9] WORKDIR /build
+#8 CACHED
+
+#23 [empresa-a builder 3/9] COPY go.mod go.sum* ./
+#23 CACHED
+
+#24 [empresa-a builder 4/9] RUN go mod download
+#24 CACHED
+
+#25 [empresa-a builder 5/9] COPY . .
+#25 DONE 0.1s
+
+#26 [empresa-a builder 6/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/servidor ./aplicacao/servidor
+#26 DONE 3.9s
+
+#27 [empresa-a builder 7/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/passageiro ./aplicacao/passageiro
+#27 DONE 0.3s
+
+#28 [empresa-a builder 8/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/motorista ./aplicacao/motorista
+#28 DONE 0.3s
+
+#29 [empresa-a builder 9/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/simulador ./aplicacao/simulador
+#29 DONE 0.2s
+
+#16 [empresa-a servidor 2/3] WORKDIR /app
+#16 CACHED
+
+#30 [empresa-a servidor 3/3] COPY --from=builder /build/bin/servidor /app/servidor
+#30 CACHED
+
+#31 [empresa-a] exporting to image
+#31 exporting layers done
+#31 exporting manifest sha256:06beed674af227c135421afb3c62d89463878f7da22ab3efc05f4f4613c28c79 done
+#31 exporting config sha256:0a5974edabaf1648cf10e4a27da9e422312fd878befb68839cc5b3584ad7ba72 done
+#31 exporting attestation manifest sha256:f5aceb91b25202402abc0308e7e9b8a7f61d00ee7e6a0e99a0b049362015b5b7 0.0s done
+#31 exporting manifest list sha256:58fe6aea2a9a0ecaf9fb5dd3eea853b8d7238863d985b674bf1aacf3112b067d done
+#31 naming to docker.io/library/docker-empresa-a:latest done
+#31 unpacking to docker.io/library/docker-empresa-a:latest done
+#31 DONE 0.1s
+
+#32 [empresa-a] resolving provenance for metadata file
+#32 DONE 0.0s
+
+#33 [empresa-c internal] load build definition from Dockerfile
+#33 transferring dockerfile: 1.13kB done
+#33 DONE 0.0s
+
+#3 [empresa-c internal] load metadata for docker.io/library/golang:1.22-alpine
+#3 DONE 0.1s
+
+#2 [empresa-c internal] load metadata for docker.io/library/alpine:3.19
+#2 DONE 0.1s
+
+#34 [empresa-c internal] load .dockerignore
+#34 transferring context: 2B done
+#34 DONE 0.0s
+
+#5 [empresa-c builder 1/9] FROM docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052
+#5 resolve docker.io/library/golang:1.22-alpine@sha256:1699c10032ca2582ec89a24a1312d986a3f094aed3d5c1147b19880afe40e052 0.0s done
+#5 DONE 0.1s
+
+#6 [empresa-c servidor 1/3] FROM docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1
+#6 resolve docker.io/library/alpine:3.19@sha256:6baf43584bcb78f2e5847d1de515f23499913ac9f12bdf834811a3145eb11ca1 0.0s done
+#6 DONE 0.1s
+
+#35 [empresa-c internal] load build context
+#35 transferring context: 58.40kB 0.0s done
+#35 DONE 0.0s
+
+#8 [empresa-c builder 2/9] WORKDIR /build
+#8 CACHED
+
+#36 [empresa-c builder 3/9] COPY go.mod go.sum* ./
+#36 CACHED
+
+#37 [empresa-c builder 4/9] RUN go mod download
+#37 CACHED
+
+#38 [empresa-c builder 5/9] COPY . .
+#38 DONE 0.1s
+
+#39 [empresa-c builder 6/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/servidor ./aplicacao/servidor
+#39 DONE 3.8s
+
+#40 [empresa-c builder 7/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/passageiro ./aplicacao/passageiro
+#40 DONE 0.3s
+
+#41 [empresa-c builder 8/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/motorista ./aplicacao/motorista
+#41 DONE 0.3s
+
+#42 [empresa-c builder 9/9] RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/simulador ./aplicacao/simulador
+#42 DONE 0.2s
+
+#16 [empresa-c servidor 2/3] WORKDIR /app
+#16 CACHED
+
+#43 [empresa-c servidor 3/3] COPY --from=builder /build/bin/servidor /app/servidor
+#43 CACHED
+
+#44 [empresa-c] exporting to image
+#44 exporting layers done
+#44 exporting manifest sha256:076cbc68b81a4d9d326703eab8fc20224052e5c2ed6d6a2a42242cb5d945d349 done
+#44 exporting config sha256:a0695830988a3bc5afeb1a91f8bef6adbe88c38c1418b206cf12be77f5ae2927 done
+#44 exporting attestation manifest sha256:d0d3fed85d66d4da8151b079db5af8598cd4b0fdaf1ab1feeca862333d09ee6e 0.0s done
+#44 exporting manifest list sha256:e2a9bccbe3d6ec0221e6bff6c713813d02652627499f4bea16ff914563000ffa done
+#44 naming to docker.io/library/docker-empresa-c:latest done
+#44 unpacking to docker.io/library/docker-empresa-c:latest done
+#44 DONE 0.1s
+
+#45 [empresa-c] resolving provenance for metadata file
+#45 DONE 0.0s
+ empresa-a  Built
+ empresa-b  Built
+ empresa-c  Built
+ Container vaijunto-empresa-a  Recreate
+ Container vaijunto-empresa-c  Recreate
+ Container vaijunto-empresa-b  Recreate
+ Container vaijunto-empresa-b  Recreated
+ Container vaijunto-empresa-c  Recreated
+ Container vaijunto-empresa-a  Recreated
+ Container vaijunto-empresa-b  Starting
+ Container vaijunto-empresa-a  Starting
+ Container vaijunto-empresa-c  Starting
+ Container vaijunto-empresa-c  Started
+ Container vaijunto-empresa-a  Started
+ Container vaijunto-empresa-b  Started
+DEPRECATED: The legacy builder is deprecated and will be removed in a future release.
+            Install the buildx component to build images with BuildKit:
+            https://docs.docker.com/go/buildx/
+
+Sending build context to Docker daemon  24.33MB
+Step 1/12 : FROM golang:1.22-alpine AS builder
+ ---> 1699c10032ca
+Step 2/12 : WORKDIR /build
+ ---> Running in d6b879e8591a
+ ---> Removed intermediate container d6b879e8591a
+ ---> c34ff0663677
+Step 3/12 : COPY go.mod go.sum* ./
+ ---> e32ad508f701
+Step 4/12 : RUN go mod download
+ ---> Running in 9ce1e1f986f0
+[91mgo: no module dependencies to download
+[0m ---> Removed intermediate container 9ce1e1f986f0
+ ---> 052b423a430c
+Step 5/12 : COPY aplicacao ./aplicacao
+ ---> a16b11621dc5
+Step 6/12 : COPY componentes ./componentes
+ ---> e764d36c877c
+Step 7/12 : RUN CGO_ENABLED=0 GOOS=linux go build -o /build/bin/simulador ./aplicacao/simulador-cli
+ ---> Running in 4626c9abc3e1
+ ---> Removed intermediate container 4626c9abc3e1
+ ---> da7ed9b40711
+Step 8/12 : FROM alpine:3.19 AS simulador
+ ---> 6baf43584bcb
+Step 9/12 : WORKDIR /app
+ ---> Running in 3a65f83cb3d5
+ ---> Removed intermediate container 3a65f83cb3d5
+ ---> d829b669ba54
+Step 10/12 : COPY --from=builder /build/bin/simulador /app/simulador
+ ---> dc51d49ed7f0
+Step 11/12 : RUN chmod 0755 /app/simulador && ls -l /app/simulador
+ ---> Running in 9877b6b05eb0
+-rwxr-xr-x    1 root     root       3485063 Nov  1 15:54 /app/simulador
+ ---> Removed intermediate container 9877b6b05eb0
+ ---> 47e42627f8a6
+Step 12/12 : ENTRYPOINT ["/app/simulador"]
+ ---> Running in 450c8b0f055a
+ ---> Removed intermediate container 450c8b0f055a
+ ---> 60d2858a6034
+Successfully built 60d2858a6034
+Successfully tagged vaijunto-simulador:latest
+docker run --rm --cpus=2 --memory=2g --network docker_consorcio vaijunto-simulador -total=5000 -concorrencia=50 -alvos="empresa-a:6060,empresa-b:7070,empresa-c:8080" -cenario=contencao -assentos=5
+==================================================================
+   VAIJUNTO - SIMULADOR DISTRIBUÍDO (5000 REQUISIÇÕES)==================================================================
+ Cenário selecionado     : Alta Contenção (Disputa Concorrente por Vaga Única no 2PC) Trabalhadores paralelos : 50 goroutines Nós do Consórcio        : [empresa-a:6060 empresa-b:7070 empresa-c:8080]==================================================================
+make: *** [Makefile:115: simulador-contencao] Terminated

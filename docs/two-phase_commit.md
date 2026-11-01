@@ -29,6 +29,7 @@ Corpo e resposta em JSON. Prefixo: `/api/v1`.
 | POST | `/transacoes/commit` | `{tx_id}` | `200` confirmado (idempotente) · `404` transação desconhecida · `409` já abortada · `500` falha de log |
 | POST | `/transacoes/abort` | `{tx_id}` | `200` abortado (idempotente, inclusive se desconhecida) · `409` já confirmada · `500` falha de log |
 | GET | `/transacoes/decisao?tx_id=` | — | `200 {decisao: COMMIT \| ABORT \| EM_ANDAMENTO}` · `400` sem `tx_id` |
+| GET | `/transacoes/estado?tx_id=` | — | `200 {estado: PREPARADA \| CONFIRMADA \| ABORTADA \| DESCONHECIDA}` · `400` sem `tx_id`. Entre participantes (terminação cooperativa); perguntar sobre transação nunca vista a registra como ABORTADA |
 | POST | `/trechos/cancelar` | `{carona_id, origem, destino, passageiro}` | `200` · `404` passageiro/trecho não encontrado |
 | POST | `/sync/status` | `{empresa_solicitante, trechos_ativos[]}` | `200 {trechos_para_liberar[]}` |
 | POST | `/caronas/cancelada` | `{empresa, carona_id}` | `200` |
@@ -93,7 +94,8 @@ Cada empresa mantém dois logs append-only com `fsync` por registro: `participan
 | Participante cai **depois** de votar SIM | Ao voltar, relê o log: PREPARE sem decisão vira transação pendente, o assento continua reservado e `ReconciliarAssentos` corrige qualquer divergência entre disco e log. Então recebe o COMMIT/ABORT reenviado ou pergunta a decisão ao coordenador. |
 | Coordenador cai **antes** de decidir | Ao voltar, vê INICIO sem decisão e aplica **abort presumido**, enviando ABORT a todos os participantes do log. |
 | Coordenador cai **depois** de decidir | Ao voltar, vê COMMIT/ABORT sem FIM e **reenvia** a decisão. |
-| Coordenador fica fora do ar | Participantes que votaram SIM **não abortam sozinhos** (poderia ter havido COMMIT): mantêm o bloqueio e perguntam a cada ciclo do TTL. É a limitação clássica de bloqueio do 2PC; só afeta os trechos dessa transação, e as demais caronas seguem operando. |
+| Coordenador fica fora do ar | **Terminação cooperativa.** Passado o TTL, o participante que votou SIM pergunta a decisão ao coordenador; se ele não responde, pergunta às **outras empresas participantes** (a lista vai em cada PREPARE): se alguma já **confirmou**, confirma; se alguma **abortou** ou **nunca votou**, aborta (quem nunca votou registra o ABORT ao ser perguntado, então o coordenador jamais poderia ter decidido COMMIT, e um PREPARE atrasado dessa transação é recusado). |
+| Coordenador fora do ar e **todos** votaram SIM | Caso irredutível do 2PC: ninguém sabe se houve COMMIT, então ninguém decide sozinho. Os assentos desses trechos ficam bloqueados até o coordenador voltar e reenviar a decisão do log. Afeta só essa transação; as demais caronas seguem operando. |
 | Empresa fora do ar na **busca** | A consulta a ela falha por timeout e é registrada; a busca devolve os itinerários possíveis com as demais empresas. |
 
 Ao receber `GET /transacoes/decisao` de uma transação desconhecida, o coordenador responde ABORT (**abort presumido**): se ele não gravou COMMIT, a transação não pode ter sido confirmada.
@@ -104,4 +106,11 @@ Ao receber `GET /transacoes/decisao` de uma transação desconhecida, o coordena
 * **Precedência:** vence quem chega primeiro ao servidor dono do assento. Não depende dos relógios físicos (não sincronizados) nem da ordem em que os pedidos saíram das empresas de origem. Cada mensagem carrega um relógio de Lamport (`timestamp`), que mantém uma ordem causal entre os eventos registrados nos logs e é atualizado em cada recepção (`max(local, recebido)+1`).
 * **Deadlock:** o PREPARE **nunca espera** por um assento: se não há vaga, recusa na hora e a transação aborta. Sem espera enquanto se segura um recurso, não há espera circular. A consequência é que, sob contenção, duas reservas cruzadas podem abortar ambas (livelock), exigindo nova tentativa do passageiro, em troca de nunca travar.
 
-> O algoritmo de Ricart-Agrawala (`ricart_agrawala.go`, `docs/Algoritmo_Ricart-Agrawala.md`) foi estudado como alternativa para exclusão mútua entre servidores, mas **não é usado** pelo servidor: com um único dono por assento ele adicionaria mensagens sem ganho de correção.
+### Por que não Ricart-Agrawala
+
+Ricart-Agrawala foi avaliado para a exclusão mútua entre servidores e **descartado**:
+
+* **Não há recurso compartilhado entre os servidores.** Cada assento tem um único dono; a seção crítica já é serializada pelo mutex dele. Pedir permissão às demais empresas não protegeria nada a mais.
+* **Piora a disponibilidade.** O algoritmo só entra na seção crítica depois de receber REPLY de **todos** os nós ativos; com uma empresa lenta ou caída, as reservas das outras ficariam esperando, contrariando o requisito de que a falha de uma empresa não pode parar as demais.
+* **Custo.** Cada reserva exigiria uma rodada extra de mensagens com todas as empresas, mesmo para trechos de uma só.
+* **Deadlock.** Entre vários recursos, o algoritmo introduz espera enquanto se segura uma seção crítica; o PREPARE sem espera evita a espera circular por construção.

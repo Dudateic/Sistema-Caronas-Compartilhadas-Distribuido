@@ -38,10 +38,12 @@ func (c *CenarioBusca) ExecutarPasso(ctx *ContextoExecucao) {
 	t0 := time.Now()
 	var buscaRes cliente_servidor.RespostaBuscarItinerarios
 	err := ctx.Cliente.Executar(map[string]any{
-		"tipo":    cliente_servidor.TipoBuscarItinerariosReq,
-		"origem":  origem,
-		"destino": destino,
-		"data":    "2026-10-30",
+		"tipo":            cliente_servidor.TipoBuscarItinerariosReq,
+		"origem":          origem,
+		"destino":         destino,
+		"data":            "2026-10-30",
+		"max_itinerarios": LimiteItinerarios,
+		"max_trechos":     LimiteTrechos,
 	}, cliente_servidor.TipoBuscarItinerariosRes, &buscaRes)
 	duracao := time.Since(t0)
 

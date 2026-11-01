@@ -26,6 +26,9 @@ type PrepareRequest struct {
 	// Coordenador é o nome da empresa que coordena a transação. O participante
 	// usa esse nome para perguntar a decisão global caso fique sem resposta.
 	Coordenador string `json:"coordenador,omitempty"`
+	// Participantes lista todas as empresas da transação. Se o coordenador cair, os
+	// participantes perguntam uns aos outros o destino da transação (terminação cooperativa).
+	Participantes []string `json:"participantes,omitempty"`
 }
 
 type PrepareResponse struct {
@@ -41,6 +44,19 @@ const (
 	DecisaoAbort       = "ABORT"
 	DecisaoEmAndamento = "EM_ANDAMENTO"
 )
+
+// Estados de uma transação em um participante, devolvidos por GET /api/v1/transacoes/estado.
+const (
+	EstadoPreparada    = "PREPARADA"
+	EstadoConfirmada   = "CONFIRMADA"
+	EstadoAbortada     = "ABORTADA"
+	EstadoDesconhecida = "DESCONHECIDA"
+)
+
+type EstadoResponse struct {
+	TxID   string `json:"tx_id"`
+	Estado string `json:"estado"`
+}
 
 type DecisaoResponse struct {
 	TxID    string `json:"tx_id"`

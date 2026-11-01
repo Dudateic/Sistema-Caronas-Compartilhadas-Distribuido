@@ -22,6 +22,15 @@ func responderJSON(conn net.Conn, v any) {
 	_, _ = conn.Write(b)
 }
 
+// ProcessarPing responde ao handshake dos clientes: confirma que há um servidor VaiJunto atendendo.
+func ProcessarPing(conn net.Conn) {
+	responderJSON(conn, cliente_servidor.RespostaSimples{
+		Tipo:     cliente_servidor.TipoPingRes,
+		Sucesso:  true,
+		Mensagem: "Servidor " + Config.Empresa + " pronto",
+	})
+}
+
 func ProcessarCadastro(conn net.Conn, dados string) {
 	var req struct {
 		Nome        string              `json:"nome"`

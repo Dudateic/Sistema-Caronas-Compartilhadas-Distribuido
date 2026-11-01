@@ -1,4 +1,4 @@
-package simulador
+package main
 
 /*
 O QUE ESTÁ FAZENDO:
@@ -11,9 +11,16 @@ O QUE ESTÁ FAZENDO:
    cenário de teste selecionado.
 6. Ao término, dispara a geração do relatório final de latências/throughput e aciona
    a auditoria de invariantes distribuídos.
+
+RESULTADOS ESPERADOS:
+- Conclusão de todas as requisições solicitadas sem deadlocks ou panics.
+- Distribuição uniforme de carga entre os nós configurados.
+- Relatório de encerramento impresso com estatísticas consolidadas.
+- Chamada bem-sucedida do auditor pós-teste confirmando Zero Overbooking.
 */
 
 import (
+	main2 "Sistema-Caronas-Compartilhadas-Distribuido/aplicacao/simulador"
 	"flag"
 	"fmt"
 	"os"
@@ -53,20 +60,20 @@ func main() {
 	}
 
 	timeoutDur := time.Duration(*timeoutFlag) * time.Second
-	cenario := ObterCenario(*cenarioFlag)
+	cenario := main2.ObterCenario(*cenarioFlag)
 
 	fmt.Println("==================================================================")
-	fmt.Printf("   VAIJUNTO - SIMULADOR DISTRIBUÍDO (%d REQUISIÇÕES)\n", *totalFlag)
+	fmt.Printf("   VAIJUNTO - SIMULADOR DISTRIBUÍDO (%d REQUISIÇÕES)", *totalFlag)
 	fmt.Println("==================================================================")
-	fmt.Printf(" Cenário selecionado     : %s\n", cenario.Nome())
-	fmt.Printf(" Trabalhadores paralelos : %d goroutines\n", *concorrenciaFlag)
-	fmt.Printf(" Nós do Consórcio        : %v\n", alvos)
+	fmt.Printf(" Cenário selecionado     : %s", cenario.Nome())
+	fmt.Printf(" Trabalhadores paralelos : %d goroutines", *concorrenciaFlag)
+	fmt.Printf(" Nós do Consórcio        : %v", alvos)
 	fmt.Println("==================================================================")
 
 	// Garante viagens cadastradas no consórcio para permitir disputas concorrentes
-	SemearCatalogoCaronas(alvos, timeoutDur, *assentosFlag)
+	main2.SemearCatalogoCaronas(alvos, timeoutDur, *assentosFlag)
 
-	var stats EstatisticasConsorcio
+	var stats main2.EstatisticasConsorcio
 	inicioGeral := time.Now()
 
 	tarefas := make(chan int, *totalFlag)
@@ -86,7 +93,7 @@ func main() {
 
 			nomeUsuario := fmt.Sprintf("sim_worker_%d_%d", workerID, time.Now().UnixNano()%100000)
 			alvo := alvos[workerID%len(alvos)]
-			cli := NovoClienteTCP(alvo, timeoutDur)
+			cli := main2.NovoClienteTCP(alvo, timeoutDur)
 			defer cli.Fechar()
 
 			// Cadastro único do passageiro simulado
@@ -99,7 +106,7 @@ func main() {
 			}, cliente_servidor.TipoCadastroRes, &cliente_servidor.RespostaSimples{})
 
 			var reservasLocais []int
-			ctx := &ContextoExecucao{
+			ctx := &main2.ContextoExecucao{
 				Cliente:        cli,
 				WorkerNome:     nomeUsuario,
 				Origens:        origens,
@@ -118,6 +125,6 @@ func main() {
 	tempoTotal := time.Since(inicioGeral)
 
 	// Exibe o painel consolidado com percentis de resposta e auditoria
-	ExibirRelatorioFinal(&stats, tempoTotal)
-	AuditarInvariantes(alvos, timeoutDur)
+	main2.ExibirRelatorioFinal(&stats, tempoTotal)
+	main2.AuditarInvariantes(alvos, timeoutDur)
 }

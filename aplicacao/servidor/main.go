@@ -220,6 +220,10 @@ func tratarCliente(conn net.Conn) {
 func rotearRequisicao(conn net.Conn, tipo string, dadosBrutos string, remoto string) {
 	switch tipo {
 
+	// Handshake de conexão
+	case cliente_servidor.TipoPingReq:
+		servicos.ProcessarPing(conn)
+
 	// Usuários
 	case cliente_servidor.TipoCadastroReq:
 		servicos.ProcessarCadastro(conn, dadosBrutos)

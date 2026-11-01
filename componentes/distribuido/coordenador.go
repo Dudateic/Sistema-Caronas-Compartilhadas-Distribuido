@@ -156,6 +156,11 @@ func (c *Coordenador2PC) ExecutarReservaAtomica(txID string, passageiro string, 
 	c.emAndamento[txID] = true
 	c.mu.Unlock()
 
+	nomesParticipantes := make([]string, 0, len(participantes))
+	for nome := range participantes {
+		nomesParticipantes = append(nomesParticipantes, nome)
+	}
+
 	// Fase 1: PREPARE em paralelo
 	canalVotos := make(chan resultadoVoto, len(itinerario.Trechos))
 	var wg sync.WaitGroup
@@ -163,7 +168,7 @@ func (c *Coordenador2PC) ExecutarReservaAtomica(txID string, passageiro string, 
 		wg.Add(1)
 		go func(t modelos.TrechoViagem) {
 			defer wg.Done()
-			c.coletarVotoPrepare(txID, passageiro, t, timestampLamport, canalVotos)
+			c.coletarVotoPrepare(txID, passageiro, t, timestampLamport, nomesParticipantes, canalVotos)
 		}(trecho)
 	}
 	go func() {
@@ -236,16 +241,18 @@ func (c *Coordenador2PC) coletarVotoPrepare(
 	passageiro string,
 	trecho modelos.TrechoViagem,
 	timestampLamport int64,
+	participantes []string,
 	canal chan<- resultadoVoto,
 ) {
 	req := modelos.PrepareRequest{
-		TxID:        txID,
-		CaronaID:    trecho.CaronaID,
-		Origem:      trecho.Origem,
-		Destino:     trecho.Destino,
-		Passageiro:  passageiro,
-		Timestamp:   timestampLamport,
-		Coordenador: c.idEmpresaLocal,
+		TxID:          txID,
+		CaronaID:      trecho.CaronaID,
+		Origem:        trecho.Origem,
+		Destino:       trecho.Destino,
+		Passageiro:    passageiro,
+		Timestamp:     timestampLamport,
+		Coordenador:   c.idEmpresaLocal,
+		Participantes: participantes,
 	}
 
 	if c.ehLocal(trecho.Empresa) {

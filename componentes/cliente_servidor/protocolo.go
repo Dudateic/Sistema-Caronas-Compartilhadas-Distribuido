@@ -1,8 +1,14 @@
 package cliente_servidor
 
-import "Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
+import (
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
+)
 
 const (
+	// Handshake: o cliente só se considera conectado depois de receber a resposta do servidor
+	TipoPingReq = "ping_requisicao"
+	TipoPingRes = "ping_resposta"
+
 	TipoLoginReq                 = "login_requisicao"
 	TipoCadastroReq              = "cadastro_requisicao"
 	TipoPublicarCaronaReq        = "publicar_carona_requisicao"

@@ -1,11 +1,11 @@
 [
   {
     "id": 1,
-    "motorista": "duda c",
+    "motorista": "duda b",
     "data": "2026-11-11",
     "horario": "08:00",
-    "assentos_totais": 1,
-    "preco_por_trecho": 4,
+    "assentos_totais": 3,
+    "preco_por_trecho": 28,
     "rota": [
       "SSA",
       "FSA",
@@ -17,170 +17,29 @@
       {
         "origem": "SSA",
         "destino": "FSA",
-        "assentos_livres": 1,
-        "preco": 4,
+        "assentos_livres": 3,
+        "preco": 28,
         "passageiros": []
       },
       {
         "origem": "FSA",
         "destino": "BRU",
-        "assentos_livres": 1,
-        "preco": 4,
+        "assentos_livres": 3,
+        "preco": 28,
         "passageiros": []
       },
       {
         "origem": "BRU",
         "destino": "GUA",
-        "assentos_livres": 0,
-        "preco": 4,
-        "passageiros": [
-          "pass c"
-        ]
+        "assentos_livres": 3,
+        "preco": 28,
+        "passageiros": []
       },
       {
         "origem": "GUA",
         "destino": "CLE",
-        "assentos_livres": 0,
-        "preco": 4,
-        "passageiros": [
-          "pass c"
-        ]
-      }
-    ]
-  },
-  {
-    "id": 2,
-    "motorista": "motorista_seed_2",
-    "data": "2026-10-30",
-    "horario": "12:00",
-    "assentos_totais": 5,
-    "preco_por_trecho": 15,
-    "rota": [
-      "SSA",
-      "FSA",
-      "VIT"
-    ],
-    "trechos": [
-      {
-        "origem": "SSA",
-        "destino": "FSA",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      },
-      {
-        "origem": "FSA",
-        "destino": "VIT",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      }
-    ]
-  },
-  {
-    "id": 3,
-    "motorista": "motorista_seed_2",
-    "data": "2026-10-30",
-    "horario": "12:00",
-    "assentos_totais": 5,
-    "preco_por_trecho": 15,
-    "rota": [
-      "VIT",
-      "BRU",
-      "CLE"
-    ],
-    "trechos": [
-      {
-        "origem": "VIT",
-        "destino": "BRU",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      },
-      {
-        "origem": "BRU",
-        "destino": "CLE",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      }
-    ]
-  },
-  {
-    "id": 4,
-    "motorista": "motorista_seed_2",
-    "data": "2026-10-30",
-    "horario": "12:00",
-    "assentos_totais": 5,
-    "preco_por_trecho": 15,
-    "rota": [
-      "SSA",
-      "VIT",
-      "CLE"
-    ],
-    "trechos": [
-      {
-        "origem": "SSA",
-        "destino": "VIT",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      },
-      {
-        "origem": "VIT",
-        "destino": "CLE",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      }
-    ]
-  },
-  {
-    "id": 5,
-    "motorista": "motorista_seed_2",
-    "data": "2026-10-30",
-    "horario": "12:00",
-    "assentos_totais": 5,
-    "preco_por_trecho": 15,
-    "rota": [
-      "FSA",
-      "VIT",
-      "CLE"
-    ],
-    "trechos": [
-      {
-        "origem": "FSA",
-        "destino": "VIT",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      },
-      {
-        "origem": "VIT",
-        "destino": "CLE",
-        "assentos_livres": 5,
-        "preco": 15,
-        "passageiros": []
-      }
-    ]
-  },
-  {
-    "id": 6,
-    "motorista": "motorista_seed_2",
-    "data": "2026-10-30",
-    "horario": "12:00",
-    "assentos_totais": 5,
-    "preco_por_trecho": 15,
-    "rota": [
-      "SSA",
-      "CLE"
-    ],
-    "trechos": [
-      {
-        "origem": "SSA",
-        "destino": "CLE",
-        "assentos_livres": 5,
-        "preco": 15,
+        "assentos_livres": 3,
+        "preco": 28,
         "passageiros": []
       }
     ]

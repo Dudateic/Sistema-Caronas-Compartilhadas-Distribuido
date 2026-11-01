@@ -474,3 +474,122 @@ func TestRelogioLamport(t *testing.T) {
 		t.Fatalf("relogio nao pode regredir: %d <= %d", d, b)
 	}
 }
+
+// --- Terminação cooperativa (coordenador fora do ar) ---------------------------------
+
+func prepararPara(t *testing.T, n *no, tx string, caronaID int, origem, destino, passageiro string, participantes []string) {
+	t.Helper()
+	resp, err := n.part.ProcessarPrepare(modelos.PrepareRequest{
+		TxID: tx, CaronaID: caronaID, Origem: origem, Destino: destino, Passageiro: passageiro,
+		Coordenador: "A", Participantes: participantes,
+	})
+	if err != nil || !resp.VotoSim {
+		t.Fatalf("prepare em %s: %+v %v", n.id, resp, err)
+	}
+}
+
+// B votou SIM, o coordenador A caiu, e C nunca votou. Como C não votou, A jamais poderia
+// ter decidido COMMIT: B e C abortam entre si, sem esperar A voltar.
+func TestCoordenadorCaidoParticipanteQueNuncaVotouLiberaOutro(t *testing.T) {
+	c := novoConsorcio(t, "A", "B", "C")
+	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
+	cc := c.nos["C"].publicar(t, []string{"VCA", "MOC"}, 1, 10)
+	prepararPara(t, c.nos["B"], "tx_coop_1", b, "FSA", "VCA", "ana", []string{"A", "B", "C"})
+
+	c.nos["A"].derrubar()
+	time.Sleep(60 * time.Millisecond)
+	c.nos["B"].part.LimparTransacoesExpiradas(30 * time.Millisecond)
+
+	if c.nos["B"].part.PendentesAtivas() != 0 || c.nos["B"].livres(b, "FSA", "VCA") != 1 {
+		t.Fatal("B deveria ter liberado o assento depois de saber que C nunca votou")
+	}
+	// A promessa de C vale: um PREPARE atrasado dessa transação é recusado.
+	resp, _ := c.nos["C"].part.ProcessarPrepare(modelos.PrepareRequest{
+		TxID: "tx_coop_1", CaronaID: cc, Origem: "VCA", Destino: "MOC", Passageiro: "ana", Coordenador: "A",
+	})
+	if resp.VotoSim {
+		t.Fatal("C votou SIM depois de prometer abortar")
+	}
+	c.invariantes(t)
+}
+
+// B votou SIM, A caiu, mas C já recebeu o COMMIT: logo a decisão foi COMMIT e B confirma.
+func TestCoordenadorCaidoParticipanteQueJaConfirmouDecideOutro(t *testing.T) {
+	c := novoConsorcio(t, "A", "B", "C")
+	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
+	cc := c.nos["C"].publicar(t, []string{"VCA", "MOC"}, 1, 10)
+	todos := []string{"A", "B", "C"}
+	prepararPara(t, c.nos["B"], "tx_coop_2", b, "FSA", "VCA", "ana", todos)
+	prepararPara(t, c.nos["C"], "tx_coop_2", cc, "VCA", "MOC", "ana", todos)
+	if err := c.nos["C"].part.ProcessarCommit("tx_coop_2"); err != nil { // o COMMIT chegou só a C
+		t.Fatal(err)
+	}
+
+	c.nos["A"].derrubar()
+	time.Sleep(60 * time.Millisecond)
+	c.nos["B"].part.LimparTransacoesExpiradas(30 * time.Millisecond)
+
+	if p := c.nos["B"].passageiros(b, "FSA", "VCA"); len(p) != 1 || p[0] != "ana" {
+		t.Fatalf("B deveria ter confirmado a reserva: %v", p)
+	}
+	c.invariantes(t)
+}
+
+// Caso irredutível do 2PC: todos votaram SIM e o coordenador caiu antes de avisar ninguém.
+// Ninguém pode decidir sozinho; o assento fica bloqueado até A voltar, e então resolve.
+func TestCoordenadorCaidoTodosPreparadosEsperamARecuperacao(t *testing.T) {
+	c := novoConsorcio(t, "A", "B", "C")
+	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
+	cc := c.nos["C"].publicar(t, []string{"VCA", "MOC"}, 1, 10)
+	todos := []string{"A", "B", "C"}
+	prepararPara(t, c.nos["B"], "tx_coop_3", b, "FSA", "VCA", "ana", todos)
+	prepararPara(t, c.nos["C"], "tx_coop_3", cc, "VCA", "MOC", "ana", todos)
+
+	c.nos["A"].derrubar()
+	time.Sleep(60 * time.Millisecond)
+	c.nos["B"].part.LimparTransacoesExpiradas(30 * time.Millisecond)
+	c.nos["C"].part.LimparTransacoesExpiradas(30 * time.Millisecond)
+	if c.nos["B"].part.PendentesAtivas() != 1 || c.nos["C"].part.PendentesAtivas() != 1 {
+		t.Fatal("ninguem poderia decidir sozinho: todos votaram SIM")
+	}
+
+	// A volta com COMMIT gravado e sem FIM: reenvia a decisão.
+	wal, _ := distribuido.NovoLogTransacoes(c.nos["A"].dir + "/coordenador.log")
+	det, _ := json.Marshal(map[string]any{"participantes": map[string]string{"B": c.url("B"), "C": c.url("C")}})
+	_ = wal.Gravar("tx_coop_3", distribuido.LogInicio, "", string(det))
+	_ = wal.Gravar("tx_coop_3", distribuido.LogCommit, "", "global_commit_aprovado")
+	_ = wal.Fechar()
+	c.nos["A"].iniciar(t)
+
+	esperar(t, 3*time.Second, "B e C confirmam apos A voltar", func() bool {
+		return len(c.nos["B"].passageiros(b, "FSA", "VCA")) == 1 && len(c.nos["C"].passageiros(cc, "VCA", "MOC")) == 1
+	})
+	c.invariantes(t)
+}
+
+func TestAPIEstadoDaTransacao(t *testing.T) {
+	c := novoConsorcio(t, "B")
+	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
+	prepararPara(t, c.nos["B"], "tx_estado", b, "FSA", "VCA", "ana", []string{"A", "B"})
+
+	estado := func(tx string) string {
+		resp, err := http.Get(c.url("B") + "/api/v1/transacoes/estado?tx_id=" + tx)
+		if err != nil {
+			t.Fatal(err)
+		}
+		defer resp.Body.Close()
+		var m map[string]any
+		_ = json.NewDecoder(resp.Body).Decode(&m)
+		return fmt.Sprint(m["estado"])
+	}
+	if e := estado("tx_estado"); e != "PREPARADA" {
+		t.Fatalf("esperado PREPARADA, veio %s", e)
+	}
+	_ = c.nos["B"].part.ProcessarCommit("tx_estado")
+	if e := estado("tx_estado"); e != "CONFIRMADA" {
+		t.Fatalf("esperado CONFIRMADA, veio %s", e)
+	}
+	if e := estado("nunca_vista"); e != "ABORTADA" {
+		t.Fatalf("transacao desconhecida deve virar ABORTADA (promessa), veio %s", e)
+	}
+}

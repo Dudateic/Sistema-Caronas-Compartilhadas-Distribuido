@@ -135,7 +135,7 @@ services:
 
   simulador:
     build:
-      context: ../../../Downloads/correcoes_vaijunto/patch
+      context: ..
       dockerfile: docker/Dockerfile
       target: simulador
     profiles: [ "testes" ]

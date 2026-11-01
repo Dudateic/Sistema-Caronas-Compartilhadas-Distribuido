@@ -21,6 +21,7 @@ type ParticipanteTransacional interface {
 	ProcessarPrepare(req modelos.PrepareRequest) (modelos.PrepareResponse, error)
 	ProcessarCommit(txID string) error
 	ProcessarAbort(txID string) error
+	ConsultarEstado(txID string) string
 }
 
 // DecisorTransacional é o papel de coordenador: informa o destino de uma transação.
@@ -65,6 +66,7 @@ func (h *HandlersREST) RegistrarRotas(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/transacoes/commit", h.HandleCommit)
 	mux.HandleFunc("/api/v1/transacoes/abort", h.HandleAbort)
 	mux.HandleFunc("/api/v1/transacoes/decisao", h.HandleDecisao)
+	mux.HandleFunc("/api/v1/transacoes/estado", h.HandleEstado)
 	mux.HandleFunc("/api/v1/trechos/cancelar", h.HandleCancelarTrechoRemoto)
 	mux.HandleFunc("/api/v1/sync/status", h.HandleSyncStatus)
 	mux.HandleFunc("/api/v1/caronas/cancelada", h.HandleNotificarCaronaCancelada)
@@ -175,6 +177,24 @@ func (h *HandlersREST) HandleDecisao(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	responderJSON(w, http.StatusOK, modelos.DecisaoResponse{TxID: txID, Decisao: h.decisor.Decisao(txID)})
+}
+
+// GET /api/v1/transacoes/estado?tx_id=X
+// Usado por outro PARTICIPANTE quando o coordenador está fora do ar (terminação cooperativa).
+// 200 {estado: PREPARADA | CONFIRMADA | ABORTADA | DESCONHECIDA} | 400 sem tx_id
+// Atenção: perguntar sobre uma transação que este participante nunca viu a registra como
+// ABORTADA (promessa de não votar SIM depois), o que é seguro para quem perguntou.
+func (h *HandlersREST) HandleEstado(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	txID := r.URL.Query().Get("tx_id")
+	if txID == "" {
+		http.Error(w, "tx_id obrigatorio", http.StatusBadRequest)
+		return
+	}
+	responderJSON(w, http.StatusOK, modelos.EstadoResponse{TxID: txID, Estado: h.participante.ConsultarEstado(txID)})
 }
 
 // POST /api/v1/trechos/cancelar

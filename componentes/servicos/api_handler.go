@@ -75,6 +75,16 @@ func InicializarTransacoes() error {
 		return InstanciaClienteREST.ConsultarDecisao(url, txID)
 	})
 
+	// Se o coordenador estiver fora do ar, os participantes decidem entre si (terminação cooperativa).
+	InstanciaParticipante.DefinirConsultaPares(func(empresa, txID string) (string, error) {
+		for nome, url := range Config.Pares {
+			if strings.EqualFold(nome, empresa) {
+				return InstanciaClienteREST.ConsultarEstado(url, txID)
+			}
+		}
+		return "", fmt.Errorf("empresa %s desconhecida", empresa)
+	})
+
 	// Retoma decisões que o coordenador gravou mas não chegou a entregar.
 	return InstanciaCoordenador.Recuperar()
 }
