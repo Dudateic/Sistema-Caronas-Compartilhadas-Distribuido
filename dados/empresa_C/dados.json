@@ -1,1 +1,139 @@
-[]
+[
+  {
+    "id": 1,
+    "motorista": "motorista_seed_3",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "motorista": "motorista_seed_3",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "motorista": "motorista_seed_3",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "motorista": "motorista_seed_3",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "motorista": "motorista_seed_3",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  }
+]

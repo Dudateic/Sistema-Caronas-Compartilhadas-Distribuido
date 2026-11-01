@@ -13,19 +13,23 @@ import (
 type TipoRegistroLog string
 
 const (
-	LogPrepare TipoRegistroLog = "PREPARE"
-	LogCommit  TipoRegistroLog = "COMMIT"
-	LogAbort   TipoRegistroLog = "ABORT"
+	LogInicio  TipoRegistroLog = "INICIO"  // coordenador: transação iniciada (lista de participantes)
+	LogPrepare TipoRegistroLog = "PREPARE" // participante: voto SIM gravado
+	LogCommit  TipoRegistroLog = "COMMIT"  // decisão global de confirmar
+	LogAbort   TipoRegistroLog = "ABORT"   // decisão global de abortar
+	LogFim     TipoRegistroLog = "FIM"     // decisão já aplicada por completo
 )
 
 type EntradaLog struct {
 	Timestamp time.Time       `json:"timestamp"`
 	TxID      string          `json:"tx_id"`
 	Tipo      TipoRegistroLog `json:"tipo"`
-	RecursoID string          `json:"recurso_id"` // ex: "carona_1_trecho_0"
+	RecursoID string          `json:"recurso_id"`
 	Detalhes  string          `json:"detalhes,omitempty"`
 }
 
+// LogTransacoes é um write-ahead log append-only com fsync a cada registro.
+// Cada linha é um JSON. Um registro só é considerado gravado depois do fsync.
 type LogTransacoes struct {
 	caminho  string
 	ficheiro *os.File
@@ -42,10 +46,7 @@ func NovoLogTransacoes(caminho string) (*LogTransacoes, error) {
 		return nil, fmt.Errorf("falha ao abrir log de transacoes em %s: %w", caminho, err)
 	}
 
-	return &LogTransacoes{
-		caminho:  caminho,
-		ficheiro: f,
-	}, nil
+	return &LogTransacoes{caminho: caminho, ficheiro: f}, nil
 }
 
 func (l *LogTransacoes) Gravar(txID string, tipo TipoRegistroLog, recursoID string, detalhes string) error {
@@ -69,60 +70,63 @@ func (l *LogTransacoes) Gravar(txID string, tipo TipoRegistroLog, recursoID stri
 	if _, err := l.ficheiro.Write(dados); err != nil {
 		return fmt.Errorf("erro de I/O ao gravar no log: %w", err)
 	}
-
 	if err := l.ficheiro.Sync(); err != nil {
 		return fmt.Errorf("falha ao sincronizar log com o disco (fsync): %w", err)
 	}
-
 	return nil
 }
 
-func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
+// Entradas lê todo o log, em ordem de gravação. Linhas corrompidas (por exemplo,
+// uma escrita interrompida pela queda) são ignoradas.
+func (l *LogTransacoes) Entradas() ([]EntradaLog, error) {
 	l.mu.Lock()
 	defer l.mu.Unlock()
 
 	fLeitura, err := os.Open(l.caminho)
 	if err != nil {
 		if os.IsNotExist(err) {
-			return make(map[string]TipoRegistroLog), nil
+			return nil, nil
 		}
 		return nil, fmt.Errorf("falha ao abrir log para leitura de recuperacao: %w", err)
 	}
-	defer func(fLeitura *os.File) {
-		err := fLeitura.Close()
-		if err != nil {
+	defer fLeitura.Close()
 
-		}
-	}(fLeitura)
-
-	estadoTransacoes := make(map[string]TipoRegistroLog)
+	var entradas []EntradaLog
 	scanner := bufio.NewScanner(fLeitura)
-
+	scanner.Buffer(make([]byte, 0, 64*1024), 4*1024*1024)
 	for scanner.Scan() {
 		linha := scanner.Bytes()
 		if len(linha) == 0 {
 			continue
 		}
-
-		var entrada EntradaLog
-		if err := json.Unmarshal(linha, &entrada); err != nil {
+		var e EntradaLog
+		if err := json.Unmarshal(linha, &e); err != nil {
 			continue
 		}
-
-		estadoTransacoes[entrada.TxID] = entrada.Tipo
+		entradas = append(entradas, e)
 	}
-
 	if err := scanner.Err(); err != nil {
 		return nil, fmt.Errorf("erro durante a leitura sequencial do log: %w", err)
 	}
+	return entradas, nil
+}
 
-	return estadoTransacoes, nil
+// RecuperarEstado devolve o último tipo de registro de cada transação.
+func (l *LogTransacoes) RecuperarEstado() (map[string]TipoRegistroLog, error) {
+	entradas, err := l.Entradas()
+	if err != nil {
+		return nil, err
+	}
+	estado := make(map[string]TipoRegistroLog)
+	for _, e := range entradas {
+		estado[e.TxID] = e.Tipo
+	}
+	return estado, nil
 }
 
 func (l *LogTransacoes) Fechar() error {
 	l.mu.Lock()
 	defer l.mu.Unlock()
-
 	if l.ficheiro != nil {
 		_ = l.ficheiro.Sync()
 		return l.ficheiro.Close()

@@ -390,3 +390,73 @@ func (gc *GerenciadorCaronas) LiberarTrechosEmLote(itens []modelos.TrechoOcupado
 	}
 	return alterados
 }
+
+// ConfirmarAssentoSeAusente confirma o assento somente se o passageiro ainda não está no trecho.
+// Usado ao reaplicar um COMMIT na recuperação, quando a confirmação pode já ter sido gravada.
+func (gc *GerenciadorCaronas) ConfirmarAssentoSeAusente(caronaID int, origem, destino, passageiro string) error {
+	gc.mu.Lock()
+	for i := range gc.caronas {
+		if gc.caronas[i].ID != caronaID {
+			continue
+		}
+		for j := range gc.caronas[i].Trechos {
+			t := &gc.caronas[i].Trechos[j]
+			if strings.EqualFold(t.Origem, origem) && strings.EqualFold(t.Destino, destino) {
+				for _, p := range t.Passageiros {
+					if strings.EqualFold(p, passageiro) {
+						gc.mu.Unlock()
+						return nil
+					}
+				}
+			}
+		}
+	}
+	gc.mu.Unlock()
+	return gc.ConfirmarAssentoDefinitivo(caronaID, origem, destino, passageiro)
+}
+
+// ReconciliarAssentos restaura a invariante AssentosLivres = totais - passageiros - pendentes.
+// Chamado após a recuperação, quando só o log sabe quais prepares ainda aguardam decisão.
+// Repara tanto o assento "preso" (decrementado sem voto gravado) quanto o contrário.
+// A chave de pendentes segue distribuido.ChaveTrecho.
+func (gc *GerenciadorCaronas) ReconciliarAssentos(pendentes map[string]int) {
+	gc.mu.Lock()
+	defer gc.mu.Unlock()
+
+	alterou := false
+	for i := range gc.caronas {
+		c := &gc.caronas[i]
+		for j := range c.Trechos {
+			t := &c.Trechos[j]
+			chave := fmt.Sprintf("%d|%s|%s", c.ID, strings.ToUpper(t.Origem), strings.ToUpper(t.Destino))
+			esperado := c.AssentosTotais - len(t.Passageiros) - pendentes[chave]
+			if esperado < 0 {
+				esperado = 0
+			}
+			if t.AssentosLivres != esperado {
+				t.AssentosLivres = esperado
+				alterou = true
+			}
+		}
+	}
+	gc.bloqueiosAtivos = make(map[string]bloqueioItem)
+	if alterou {
+		_ = gc.salvarEmDisco()
+	}
+}
+
+// Snapshot devolve uma cópia profunda das caronas (usada por auditoria e testes).
+func (gc *GerenciadorCaronas) Snapshot() []modelos.Carona {
+	gc.mu.RLock()
+	defer gc.mu.RUnlock()
+	copia := make([]modelos.Carona, len(gc.caronas))
+	for i, c := range gc.caronas {
+		copia[i] = c
+		copia[i].Trechos = make([]modelos.Trecho, len(c.Trechos))
+		for j, t := range c.Trechos {
+			copia[i].Trechos[j] = t
+			copia[i].Trechos[j].Passageiros = append([]string(nil), t.Passageiros...)
+		}
+	}
+	return copia
+}

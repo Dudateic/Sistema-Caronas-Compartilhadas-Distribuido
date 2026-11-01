@@ -11,12 +11,6 @@ O QUE ESTÁ FAZENDO:
    cenário de teste selecionado.
 6. Ao término, dispara a geração do relatório final de latências/throughput e aciona
    a auditoria de invariantes distribuídos.
-
-RESULTADOS ESPERADOS:
-- Conclusão de todas as requisições solicitadas sem deadlocks ou panics.
-- Distribuição uniforme de carga entre os nós configurados.
-- Relatório de encerramento impresso com estatísticas consolidadas.
-- Chamada bem-sucedida do auditor pós-teste confirmando Zero Overbooking.
 */
 
 import (
@@ -62,11 +56,11 @@ func main() {
 	cenario := ObterCenario(*cenarioFlag)
 
 	fmt.Println("==================================================================")
-	fmt.Printf("   VAIJUNTO - SIMULADOR DISTRIBUÍDO (%d REQUISIÇÕES)", *totalFlag)
+	fmt.Printf("   VAIJUNTO - SIMULADOR DISTRIBUÍDO (%d REQUISIÇÕES)\n", *totalFlag)
 	fmt.Println("==================================================================")
-	fmt.Printf(" Cenário selecionado     : %s", cenario.Nome())
-	fmt.Printf(" Trabalhadores paralelos : %d goroutines", *concorrenciaFlag)
-	fmt.Printf(" Nós do Consórcio        : %v", alvos)
+	fmt.Printf(" Cenário selecionado     : %s\n", cenario.Nome())
+	fmt.Printf(" Trabalhadores paralelos : %d goroutines\n", *concorrenciaFlag)
+	fmt.Printf(" Nós do Consórcio        : %v\n", alvos)
 	fmt.Println("==================================================================")
 
 	// Garante viagens cadastradas no consórcio para permitir disputas concorrentes

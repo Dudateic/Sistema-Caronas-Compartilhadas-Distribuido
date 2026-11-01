@@ -1,4 +1,12 @@
 {
+  "motorista_seed_3": {
+    "id": "usr_1793503021934714126",
+    "nome": "motorista_seed_3",
+    "login": "motorista_seed_3",
+    "senha": "123456",
+    "tipo": "motorista",
+    "criado_em": "2026-11-01T03:17:01.934715127Z"
+  },
   "pass c": {
     "id": "usr_1793488546708360962",
     "nome": "pass c",
@@ -6,5 +14,133 @@
     "senha": "0804",
     "tipo": "passageiro",
     "criado_em": "2026-10-31T20:15:46.708363383-03:00"
+  },
+  "sim_worker_11_81276": {
+    "id": "usr_1793503021936469862",
+    "nome": "sim_worker_11_81276",
+    "login": "sim_worker_11_81276",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.936470611Z"
+  },
+  "sim_worker_14_1167": {
+    "id": "usr_1793503021936383494",
+    "nome": "sim_worker_14_1167",
+    "login": "sim_worker_14_1167",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.936384601Z"
+  },
+  "sim_worker_17_13441": {
+    "id": "usr_1793503021938582838",
+    "nome": "sim_worker_17_13441",
+    "login": "sim_worker_17_13441",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938584044Z"
+  },
+  "sim_worker_20_33311": {
+    "id": "usr_1793503021938434724",
+    "nome": "sim_worker_20_33311",
+    "login": "sim_worker_20_33311",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938436493Z"
+  },
+  "sim_worker_23_7763": {
+    "id": "usr_1793503021937851437",
+    "nome": "sim_worker_23_7763",
+    "login": "sim_worker_23_7763",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.937852318Z"
+  },
+  "sim_worker_26_76726": {
+    "id": "usr_1793503021937665874",
+    "nome": "sim_worker_26_76726",
+    "login": "sim_worker_26_76726",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.937666779Z"
+  },
+  "sim_worker_29_26104": {
+    "id": "usr_1793503021938698147",
+    "nome": "sim_worker_29_26104",
+    "login": "sim_worker_29_26104",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938699199Z"
+  },
+  "sim_worker_2_62013": {
+    "id": "usr_1793503021936267211",
+    "nome": "sim_worker_2_62013",
+    "login": "sim_worker_2_62013",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.936267931Z"
+  },
+  "sim_worker_32_67665": {
+    "id": "usr_1793503021937531027",
+    "nome": "sim_worker_32_67665",
+    "login": "sim_worker_32_67665",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.937532339Z"
+  },
+  "sim_worker_35_35564": {
+    "id": "usr_1793503021938139847",
+    "nome": "sim_worker_35_35564",
+    "login": "sim_worker_35_35564",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938141078Z"
+  },
+  "sim_worker_38_31155": {
+    "id": "usr_1793503021938238534",
+    "nome": "sim_worker_38_31155",
+    "login": "sim_worker_38_31155",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938239257Z"
+  },
+  "sim_worker_41_67022": {
+    "id": "usr_1793503021937427269",
+    "nome": "sim_worker_41_67022",
+    "login": "sim_worker_41_67022",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.937427896Z"
+  },
+  "sim_worker_44_31447": {
+    "id": "usr_1793503021938315533",
+    "nome": "sim_worker_44_31447",
+    "login": "sim_worker_44_31447",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.938316024Z"
+  },
+  "sim_worker_47_71517": {
+    "id": "usr_1793503021937977639",
+    "nome": "sim_worker_47_71517",
+    "login": "sim_worker_47_71517",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.937979779Z"
+  },
+  "sim_worker_5_49359": {
+    "id": "usr_1793503021936539207",
+    "nome": "sim_worker_5_49359",
+    "login": "sim_worker_5_49359",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.936539799Z"
+  },
+  "sim_worker_8_66311": {
+    "id": "usr_1793503021936613090",
+    "nome": "sim_worker_8_66311",
+    "login": "sim_worker_8_66311",
+    "senha": "123456",
+    "tipo": "passageiro",
+    "criado_em": "2026-11-01T03:17:01.936613719Z"
   }
 }

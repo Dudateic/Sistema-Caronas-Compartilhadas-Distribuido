@@ -6,7 +6,9 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	"sort"
 	"strings"
+	"sync"
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
@@ -174,14 +176,7 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 	dataDesejada := strings.TrimSpace(req.Data)
 
 	todosTrechos := InstanciaCaronas.BuscarTrechos("", "")
-	for nomePar, urlPar := range Config.Pares {
-		remotos, err := InstanciaClienteREST.ConsultarTrechos(urlPar, "", "")
-		if err != nil {
-			visual.MensagemErro(fmt.Sprintf("[Busca] Falha ao consultar a empresa %s em %s: %v", nomePar, urlPar, err))
-			continue
-		}
-		todosTrechos = append(todosTrechos, remotos...)
-	}
+	todosTrechos = append(todosTrechos, consultarTrechosDoConsorcio()...)
 
 	var itinerarios []modelos.Itinerario
 	visitados := make(map[string]bool)
@@ -360,4 +355,38 @@ func ProcessarConsultarNotificacoes(conn net.Conn, dados string) {
 		Mensagem:     "Notificacoes carregadas",
 		Notificacoes: notificacoes,
 	})
+}
+
+// consultarTrechosDoConsorcio consulta todos os parceiros EM PARALELO (cada um com o seu
+// timeout) e junta os resultados em ordem alfabética de empresa, para o resultado ser
+// determinístico. Um parceiro fora do ar é registrado no log e simplesmente não contribui:
+// as demais empresas continuam atendendo a busca.
+func consultarTrechosDoConsorcio() []modelos.TrechoViagem {
+	nomes := make([]string, 0, len(Config.Pares))
+	for nome := range Config.Pares {
+		nomes = append(nomes, nome)
+	}
+	sort.Strings(nomes)
+
+	resultados := make([][]modelos.TrechoViagem, len(nomes))
+	var wg sync.WaitGroup
+	for i, nome := range nomes {
+		wg.Add(1)
+		go func(i int, nome, url string) {
+			defer wg.Done()
+			remotos, err := InstanciaClienteREST.ConsultarTrechos(url, "", "")
+			if err != nil {
+				visual.MensagemErro(fmt.Sprintf("[Busca] Falha ao consultar a empresa %s em %s: %v", nome, url, err))
+				return
+			}
+			resultados[i] = remotos
+		}(i, nome, Config.Pares[nome])
+	}
+	wg.Wait()
+
+	var todos []modelos.TrechoViagem
+	for _, r := range resultados {
+		todos = append(todos, r...)
+	}
+	return todos
 }

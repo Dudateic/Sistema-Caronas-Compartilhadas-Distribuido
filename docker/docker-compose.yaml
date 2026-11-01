@@ -35,7 +35,7 @@ services:
       EMPRESA: A
       TCP_ADDR: ":6060"
       HTTP_ADDR: ":9090"
-      PARES: "B=${URL_B:-http://empresa-b:9090},C=${URL_C:-http://empresa-c:9090}"
+      PARES: "B=${URL_B:-http://172.16.201.11:9092},C=${URL_C:-http://172.16.201.12:9093}"
       DADOS_DIR: "/app/dados"
     ports:
       - "0.0.0.0:6060:6060"
@@ -58,7 +58,7 @@ services:
       EMPRESA: B
       TCP_ADDR: ":7070"
       HTTP_ADDR: ":9090"
-      PARES: "A=${URL_A:-http://empresa-a:9090},C=${URL_C:-http://empresa-c:9090}"
+      PARES: "A=${URL_A:-http://172.16.201.9:9091},C=${URL_C:-http://172.16.201.12:9093}"
       DADOS_DIR: "/app/dados"
     ports:
       - "0.0.0.0:7070:7070"
@@ -81,7 +81,7 @@ services:
       EMPRESA: C
       TCP_ADDR: ":8080"
       HTTP_ADDR: ":9090"
-      PARES: "A=${URL_A:-http://empresa-a:9090},B=${URL_B:-http://empresa-b:9090}"
+      PARES: "A=${URL_A:-http://172.16.201.9:9091},B=${URL_B:-http://172.16.201.11:9092}"
       DADOS_DIR: "/app/dados"
     ports:
       - "0.0.0.0:8080:8080"
@@ -135,7 +135,7 @@ services:
 
   simulador:
     build:
-      context: ..
+      context: ../../../Downloads/correcoes_vaijunto/patch
       dockerfile: docker/Dockerfile
       target: simulador
     profiles: [ "testes" ]

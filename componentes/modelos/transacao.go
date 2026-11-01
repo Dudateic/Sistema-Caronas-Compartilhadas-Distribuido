@@ -23,12 +23,28 @@ type PrepareRequest struct {
 	Destino    string `json:"destino"`
 	Passageiro string `json:"passageiro"`
 	Timestamp  int64  `json:"timestamp"`
+	// Coordenador é o nome da empresa que coordena a transação. O participante
+	// usa esse nome para perguntar a decisão global caso fique sem resposta.
+	Coordenador string `json:"coordenador,omitempty"`
 }
 
 type PrepareResponse struct {
+	TxID      string `json:"tx_id"`
+	VotoSim   bool   `json:"voto_sim"`
+	Motivo    string `json:"motivo,omitempty"`
+	Timestamp int64  `json:"timestamp,omitempty"`
+}
+
+// Decisões globais devolvidas por GET /api/v1/transacoes/decisao.
+const (
+	DecisaoCommit      = "COMMIT"
+	DecisaoAbort       = "ABORT"
+	DecisaoEmAndamento = "EM_ANDAMENTO"
+)
+
+type DecisaoResponse struct {
 	TxID    string `json:"tx_id"`
-	VotoSim bool   `json:"voto_sim"`
-	Motivo  string `json:"motivo,omitempty"`
+	Decisao string `json:"decisao"`
 }
 
 type DecisaoRequest struct {

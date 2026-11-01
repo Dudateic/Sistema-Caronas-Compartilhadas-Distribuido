@@ -4,9 +4,8 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"encoding/json"
-	"fmt"
+	"errors"
 	"net/http"
-	"sync"
 )
 
 type ServicoCaronas interface {
@@ -17,6 +16,18 @@ type ServicoCaronas interface {
 	LiberarAssentoConfirmado(caronaID int, origem, destino, passageiro string) error
 }
 
+// ParticipanteTransacional é o papel de participante do 2PC nesta empresa.
+type ParticipanteTransacional interface {
+	ProcessarPrepare(req modelos.PrepareRequest) (modelos.PrepareResponse, error)
+	ProcessarCommit(txID string) error
+	ProcessarAbort(txID string) error
+}
+
+// DecisorTransacional é o papel de coordenador: informa o destino de uma transação.
+type DecisorTransacional interface {
+	Decisao(txID string) string
+}
+
 type VerificadorCancelamentos interface {
 	VerificarTrechosCancelados(empresaAlvo string, ativos []modelos.TrechoOcupadoInfo) []modelos.TrechoOcupadoInfo
 }
@@ -24,29 +35,27 @@ type VerificadorCancelamentos interface {
 type HandlersREST struct {
 	idEmpresa        string
 	servico          ServicoCaronas
+	participante     ParticipanteTransacional
+	decisor          DecisorTransacional
 	verifReservas    VerificadorCancelamentos
 	aoCancelarRemoto func(empresa string, caronaID int)
-	wal              *distribuido.LogTransacoes
-	mu               sync.Mutex
-
-	// Mapeia TxID para todos os trechos preparados naquela transação
-	transacoesAtivas map[string][]modelos.PrepareRequest
 }
 
 func NovoHandlersREST(
 	idEmpresa string,
 	servico ServicoCaronas,
-	wal *distribuido.LogTransacoes,
+	participante ParticipanteTransacional,
+	decisor DecisorTransacional,
 	verif VerificadorCancelamentos,
 	aoCancelarRemoto func(empresa string, caronaID int),
 ) *HandlersREST {
 	return &HandlersREST{
 		idEmpresa:        idEmpresa,
 		servico:          servico,
+		participante:     participante,
+		decisor:          decisor,
 		verifReservas:    verif,
 		aoCancelarRemoto: aoCancelarRemoto,
-		wal:              wal,
-		transacoesAtivas: make(map[string][]modelos.PrepareRequest),
 	}
 }
 
@@ -55,29 +64,29 @@ func (h *HandlersREST) RegistrarRotas(mux *http.ServeMux) {
 	mux.HandleFunc("/api/v1/transacoes/prepare", h.HandlePrepare)
 	mux.HandleFunc("/api/v1/transacoes/commit", h.HandleCommit)
 	mux.HandleFunc("/api/v1/transacoes/abort", h.HandleAbort)
+	mux.HandleFunc("/api/v1/transacoes/decisao", h.HandleDecisao)
 	mux.HandleFunc("/api/v1/trechos/cancelar", h.HandleCancelarTrechoRemoto)
 	mux.HandleFunc("/api/v1/sync/status", h.HandleSyncStatus)
 	mux.HandleFunc("/api/v1/caronas/cancelada", h.HandleNotificarCaronaCancelada)
 }
 
-// GET /api/v1/trechos?origem=X&destino=Y
+// GET /api/v1/trechos?origem=&destino=
+// 200 com a lista de trechos com assento livre (pode ser vazia).
 func (h *HandlersREST) HandleBuscarTrechos(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
 		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
 		return
 	}
 
-	origem := r.URL.Query().Get("origem")
-	destino := r.URL.Query().Get("destino")
-
-	trechos := h.servico.BuscarTrechos(origem, destino)
-
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(trechos)
+	trechos := h.servico.BuscarTrechos(r.URL.Query().Get("origem"), r.URL.Query().Get("destino"))
+	if trechos == nil {
+		trechos = []modelos.TrechoViagem{}
+	}
+	responderJSON(w, http.StatusOK, trechos)
 }
 
 // POST /api/v1/transacoes/prepare
+// 200 voto SIM (idempotente) | 409 voto NAO | 400 corpo invalido | 500 falha ao gravar o log
 func (h *HandlersREST) HandlePrepare(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
@@ -85,53 +94,26 @@ func (h *HandlersREST) HandlePrepare(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req modelos.PrepareRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.TxID == "" {
 		responderJSON(w, http.StatusBadRequest, modelos.PrepareResponse{
-			TxID:    req.TxID,
-			VotoSim: false,
-			Motivo:  "corpo da requisicao malformado",
+			TxID: req.TxID, VotoSim: false, Motivo: "corpo da requisicao malformado",
 		})
 		return
 	}
 
-	recursoID := fmt.Sprintf("carona_%d_%s_%s", req.CaronaID, req.Origem, req.Destino)
-
-	h.mu.Lock()
-	defer h.mu.Unlock()
-
-	err := h.servico.BloquearAssentoProvisorio(req.CaronaID, req.Origem, req.Destino, req.Passageiro)
-	if err != nil {
-		responderJSON(w, http.StatusOK, modelos.PrepareResponse{
-			TxID:    req.TxID,
-			VotoSim: false,
-			Motivo:  fmt.Sprintf("indisponibilidade de assento: %v", err),
-		})
-		return
+	resp, err := h.participante.ProcessarPrepare(req)
+	switch {
+	case err != nil:
+		responderJSON(w, http.StatusInternalServerError, resp)
+	case resp.VotoSim:
+		responderJSON(w, http.StatusOK, resp)
+	default:
+		responderJSON(w, http.StatusConflict, resp)
 	}
-
-	if h.wal != nil {
-		errWal := h.wal.Gravar(req.TxID, distribuido.LogPrepare, recursoID, req.Passageiro)
-		if errWal != nil {
-			_ = h.servico.LiberarAssentoProvisorio(req.CaronaID, req.Origem, req.Destino, req.Passageiro)
-			responderJSON(w, http.StatusInternalServerError, modelos.PrepareResponse{
-				TxID:    req.TxID,
-				VotoSim: false,
-				Motivo:  "falha ao persistir voto em disco seguro",
-			})
-			return
-		}
-	}
-
-	// Adiciona ao slice para suportar múltiplos trechos na mesma transação
-	h.transacoesAtivas[req.TxID] = append(h.transacoesAtivas[req.TxID], req)
-
-	responderJSON(w, http.StatusOK, modelos.PrepareResponse{
-		TxID:    req.TxID,
-		VotoSim: true,
-	})
 }
 
 // POST /api/v1/transacoes/commit
+// 200 confirmado (idempotente) | 404 transacao desconhecida | 409 ja abortada | 500 falha de log
 func (h *HandlersREST) HandleCommit(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
@@ -139,38 +121,17 @@ func (h *HandlersREST) HandleCommit(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req modelos.DecisaoRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.TxID == "" {
 		http.Error(w, "json invalido", http.StatusBadRequest)
 		return
 	}
 
-	h.mu.Lock()
-	listaPrep, existe := h.transacoesAtivas[req.TxID]
-	if existe {
-		delete(h.transacoesAtivas, req.TxID)
-	}
-	h.mu.Unlock()
-
-	// Confirma todos os trechos associados a esse TxID
-	if existe {
-		for _, dadosPrep := range listaPrep {
-			recursoID := fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
-			if h.wal != nil {
-				_ = h.wal.Gravar(req.TxID, distribuido.LogCommit, recursoID, "reserva_confirmada")
-			}
-			_ = h.servico.ConfirmarAssentoDefinitivo(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
-		}
-	}
-
-	responderJSON(w, http.StatusOK, map[string]any{
-		"tx_id":    req.TxID,
-		"status":   "COMMITTED",
-		"sucesso":  true,
-		"mensagem": "transacao confirmada com sucesso",
-	})
+	err := h.participante.ProcessarCommit(req.TxID)
+	h.responderDecisao(w, req.TxID, "COMMITTED", err)
 }
 
 // POST /api/v1/transacoes/abort
+// 200 abortado (idempotente; inclusive se a transacao era desconhecida) | 409 ja confirmada | 500 falha de log
 func (h *HandlersREST) HandleAbort(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
 		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
@@ -178,35 +139,42 @@ func (h *HandlersREST) HandleAbort(w http.ResponseWriter, r *http.Request) {
 	}
 
 	var req modelos.DecisaoRequest
-	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil || req.TxID == "" {
 		http.Error(w, "json invalido", http.StatusBadRequest)
 		return
 	}
 
-	h.mu.Lock()
-	listaPrep, existe := h.transacoesAtivas[req.TxID]
-	if existe {
-		delete(h.transacoesAtivas, req.TxID)
-	}
-	h.mu.Unlock()
+	err := h.participante.ProcessarAbort(req.TxID)
+	h.responderDecisao(w, req.TxID, "ABORTED", err)
+}
 
-	// Libera todos os trechos bloqueados associados a esse TxID
-	if existe {
-		for _, dadosPrep := range listaPrep {
-			recursoID := fmt.Sprintf("carona_%d_%s_%s", dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino)
-			_ = h.servico.LiberarAssentoProvisorio(dadosPrep.CaronaID, dadosPrep.Origem, dadosPrep.Destino, dadosPrep.Passageiro)
-			if h.wal != nil {
-				_ = h.wal.Gravar(req.TxID, distribuido.LogAbort, recursoID, "reserva_abortada")
-			}
-		}
+func (h *HandlersREST) responderDecisao(w http.ResponseWriter, txID, status string, err error) {
+	switch {
+	case err == nil:
+		responderJSON(w, http.StatusOK, map[string]any{"tx_id": txID, "status": status, "sucesso": true})
+	case errors.Is(err, distribuido.ErrTransacaoNaoEncontrada):
+		responderJSON(w, http.StatusNotFound, map[string]any{"tx_id": txID, "sucesso": false, "erro": err.Error()})
+	case errors.Is(err, distribuido.ErrEstadoInvalido):
+		responderJSON(w, http.StatusConflict, map[string]any{"tx_id": txID, "sucesso": false, "erro": err.Error()})
+	default:
+		responderJSON(w, http.StatusInternalServerError, map[string]any{"tx_id": txID, "sucesso": false, "erro": err.Error()})
 	}
+}
 
-	responderJSON(w, http.StatusOK, map[string]any{
-		"tx_id":    req.TxID,
-		"status":   "ABORTED",
-		"sucesso":  true,
-		"mensagem": "transacao abortada e vaga liberada",
-	})
+// GET /api/v1/transacoes/decisao?tx_id=X
+// Usado por um participante que votou SIM e ficou sem resposta do coordenador.
+// 200 {decisao: COMMIT | ABORT | EM_ANDAMENTO} | 400 sem tx_id
+func (h *HandlersREST) HandleDecisao(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "metodo nao permitido", http.StatusMethodNotAllowed)
+		return
+	}
+	txID := r.URL.Query().Get("tx_id")
+	if txID == "" {
+		http.Error(w, "tx_id obrigatorio", http.StatusBadRequest)
+		return
+	}
+	responderJSON(w, http.StatusOK, modelos.DecisaoResponse{TxID: txID, Decisao: h.decisor.Decisao(txID)})
 }
 
 // POST /api/v1/trechos/cancelar

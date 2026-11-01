@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"path/filepath"
 	"strings"
 	"time"
 
@@ -36,9 +37,18 @@ func InicializarReservas() error {
 }
 
 func InicializarTransacoes() error {
-	var err error
+	// Um log de transações por papel (participante e coordenador), com fsync a cada registro.
+	walParticipante, err := distribuido.NovoLogTransacoes(filepath.Join(DiretorioDados, "participante.log"))
+	if err != nil {
+		return err
+	}
+	walCoordenador, err := distribuido.NovoLogTransacoes(filepath.Join(DiretorioDados, "coordenador.log"))
+	if err != nil {
+		return err
+	}
 
-	InstanciaParticipante, err = distribuido.NovoParticipante2PC(Config.Empresa, InstanciaCaronas, nil)
+	// Recupera os votos pendentes e reconcilia os assentos antes de aceitar tráfego.
+	InstanciaParticipante, err = distribuido.NovoParticipante2PC(Config.Empresa, InstanciaCaronas, walParticipante)
 	if err != nil {
 		return err
 	}
@@ -48,12 +58,25 @@ func InicializarTransacoes() error {
 		Config.Empresa,
 		"",
 		InstanciaClienteREST,
-		nil,
+		walCoordenador,
 		InstanciaParticipante,
 		Config.Pares,
 	)
 
-	return nil
+	// Participante com voto SIM sem resposta pergunta a decisão ao coordenador da transação.
+	InstanciaParticipante.DefinirConsultaDecisao(func(coordenador, txID string) (string, error) {
+		if strings.EqualFold(coordenador, Config.Empresa) {
+			return InstanciaCoordenador.Decisao(txID), nil
+		}
+		url, ok := Config.Pares[coordenador]
+		if !ok {
+			return "", fmt.Errorf("coordenador %s desconhecido", coordenador)
+		}
+		return InstanciaClienteREST.ConsultarDecisao(url, txID)
+	})
+
+	// Retoma decisões que o coordenador gravou mas não chegou a entregar.
+	return InstanciaCoordenador.Recuperar()
 }
 
 func LimparReservasDaCarona(caronaID int) {
@@ -154,7 +177,8 @@ func NovoHandlerAPI() http.Handler {
 	handlers := rest.NovoHandlersREST(
 		Config.Empresa,
 		InstanciaCaronas,
-		nil,
+		InstanciaParticipante,
+		InstanciaCoordenador,
 		InstanciaReservas,
 		LimparReservasDeCaronaExterna,
 	)

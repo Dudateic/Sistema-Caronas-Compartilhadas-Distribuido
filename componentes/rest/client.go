@@ -98,6 +98,12 @@ func (c *ClienteRESTInterEmpresas) EnviarPrepare(enderecoBase string, prepareReq
 	}
 	defer resp.Body.Close()
 
+	// 200 = voto SIM, 409 = voto NAO (ambos trazem o corpo); qualquer outro codigo e erro
+	if resp.StatusCode != http.StatusOK && resp.StatusCode != http.StatusConflict {
+		return modelos.PrepareResponse{TxID: prepareReq.TxID, VotoSim: false},
+			fmt.Errorf("%s respondeu HTTP %d ao prepare", enderecoBase, resp.StatusCode)
+	}
+
 	var prepareResp modelos.PrepareResponse
 	if err := json.NewDecoder(resp.Body).Decode(&prepareResp); err != nil {
 		return modelos.PrepareResponse{TxID: prepareReq.TxID, VotoSim: false}, fmt.Errorf("resposta invalida: %w", err)
@@ -187,4 +193,31 @@ func (c *ClienteRESTInterEmpresas) EnviarCancelamentoTrecho(enderecoBase string,
 	}
 
 	return nil
+}
+
+// ConsultarDecisao pergunta ao coordenador (endereco base) a decisao global de uma transacao.
+func (c *ClienteRESTInterEmpresas) ConsultarDecisao(enderecoBase, txID string) (string, error) {
+	urlAlvo := fmt.Sprintf("%s/api/v1/transacoes/decisao?tx_id=%s", strings.TrimRight(enderecoBase, "/"), url.QueryEscape(txID))
+
+	ctx, cancel := context.WithTimeout(context.Background(), TimeoutPadraoHTTP)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodGet, urlAlvo, nil)
+	if err != nil {
+		return "", err
+	}
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("falha ao consultar decisao em %s: %w", enderecoBase, err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("coordenador respondeu HTTP %d", resp.StatusCode)
+	}
+	var d modelos.DecisaoResponse
+	if err := json.NewDecoder(resp.Body).Decode(&d); err != nil {
+		return "", fmt.Errorf("resposta invalida do coordenador: %w", err)
+	}
+	return d.Decisao, nil
 }
