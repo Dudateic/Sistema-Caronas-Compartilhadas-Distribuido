@@ -1,18 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Simula o tráfego típico de um ambiente de produção real.
-2. Cada trabalhador pesquisa rotas aleatórias e seleciona um dos itinerários
-   retornados para efetivar a reserva.
-3. Cobre itinerários diretos (locais) e com conexões entre empresas parceiras.
-
-RESULTADOS ESPERADOS:
-- Elevado índice de COMMITS em trechos com vagas disponíveis.
-- Transição segura para ABORT quando trechos intermediários se esgotam.
-- Nenhum itinerário confirmado parcialmente em servidores parceiros.
-*/
-
 import (
 	"math/rand"
 	"strings"

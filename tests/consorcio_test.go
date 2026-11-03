@@ -15,8 +15,6 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 )
 
-// --- Atomicidade -----------------------------------------------------------
-
 func TestReservaAtravessaEmpresas(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
 	a := c.nos["A"].publicar(t, []string{"SSA", "FSA"}, 2, 10)
@@ -42,7 +40,6 @@ func TestNaoConfirmaParcial(t *testing.T) {
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
 	cc := c.nos["C"].publicar(t, []string{"VCA", "MOC"}, 1, 10)
 
-	// Esgota o trecho de C: a próxima reserva que o inclua deve falhar inteira.
 	if ok, m := c.nos["C"].reservar("zé", trecho("C", cc, "VCA", "MOC")); !ok {
 		t.Fatalf("setup: %s", m)
 	}
@@ -51,23 +48,20 @@ func TestNaoConfirmaParcial(t *testing.T) {
 	if ok {
 		t.Fatal("reserva nao deveria confirmar: trecho de C lotado")
 	}
-	// Os assentos já bloqueados em A e B precisam ter sido devolvidos.
 	esperar(t, 2*time.Second, "assentos de A e B liberados pelo ABORT", func() bool {
 		return c.nos["A"].livres(a, "SSA", "FSA") == 1 && c.nos["B"].livres(b, "FSA", "VCA") == 1
 	})
 	c.invariantes(t)
 }
 
-// --- Exclusão mútua / precedência -----------------------------------------
-
 func TestUltimoAssentoComCoordenadoresDiferentes(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
-	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10) // 1 assento, dono = B
+	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
 
 	var confirmados int32
 	var wg sync.WaitGroup
 	for i := 0; i < 30; i++ {
-		coord := []string{"A", "B", "C"}[i%3] // pedidos chegam por empresas diferentes
+		coord := []string{"A", "B", "C"}[i%3]
 		wg.Add(1)
 		go func(i int, coord string) {
 			defer wg.Done()
@@ -85,8 +79,6 @@ func TestUltimoAssentoComCoordenadoresDiferentes(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Dois passageiros querem os mesmos trechos de empresas distintas em ordens opostas.
-// O prepare nunca espera (recusa na hora), então não há espera circular: o teste termina.
 func TestSemDeadlockEmOrdensOpostas(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	a := c.nos["A"].publicar(t, []string{"X", "Y"}, 1, 10)
@@ -119,8 +111,6 @@ func TestSemDeadlockEmOrdensOpostas(t *testing.T) {
 	})
 	c.invariantes(t)
 }
-
-// --- Carga ------------------------------------------------------------------
 
 func TestCargaConcorrenteMantemInvariantes(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
@@ -164,7 +154,6 @@ func TestCargaConcorrenteMantemInvariantes(t *testing.T) {
 	})
 	c.invariantes(t)
 
-	// Atomicidade: todo passageiro aparece nos DOIS trechos ou em nenhum.
 	nos := map[string]int{}
 	for _, id := range ids {
 		for _, car := range c.nos[id].caronas.Snapshot() {
@@ -192,8 +181,6 @@ func TestCargaConcorrenteMantemInvariantes(t *testing.T) {
 	t.Logf("%d reservas concorrentes, %d confirmadas, invariantes preservadas", reservas, confirmadas)
 }
 
-// --- Tolerância a falhas ------------------------------------------------------
-
 func TestEmpresaForaDoArNaoBloqueiaAsDemais(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
 	a := c.nos["A"].publicar(t, []string{"SSA", "FSA"}, 2, 10)
@@ -202,7 +189,6 @@ func TestEmpresaForaDoArNaoBloqueiaAsDemais(t *testing.T) {
 
 	c.nos["B"].derrubar()
 
-	// Itinerário que depende de B: aborta, e A/C não ficam com assento preso.
 	ok, _ := c.nos["A"].reservar("ana", trecho("A", a, "SSA", "FSA"), trecho("B", b, "FSA", "VCA"), trecho("C", cc, "VCA", "MOC"))
 	if ok {
 		t.Fatal("nao deveria confirmar com B fora do ar")
@@ -211,7 +197,6 @@ func TestEmpresaForaDoArNaoBloqueiaAsDemais(t *testing.T) {
 		return c.nos["A"].livres(a, "SSA", "FSA") == 2 && c.nos["C"].livres(cc, "VCA", "MOC") == 2
 	})
 
-	// Itinerário que NÃO depende de B continua funcionando.
 	if ok, m := c.nos["A"].reservar("bia", trecho("A", a, "SSA", "FSA")); !ok {
 		t.Fatalf("A deveria operar normalmente sem B: %s", m)
 	}
@@ -222,12 +207,10 @@ func TestEmpresaForaDoArNaoBloqueiaAsDemais(t *testing.T) {
 	c.invariantes(t)
 }
 
-// O participante vota SIM, cai e volta: o voto sobrevive (log) e a decisão do coordenador chega.
 func TestParticipanteCaiAposPrepareECommitChegaDepois(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
 
-	// B vota SIM para uma transação coordenada por A.
 	resp, err := c.nos["B"].part.ProcessarPrepare(modelos.PrepareRequest{
 		TxID: "tx_manual_1", CaronaID: b, Origem: "FSA", Destino: "VCA", Passageiro: "ana", Timestamp: 5, Coordenador: "A",
 	})
@@ -236,7 +219,7 @@ func TestParticipanteCaiAposPrepareECommitChegaDepois(t *testing.T) {
 	}
 
 	c.nos["B"].derrubar()
-	c.nos["B"].iniciar(t) // reinício: recupera o voto do log
+	c.nos["B"].iniciar(t)
 
 	if got := c.nos["B"].part.PendentesAtivas(); got != 1 {
 		t.Fatalf("apos reiniciar, B deveria ter 1 transacao pendente recuperada do log, tem %d", got)
@@ -254,7 +237,6 @@ func TestParticipanteCaiAposPrepareECommitChegaDepois(t *testing.T) {
 	c.invariantes(t)
 }
 
-// O coordenador gravou COMMIT, caiu antes de avisar o participante e, ao voltar, reenvia a decisão.
 func TestCoordenadorCaiDepoisDeDecidirCommit(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -265,7 +247,6 @@ func TestCoordenadorCaiDepoisDeDecidirCommit(t *testing.T) {
 		t.Fatal("prepare recusado")
 	}
 
-	// Simula o log do coordenador A no ponto exato da queda: INICIO + COMMIT, sem FIM.
 	c.nos["A"].derrubar()
 	wal, err := distribuido.NovoLogTransacoes(c.nos["A"].dir + "/coordenador.log")
 	if err != nil {
@@ -276,8 +257,7 @@ func TestCoordenadorCaiDepoisDeDecidirCommit(t *testing.T) {
 	_ = wal.Gravar("tx_coord_1", distribuido.LogCommit, "", "global_commit_aprovado")
 	_ = wal.Fechar()
 
-	c.nos["A"].iniciar(t) // recuperação reenvia o COMMIT para B
-
+	c.nos["A"].iniciar(t)
 	esperar(t, 3*time.Second, "B confirma o assento apos a recuperacao de A", func() bool {
 		return len(c.nos["B"].passageiros(b, "FSA", "VCA")) == 1
 	})
@@ -287,7 +267,6 @@ func TestCoordenadorCaiDepoisDeDecidirCommit(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Coordenador caiu ANTES de decidir: ao voltar, aplica abort presumido e o assento é liberado.
 func TestCoordenadorCaiAntesDeDecidirAbortaPresumido(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -312,7 +291,6 @@ func TestCoordenadorCaiAntesDeDecidirAbortaPresumido(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Bloqueio órfão: o coordenador nunca decidiu nem respondeu. O TTL consulta o coordenador e libera.
 func TestBloqueioOrfaoExpiraConsultandoCoordenador(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -331,7 +309,6 @@ func TestBloqueioOrfaoExpiraConsultandoCoordenador(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Coordenador inalcançável: o participante NÃO pode abortar sozinho (poderia ter havido COMMIT).
 func TestParticipanteNaoAbortaSozinhoSeCoordenadorForaDoAr(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -355,8 +332,6 @@ func TestParticipanteNaoAbortaSozinhoSeCoordenadorForaDoAr(t *testing.T) {
 	}
 }
 
-// --- Persistência / recuperação ----------------------------------------------------
-
 func TestReinicioPreservaReservasConfirmadas(t *testing.T) {
 	c := novoConsorcio(t, "A", "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 2, 10)
@@ -377,8 +352,6 @@ func TestReinicioPreservaReservasConfirmadas(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Assento decrementado em disco sem voto gravado no log (queda entre as duas gravações):
-// a reconciliação da recuperação devolve o assento.
 func TestReconciliacaoLiberaAssentoSemVotoNoLog(t *testing.T) {
 	c := novoConsorcio(t, "B")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 2, 10)
@@ -394,8 +367,6 @@ func TestReconciliacaoLiberaAssentoSemVotoNoLog(t *testing.T) {
 		t.Fatalf("assento preso nao foi reconciliado: livres=%d", l)
 	}
 }
-
-// --- API REST: códigos de retorno e idempotência ----------------------------------
 
 func postJSON(t *testing.T, url string, corpo any) (int, map[string]any) {
 	t.Helper()
@@ -426,7 +397,6 @@ func TestAPIRestCodigosEIdempotencia(t *testing.T) {
 	if l := c.nos["B"].livres(b, "FSA", "VCA"); l != 0 {
 		t.Fatalf("prepare repetido bloqueou assento extra: livres=%d", l)
 	}
-	// Outro passageiro, sem assento: voto NÃO = 409.
 	outro := prep
 	outro.TxID, outro.Passageiro = "tx_rest_2", "bia"
 	if st, _ := postJSON(t, base+"prepare", outro); st != 409 {
@@ -455,7 +425,6 @@ func TestAPIRestCodigosEIdempotencia(t *testing.T) {
 	if st, _ := postJSON(t, base+"abort", map[string]any{"tx_id": "inexistente"}); st != 200 {
 		t.Fatalf("abort de transacao desconhecida esperado 200, veio %d", st)
 	}
-	// Um PREPARE atrasado de uma transação já abortada deve ser recusado (não bloqueia assento).
 	late := modelos.PrepareRequest{TxID: "inexistente", CaronaID: b, Origem: "FSA", Destino: "VCA", Passageiro: "caio"}
 	if st, _ := postJSON(t, base+"prepare", late); st != 409 {
 		t.Fatalf("prepare atrasado apos abort esperado 409, veio %d", st)
@@ -475,8 +444,6 @@ func TestRelogioLamport(t *testing.T) {
 	}
 }
 
-// --- Terminação cooperativa (coordenador fora do ar) ---------------------------------
-
 func prepararPara(t *testing.T, n *no, tx string, caronaID int, origem, destino, passageiro string, participantes []string) {
 	t.Helper()
 	resp, err := n.part.ProcessarPrepare(modelos.PrepareRequest{
@@ -488,8 +455,6 @@ func prepararPara(t *testing.T, n *no, tx string, caronaID int, origem, destino,
 	}
 }
 
-// B votou SIM, o coordenador A caiu, e C nunca votou. Como C não votou, A jamais poderia
-// ter decidido COMMIT: B e C abortam entre si, sem esperar A voltar.
 func TestCoordenadorCaidoParticipanteQueNuncaVotouLiberaOutro(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -503,7 +468,6 @@ func TestCoordenadorCaidoParticipanteQueNuncaVotouLiberaOutro(t *testing.T) {
 	if c.nos["B"].part.PendentesAtivas() != 0 || c.nos["B"].livres(b, "FSA", "VCA") != 1 {
 		t.Fatal("B deveria ter liberado o assento depois de saber que C nunca votou")
 	}
-	// A promessa de C vale: um PREPARE atrasado dessa transação é recusado.
 	resp, _ := c.nos["C"].part.ProcessarPrepare(modelos.PrepareRequest{
 		TxID: "tx_coop_1", CaronaID: cc, Origem: "VCA", Destino: "MOC", Passageiro: "ana", Coordenador: "A",
 	})
@@ -513,7 +477,6 @@ func TestCoordenadorCaidoParticipanteQueNuncaVotouLiberaOutro(t *testing.T) {
 	c.invariantes(t)
 }
 
-// B votou SIM, A caiu, mas C já recebeu o COMMIT: logo a decisão foi COMMIT e B confirma.
 func TestCoordenadorCaidoParticipanteQueJaConfirmouDecideOutro(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -535,8 +498,6 @@ func TestCoordenadorCaidoParticipanteQueJaConfirmouDecideOutro(t *testing.T) {
 	c.invariantes(t)
 }
 
-// Caso irredutível do 2PC: todos votaram SIM e o coordenador caiu antes de avisar ninguém.
-// Ninguém pode decidir sozinho; o assento fica bloqueado até A voltar, e então resolve.
 func TestCoordenadorCaidoTodosPreparadosEsperamARecuperacao(t *testing.T) {
 	c := novoConsorcio(t, "A", "B", "C")
 	b := c.nos["B"].publicar(t, []string{"FSA", "VCA"}, 1, 10)
@@ -553,7 +514,6 @@ func TestCoordenadorCaidoTodosPreparadosEsperamARecuperacao(t *testing.T) {
 		t.Fatal("ninguem poderia decidir sozinho: todos votaram SIM")
 	}
 
-	// A volta com COMMIT gravado e sem FIM: reenvia a decisão.
 	wal, _ := distribuido.NovoLogTransacoes(c.nos["A"].dir + "/coordenador.log")
 	det, _ := json.Marshal(map[string]any{"participantes": map[string]string{"B": c.url("B"), "C": c.url("C")}})
 	_ = wal.Gravar("tx_coop_3", distribuido.LogInicio, "", string(det))

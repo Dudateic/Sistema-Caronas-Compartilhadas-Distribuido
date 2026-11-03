@@ -1,20 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Mantém uma conexão TCP persistente (keep-alive) aberta por trabalhador.
-2. Serializa payloads JSON com delimitador de quebra de linha ('\n') para
-   adequação ao protocolo de streaming do servidor.
-3. Se a conexão cair ou expirar por timeout, realiza reconexão transparente
-   com retry automático antes de computar erro.
-4. Evita o esgotamento de portas efêmeras (TIME_WAIT socket exhaustion) no Linux.
-
-RESULTADOS ESPERADOS:
-- Falhas de conexão próximas a 0 mesmo com 10.000+ requisições em curto intervalo.
-- Redução expressiva da latência total (eliminando o handshake SYN-ACK repetitivo).
-- Fechamento gracioso de sockets ao término de cada rotina trabalhadora.
-*/
-
 import (
 	"bufio"
 	"encoding/json"

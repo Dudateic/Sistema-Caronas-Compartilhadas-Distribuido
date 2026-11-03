@@ -1,4 +1,3 @@
-# Teste de ponta a ponta com 3 servidores reais (processos) em localhost.
 # Uso: go build -o bin/servidor ./aplicacao/servidor && python3 tests/e2e/cancelamento.py ./bin/servidor
 # Verifica: cancelamento de carona pelo motorista devolve os assentos nas outras empresas e o aviso
 # a uma empresa fora do ar e guardado e reenviado quando ela volta.
@@ -28,13 +27,11 @@ def check(nome,cond):
     global ok; print(("OK   " if cond else "FALHA"),nome); ok&=bool(cond)
 for n in "ABC": start(n)
 
-# 1) motorista de A cancela a carona: o assento do passageiro em B precisa ser devolvido
 r=setup("p1"); check("reserva criada",r["sucesso"])
 call("A",{"tipo":"cancelar_carona_requisicao","carona_id":1,"motorista":"ma"}); time.sleep(1.5)
 check("1) assento em B devolvido apos motorista de A cancelar", seats("B")[0][2]==1 and seats("B")[0][1]==[])
 check("1) reserva removida em C", not call("C",{"tipo":"consultar_reservas_requisicao","passageiro":"p1"}).get("reservas"))
 
-# 2) passageiro cancela com B fora do ar: aviso guardado e reenviado quando B volta
 call("B",{"tipo":"cancelar_carona_requisicao","carona_id":1,"motorista":"mb"}) if False else None
 shutil.rmtree(R+"/A"); shutil.rmtree(R+"/B"); stop("A"); stop("B"); start("A"); start("B")
 r=setup("p2"); check("2) reserva criada",r["sucesso"])
@@ -45,7 +42,6 @@ start("B"); time.sleep(4)
 check("2) B liberou o assento depois de voltar", seats("B")[0][1]==[] and seats("B")[0][2]==1)
 check("2) fila de C esvaziada", len(json.load(open(f"{R}/C/notificacoes_pendentes.json")))==0)
 
-# 3) motorista de A cancela com C fora do ar: C so fica sabendo ao voltar e devolve o assento em B
 shutil.rmtree(R+"/A"); shutil.rmtree(R+"/B"); stop("A"); stop("B"); start("A"); start("B")
 r=setup("p3"); check("3) reserva criada",r["sucesso"])
 stop("C")

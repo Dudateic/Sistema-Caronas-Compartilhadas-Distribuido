@@ -17,14 +17,10 @@ import (
 )
 
 func TestMain(m *testing.M) {
-	// Escrito uma única vez, antes de qualquer teste: reenvios da fase 2 em segundo plano leem este valor.
 	distribuido.IntervaloReenvioFase2 = 100 * time.Millisecond
 	os.Exit(m.Run())
 }
 
-// no é uma empresa do consórcio rodando em processo: tem diretório de dados próprio,
-// logs de transação próprios e uma API REST em porta HTTP real. derrubar() simula a queda
-// (perde toda a memória) e iniciar() simula o reinício (relê o disco).
 type no struct {
 	id    string
 	dir   string
@@ -45,7 +41,6 @@ type consorcio struct {
 
 func (c *consorcio) url(id string) string { return "http://" + c.nos[id].addr }
 
-// novoConsorcio sobe as empresas informadas, todas conhecendo umas às outras.
 func novoConsorcio(t *testing.T, ids ...string) *consorcio {
 	t.Helper()
 	c := &consorcio{nos: map[string]*no{}}
@@ -125,7 +120,7 @@ func (n *no) iniciar(t *testing.T) {
 	mux := http.NewServeMux()
 	rest.NovoHandlersREST(n.id, n.caronas, n.part, n.coord, nil, nil).RegistrarRotas(mux)
 	var l net.Listener
-	for i := 0; i < 50; i++ { // a porta pode demorar um instante para ser liberada
+	for i := 0; i < 50; i++ {
 		l, err = net.Listen("tcp", n.addr)
 		if err == nil {
 			break
@@ -140,7 +135,6 @@ func (n *no) iniciar(t *testing.T) {
 	go func() { _ = srv.Serve(l) }()
 }
 
-// derrubar simula a queda: fecha a API e descarta tudo o que estava só em memória.
 func (n *no) derrubar() {
 	if n.srv != nil {
 		_ = n.srv.Close()
@@ -231,7 +225,6 @@ func (c *consorcio) invariantes(t *testing.T) {
 	}
 }
 
-// esperar repete a condição até ela ficar verdadeira ou o prazo estourar.
 func esperar(t *testing.T, prazo time.Duration, descricao string, cond func() bool) {
 	t.Helper()
 	limite := time.Now().Add(prazo)

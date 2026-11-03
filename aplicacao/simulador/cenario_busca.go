@@ -1,18 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Sorteia pares aleatórios de Origem e Destino a cada iteração.
-2. Dispara requisições contínuas de busca de itinerários.
-3. Avalia o desempenho do algoritmo DFS e das rotas REST de consulta inter-servidores
-   sem reter travas de escrita ou assentos provisórios.
-
-RESULTADOS ESPERADOS:
-- Latências P50 e P95 baixíssimas (< 10 ms).
-- Identificação precisa de itinerários diretos e com conexão.
-- Zero impacto no inventário de vagas ou locks transacionais.
-*/
-
 import (
 	"math/rand"
 	"strings"

@@ -1,20 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Coleta durações de execução de forma thread-safe (com sync/atomic e RWMutex).
-2. Segmenta as latências por categoria operacional (Buscas vs. Reservas 2PC vs. Cancelamentos).
-3. Calcula métricas estatísticas essenciais:
-   - P50 (Mediana): comportamento padrão da maioria das requisições.
-   - P95: cauda operacional relevante para SLAs distribuídos.
-   - P99: pior caso observado sob contenção ou disputa concorrente.
-   - Média aritmética global.
-
-RESULTADOS ESPERADOS:
-- Medições isoladas: buscas leves não camuflam o custo transacional do 2PC.
-- Ausência de gargalo de sincronização de memória entre goroutines concorrentes.
-*/
-
 import (
 	"sort"
 	"sync"

@@ -1,18 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Realiza buscas e reservas bem-sucedidas.
-2. Mantém o registro dos bilhetes confirmados em memória local do worker.
-3. Com probabilidade de 40%, dispara o cancelamento de um bilhete já adquirido.
-4. Valida se o cancelamento local propaga para as empresas que detêm os trechos.
-
-RESULTADOS ESPERADOS:
-- Liberação imediata dos assentos cancelados nos servidores de dados.json.
-- Reutilização instantânea desses assentos por novas buscas e reservas.
-- Zero assentos perdidos ou inconsistentes no encerramento.
-*/
-
 import (
 	"math/rand"
 	"strings"

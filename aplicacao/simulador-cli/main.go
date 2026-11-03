@@ -1,24 +1,5 @@
 package main
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Faz o parse de todas as flags de linha de comando configuradas pelo usuário ou Docker.
-2. Normaliza os alvos dos servidores (TCP) do consórcio distribuído.
-3. Inicializa o catálogo de caronas ativas através da rotina de semeadura.
-4. Spawna um pool de goroutines (trabalhadores concorrentes) e distribui as tarefas
-   via canais seguros (channels).
-5. Cada trabalhador cadastra-se como passageiro e executa repetidamente passos do
-   cenário de teste selecionado.
-6. Ao término, dispara a geração do relatório final de latências/throughput e aciona
-   a auditoria de invariantes distribuídos.
-
-RESULTADOS ESPERADOS:
-- Conclusão de todas as requisições solicitadas sem deadlocks ou panics.
-- Distribuição uniforme de carga entre os nós configurados.
-- Relatório de encerramento impresso com estatísticas consolidadas.
-- Chamada bem-sucedida do auditor pós-teste confirmando Zero Overbooking.
-*/
-
 import (
 	main2 "Sistema-Caronas-Compartilhadas-Distribuido/aplicacao/simulador"
 	"flag"
@@ -63,14 +44,11 @@ func main() {
 	cenario := main2.ObterCenario(*cenarioFlag)
 
 	fmt.Println("==================================================================")
-	fmt.Printf("   VAIJUNTO - SIMULADOR DISTRIBUÍDO (%d REQUISIÇÕES)", *totalFlag)
-	fmt.Println("==================================================================")
 	fmt.Printf(" Cenário selecionado     : %s", cenario.Nome())
 	fmt.Printf(" Trabalhadores paralelos : %d goroutines", *concorrenciaFlag)
 	fmt.Printf(" Nós do Consórcio        : %v", alvos)
 	fmt.Println("==================================================================")
 
-	// Garante viagens cadastradas no consórcio para permitir disputas concorrentes
 	main2.SemearCatalogoCaronas(alvos, timeoutDur, *assentosFlag)
 
 	var stats main2.EstatisticasConsorcio
@@ -96,7 +74,6 @@ func main() {
 			cli := main2.NovoClienteTCP(alvo, timeoutDur)
 			defer cli.Fechar()
 
-			// Cadastro único do passageiro simulado
 			_ = cli.Executar(map[string]any{
 				"tipo":         cliente_servidor.TipoCadastroReq,
 				"nome":         nomeUsuario,
@@ -124,7 +101,6 @@ func main() {
 	wg.Wait()
 	tempoTotal := time.Since(inicioGeral)
 
-	// Exibe o painel consolidado com percentis de resposta e auditoria
 	main2.ExibirRelatorioFinal(&stats, tempoTotal)
 	main2.AuditarInvariantes(alvos, timeoutDur)
 }

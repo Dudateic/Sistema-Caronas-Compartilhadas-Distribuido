@@ -1,18 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Conecta-se individualmente a cada nó da empresa (A, B, C) ao término do estresse.
-2. Consulta o catálogo completo de caronas diretamente da API.
-3. Para cada trecho de cada carona, aplica a invariante de conservação:
-      len(Passageiros) + AssentosLivres == AssentosTotais
-4. Reporta qualquer discrepância matemática de vagas excedidas ou vazadas.
-
-RESULTADOS ESPERADOS:
-- Relatório positivo indicando: "ZERO OVERBOOKING detectado em todas as empresas".
-- Ausência total de trechos com assentos negativos ou passageiros duplicados.
-*/
-
 import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
 	"fmt"

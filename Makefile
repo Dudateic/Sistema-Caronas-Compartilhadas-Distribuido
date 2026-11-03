@@ -1,9 +1,9 @@
 COMPOSE       ?= docker compose -f docker/docker-compose.yaml
 COMPOSE_LOCAL ?= docker compose -f docker/docker-compose.yaml -f docker/docker-compose.local-ips.yaml
 BIN           ?= bin
-IP_A          ?= 172.16.201.9
-IP_B          ?= 172.16.201.11
-IP_C          ?= 172.16.201.12
+IP_A          ?= 172.16.201.10
+IP_B          ?= 172.16.201.6
+IP_C          ?= 172.16.230.203
 ALVOS         ?= empresa-a:6060,empresa-b:7070,empresa-c:8080
 SIM_IMG       ?= vaijunto-simulador
 REDE          ?= docker_consorcio

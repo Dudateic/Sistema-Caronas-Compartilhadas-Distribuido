@@ -1,17 +1,5 @@
 package simulador
 
-/*
-
-O QUE ESTÁ FAZENDO:
-1. Consolida os contadores de throughput (vazão média por segundo).
-2. Extrai os percentis P50, P95, P99 e médias de latência por categoria.
-3. Imprime uma tabela clara e visualmente estruturada no terminal padrão.
-
-RESULTADOS ESPERADOS:
-- Apresentação transparente das métricas de desempenho para documentação e entrega.
-- Discriminação nítida entre operações de leitura rápida e reservas atômicas 2PC.
-*/
-
 import (
 	"fmt"
 	"sync/atomic"
@@ -31,7 +19,7 @@ func ExibirRelatorioFinal(stats *EstatisticasConsorcio, duracao time.Duration) {
 
 	fmt.Println("==================================================================")
 	fmt.Println("             RELATÓRIO DE ESTRESSE & ATOMICIDADE (2PC)            ")
-	fmt.Println("==================================================================")
+	fmt.Println("==================================================================\n")
 	fmt.Printf("Tempo de execução        : %v", duracao.Round(time.Millisecond))
 	fmt.Printf("Volume total executado   : %d operações", totalOps)
 	fmt.Printf("Throughput (Vazão média) : %.2f ops/s", vazao)

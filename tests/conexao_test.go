@@ -31,7 +31,6 @@ func ouvir(t *testing.T, tratar func(net.Conn)) string {
 	return l.Addr().String()
 }
 
-// Um servidor VaiJunto de verdade responde ao handshake: o cliente fica conectado.
 func TestConectaQuandoServidorResponde(t *testing.T) {
 	addr := ouvir(t, func(c net.Conn) {
 		defer c.Close()
@@ -57,7 +56,6 @@ func TestConectaQuandoServidorResponde(t *testing.T) {
 	_ = cli.Fechar()
 }
 
-// Porta aceita a conexão TCP e fecha em seguida (como o proxy do Docker sem servidor por trás).
 func TestNaoConectaSeAceitaEFecha(t *testing.T) {
 	addr := ouvir(t, func(c net.Conn) { _ = c.Close() })
 	if cli, err := cliente_servidor.ConectarTCP(addr, time.Second); err == nil {
@@ -66,7 +64,6 @@ func TestNaoConectaSeAceitaEFecha(t *testing.T) {
 	}
 }
 
-// Porta aberta, mas ninguém responde (servidor travado ou outro serviço na porta).
 func TestNaoConectaSeNaoResponde(t *testing.T) {
 	addr := ouvir(t, func(c net.Conn) { time.Sleep(5 * time.Second); _ = c.Close() })
 	inicio := time.Now()
@@ -83,7 +80,6 @@ func TestNaoConectaSeNaoResponde(t *testing.T) {
 	}
 }
 
-// Nada escutando na porta.
 func TestNaoConectaSeNaoHaServidor(t *testing.T) {
 	l, _ := net.Listen("tcp", "127.0.0.1:0")
 	addr := l.Addr().String()

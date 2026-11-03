@@ -1,27 +1,12 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Registra dinamicamente contas de motoristas concorrentes.
-2. Publica viagens efêmeras no consórcio.
-3. Aguarda um intervalo curto e cancela a carona pelo motorista.
-4. Testa a emissão em cascata do cancelamento remoto via REST (/api/v1/caronas/cancelada)
-   para que os servidores parceiros anulem as reservas e gerem notificações.
-
-RESULTADOS ESPERADOS:
-- Propagação íntegra dos cancelamentos entre empresas parceiras.
-- Geração das notificações de viagem cancelada para os passageiros afetados.
-- Devolução exata de todas as capacidades sem vestígios de reservas órfãs.
-*/
-
 import (
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"fmt"
 	"math/rand"
 	"sync/atomic"
 	"time"
-
-	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/cliente_servidor"
-	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 )
 
 type CenarioResilienciaMotorista struct{}

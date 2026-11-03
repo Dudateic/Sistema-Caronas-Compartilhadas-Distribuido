@@ -1,18 +1,5 @@
 package simulador
 
-/*
-O QUE ESTÁ FAZENDO:
-1. Conecta-se em cada nó servidor antes da execução concorrente de testes.
-2. Registra contas de motoristas padronizadas.
-3. Publica viagens com rotas contíguas que formam conexões entre diferentes
-   empresas (ex: SSA->FSA->VIT, VIT->BRU->CLE, SSA->VIT->CLE).
-4. Parametriza o total de assentos por trecho conforme flag informada.
-
-RESULTADOS ESPERADOS:
-- Existência garantida de itinerários diretos e multitrecho navegáveis por DFS.
-- Vagas delimitadas para que a contenção do 2PC possa ser testada sob limites reais.
-*/
-
 import (
 	"fmt"
 	"time"

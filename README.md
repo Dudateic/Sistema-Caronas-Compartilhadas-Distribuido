@@ -319,3 +319,4 @@ tests/             testes automatizados (carga, concorrência, falhas)
 make run-servidor-a IP_B=192.168.18.7 IP_C=192.168.18.7
 curl http://192.168.18.7:9092/api/v1/trechos
 curl http://192.168.18.7:9093/api/v1/trechos
+  make run-servidor-a IP_B=localhost IP_C=localhost
