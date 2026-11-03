@@ -1,7 +1,5 @@
 # Coordenação Distribuída: Algoritmo de Ricart-Agrawala aplicado ao VaiJunto
 
-> **Atenção:** este algoritmo foi estudado como alternativa, mas **não está ligado ao servidor**. A exclusão mútua adotada é a serialização no dono do assento; veja `two-phase_commit.md`.
-
 > **TEC502 - TP02 - Concorrência e Conectividade — Semestre 2026.2 | UEFS**
 
 ## 1. Objetivo
