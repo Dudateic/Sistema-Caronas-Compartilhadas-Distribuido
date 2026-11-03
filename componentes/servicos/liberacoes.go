@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,6 +13,7 @@ import (
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/rest"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
 )
 
 // Tipos de tarefa que precisam chegar a OUTRA empresa e não podem se perder se ela estiver fora do ar.
@@ -94,7 +96,13 @@ func entregar(t tarefaRemota) bool {
 		err := InstanciaClienteREST.EnviarCancelamentoTrecho(url, t.CaronaID, t.Origem, t.Destino, t.Passageiro)
 		return err == nil || errors.Is(err, rest.ErrNaoEncontrado) // 404: já estava liberado
 	case tarefaCaronaCancelada:
-		return InstanciaClienteREST.NotificarCaronaCancelada(url, Config.Empresa, t.CaronaID) == nil
+		err := InstanciaClienteREST.NotificarCaronaCancelada(url, Config.Empresa, t.CaronaID)
+		if err != nil {
+			visual.MensagemAviso(fmt.Sprintf("[Cancelamento] Aviso da carona #%d nao entregue a %s (%v); sera reenviado", t.CaronaID, t.Empresa, err))
+			return false
+		}
+		visual.MensagemSucesso(fmt.Sprintf("[Cancelamento] Empresa %s avisada do cancelamento da carona #%d", t.Empresa, t.CaronaID))
+		return true
 	}
 	return true
 }

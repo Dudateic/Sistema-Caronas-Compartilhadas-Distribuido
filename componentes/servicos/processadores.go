@@ -173,50 +173,7 @@ func ProcessarBuscarItinerarios(conn net.Conn, dados string) {
 	todosTrechos := InstanciaCaronas.BuscarTrechos("", "")
 	todosTrechos = append(todosTrechos, consultarTrechosDoConsorcio()...)
 
-	var itinerarios []modelos.Itinerario
-	visitados := make(map[string]bool)
-
-	var dfs func(atual string, caminhoAtual []modelos.TrechoViagem, precoAcumulado float64)
-	dfs = func(atual string, caminhoAtual []modelos.TrechoViagem, precoAcumulado float64) {
-		if strings.EqualFold(atual, destinoDesejado) && len(caminhoAtual) > 0 {
-			copiaCaminho := make([]modelos.TrechoViagem, len(caminhoAtual))
-			copy(copiaCaminho, caminhoAtual)
-
-			dataViagem := dataDesejada
-			if dataViagem == "" && len(caminhoAtual) > 0 {
-				dataViagem = copiaCaminho[0].Data
-				if dataViagem == "" {
-					dataViagem = time.Now().Format("2006-01-02")
-				}
-			}
-
-			itinerarios = append(itinerarios, modelos.Itinerario{
-				Data:       dataViagem,
-				PrecoTotal: precoAcumulado,
-				Trechos:    copiaCaminho,
-			})
-			return
-		}
-
-		visitados[strings.ToUpper(atual)] = true
-		defer func() { visitados[strings.ToUpper(atual)] = false }()
-
-		for _, t := range todosTrechos {
-			tOrigem := strings.ToUpper(t.Origem)
-			tDestino := strings.ToUpper(t.Destino)
-
-			// Valida se o trecho coincide com a data solicitada pelo passageiro
-			if dataDesejada != "" && t.Data != "" && !strings.EqualFold(t.Data, dataDesejada) {
-				continue
-			}
-
-			if strings.EqualFold(tOrigem, atual) && !visitados[tDestino] {
-				dfs(tDestino, append(caminhoAtual, t), precoAcumulado+t.Preco)
-			}
-		}
-	}
-
-	dfs(origemDesejada, nil, 0)
+	itinerarios := MontarItinerarios(todosTrechos, origemDesejada, destinoDesejado, dataDesejada)
 
 	responderJSON(conn, cliente_servidor.RespostaBuscarItinerarios{
 		Tipo:        cliente_servidor.TipoBuscarItinerariosRes,

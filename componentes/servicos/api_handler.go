@@ -11,6 +11,7 @@ import (
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/rest"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/visual"
 )
 
 var (
@@ -115,6 +116,7 @@ func LimparReservasDeCaronaExterna(empresaOrigem string, caronaID int) {
 	desfeitas := removerReservasDaCarona(caronaID, pertence,
 		"carona #%d da Empresa "+empresaOrigem+" foi cancelada pelo motorista.", caronaID)
 
+	visual.MensagemAviso(fmt.Sprintf("[Cancelamento] Recebido aviso: carona #%d da empresa %s cancelada; %d reserva(s) local(is) desfeita(s)", caronaID, empresaOrigem, len(desfeitas)))
 	for _, res := range desfeitas {
 		liberarOutrosTrechos(res.Passageiro, res.Trechos, pertence)
 	}
