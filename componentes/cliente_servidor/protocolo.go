@@ -5,7 +5,6 @@ import (
 )
 
 const (
-	// Handshake: o cliente só se considera conectado depois de receber a resposta do servidor
 	TipoPingReq = "ping_requisicao"
 	TipoPingRes = "ping_resposta"
 
@@ -64,7 +63,7 @@ type RespostaBuscarItinerarios struct {
 	Tipo        string               `json:"tipo"`
 	Sucesso     bool                 `json:"sucesso"`
 	Mensagem    string               `json:"mensagem"`
-	Itinerarios []modelos.Itinerario `json:"itinerarios,omitempty"`
+	Itinerarios []modelos.Itinerario `json:"itinerarios"`
 }
 
 type RespostaReservar struct {

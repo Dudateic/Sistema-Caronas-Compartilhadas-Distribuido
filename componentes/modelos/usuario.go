@@ -2,7 +2,6 @@ package modelos
 
 import "time"
 
-// TipoUsuario categoriza o perfil de acesso no sistema
 type TipoUsuario string
 
 const (

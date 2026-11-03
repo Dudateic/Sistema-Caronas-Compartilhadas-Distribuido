@@ -43,5 +43,2240 @@
         "passageiros": []
       }
     ]
+  },
+  {
+    "id": 2,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571"
+        ]
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_3_50655",
+          "sim_worker_2_46132",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_2_46132",
+          "sim_worker_4_47505",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_3_50655",
+          "sim_worker_3_50655",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_2_46132",
+          "sim_worker_3_50655",
+          "sim_worker_4_47505",
+          "sim_worker_2_46132",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571"
+        ]
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_22099",
+          "sim_worker_1_36508",
+          "sim_worker_1_36508",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089"
+        ]
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_36508"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_0_60526",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_47505",
+          "sim_worker_4_47505",
+          "sim_worker_3_50655",
+          "sim_worker_3_50655",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571"
+        ]
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_22099",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_22099",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_1_46571",
+          "sim_worker_4_38089",
+          "sim_worker_4_4464"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897"
+        ]
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 9,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_3_68848"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_22099",
+          "sim_worker_1_36508",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 7,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 8,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_3_68848",
+          "sim_worker_4_22099"
+        ]
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 9,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_1_36508"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 21,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 0,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 22,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 2,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_22099",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464",
+          "sim_worker_4_4464",
+          "sim_worker_1_72897",
+          "sim_worker_4_4464"
+        ]
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 23,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 7,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_3_68848",
+          "sim_worker_1_36508",
+          "sim_worker_4_22099"
+        ]
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 9,
+        "preco": 15,
+        "passageiros": [
+          "sim_worker_4_22099"
+        ]
+      }
+    ]
+  },
+  {
+    "id": 24,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 25,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 26,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 27,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 28,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 29,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 30,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 31,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 32,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 33,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 34,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 35,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 36,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 10,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 10,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 37,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 38,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 39,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 40,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 41,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 42,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 43,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 44,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 45,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 46,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 47,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 48,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 49,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 50,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 51,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 52,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 53,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 54,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 55,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 56,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 57,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 58,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 59,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 60,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 61,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 62,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 63,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 64,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 65,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 66,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 67,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "FSA",
+      "VIT"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "FSA",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 68,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "VIT",
+      "BRU",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "VIT",
+        "destino": "BRU",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "BRU",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 69,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 70,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "FSA",
+      "VIT",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "FSA",
+        "destino": "VIT",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      },
+      {
+        "origem": "VIT",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
+  },
+  {
+    "id": 71,
+    "motorista": "motorista_seed_2",
+    "data": "2026-10-30",
+    "horario": "12:00",
+    "assentos_totais": 5,
+    "preco_por_trecho": 15,
+    "rota": [
+      "SSA",
+      "CLE"
+    ],
+    "trechos": [
+      {
+        "origem": "SSA",
+        "destino": "CLE",
+        "assentos_livres": 5,
+        "preco": 15,
+        "passageiros": []
+      }
+    ]
   }
 ]

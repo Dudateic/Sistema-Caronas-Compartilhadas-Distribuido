@@ -234,6 +234,15 @@ Os testes sobem empresas reais em processo (cada uma com diretório de dados, lo
 - códigos de retorno e idempotência da API REST;
 - relógio de Lamport.
 
+### Teste de ponta a ponta (processos reais)
+
+```bash
+go build -o bin/servidor ./aplicacao/servidor
+python3 tests/e2e/cancelamento.py ./bin/servidor
+```
+
+Sobe A, B e C em `localhost`, cancela caronas e reservas e derruba empresas no meio, conferindo que os assentos são devolvidos nas outras empresas e que os avisos a uma empresa fora do ar são reenviados quando ela volta.
+
 ### Simulador de carga
 
 Gera buscas e reservas simultâneas contra os três servidores e, no fim, audita a invariante `passageiros + assentos livres == assentos totais` em todas as empresas.
@@ -296,8 +305,6 @@ componentes/
   modelos/         estruturas de dados compartilhadas
   cliente_servidor/ protocolo TCP entre clientes e servidor
 docker/            Dockerfile e docker-compose (normal e com IPs fixos)
-ferramentas/
-  monitor/         scripts Python de monitoramento visual (opcional; veja o README da pasta)
 docs/              especificação, 2PC e diagrama de sequência
 tests/             testes automatizados (carga, concorrência, falhas)
 ```
@@ -309,3 +316,6 @@ tests/             testes automatizados (carga, concorrência, falhas)
 - **Sem autenticação** na API REST entre servidores; pressupõe rede confiável do consórcio.
 - Sob contenção, reservas cruzadas podem abortar ambas (nunca travam); o passageiro precisa tentar de novo.
 - Uma empresa fora do ar custa até o timeout (3 s) em cada busca que a consulta.
+make run-servidor-a IP_B=192.168.18.7 IP_C=192.168.18.7
+curl http://192.168.18.7:9092/api/v1/trechos
+curl http://192.168.18.7:9093/api/v1/trechos

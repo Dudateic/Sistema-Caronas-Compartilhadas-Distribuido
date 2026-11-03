@@ -109,11 +109,8 @@ export DOCKERFILE_SIMULADOR
 build-simulador: ## constroi a imagem do simulador (so codigo-fonte, sem bin/ do host)
 	@printf '%s\n' "$$DOCKERFILE_SIMULADOR" | docker build --no-cache -f - --target simulador -t $(SIM_IMG) .
 
-# Os alvos do simulador sobem as empresas (se nao estiverem no ar), constroem a
-# imagem do simulador e a executam na mesma rede dos servidores (REDE).
 simulador-contencao: up-local build-simulador ## 200 reservas disputando 5 assentos (leve)
-	docker run --rm --cpus=1 --memory=512m --network $(REDE) $(SIM_IMG) -total=200 -concorrencia=5 -alvos="$(ALVOS)" -cenario=contencao -assentos=5
-
+	docker run --rm --cpus=2 --memory=512m --network $(REDE) $(SIM_IMG) -total=100 -concorrencia=5 -alvos="$(ALVOS)" -cenario=contencao -assentos=5
 simulador-cancelamento: up-local build-simulador ## 200 operacoes com cancelamento (leve)
 	docker run --rm --cpus=1 --memory=512m --network $(REDE) $(SIM_IMG) -total=200 -concorrencia=5 -alvos="$(ALVOS)" -cenario=cancelamento
 
@@ -124,8 +121,6 @@ simulador-busca: up-local build-simulador ## 300 buscas de itinerarios (leve)
 	docker run --rm --cpus=1 --memory=512m --network $(REDE) $(SIM_IMG) -total=300 -concorrencia=5 -alvos="$(ALVOS)" -cenario=busca
 
 simulador: simulador-contencao simulador-cancelamento simulador-motorista simulador-busca ## roda os 4 cenarios leves em sequencia (carga reduzida)
-
-simulador-todos: simulador ## alias de simulador
 
 down-a: ## para a empresa A (simula a queda)
 	$(COMPOSE_LOCAL) stop empresa-a

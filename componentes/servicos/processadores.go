@@ -1,11 +1,9 @@
 package servicos
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"net"
-	"net/http"
 	"sort"
 	"strings"
 	"sync"
@@ -152,23 +150,11 @@ func ProcessarCancelarCarona(conn net.Conn, dados string) {
 	})
 }
 
-func notificarConsorcioCaronaCancelada(empresaOrigem string, caronaID int) {
-	clienteHTTP := &http.Client{Timeout: 3 * time.Second}
-	payload, _ := json.Marshal(map[string]any{
-		"empresa":   empresaOrigem,
-		"carona_id": caronaID,
-	})
-
-	for _, urlBase := range Config.Pares {
-		urlAlvo := fmt.Sprintf("%s/api/v1/caronas/cancelada", strings.TrimRight(urlBase, "/"))
-		req, err := http.NewRequest(http.MethodPost, urlAlvo, bytes.NewReader(payload))
-		if err == nil {
-			req.Header.Set("Content-Type", "application/json")
-			resp, errDo := clienteHTTP.Do(req)
-			if errDo == nil {
-				_ = resp.Body.Close()
-			}
-		}
+// notificarConsorcioCaronaCancelada avisa todas as empresas parceiras; as que estiverem fora do ar
+// recebem o aviso quando voltarem (reenvio confiável).
+func notificarConsorcioCaronaCancelada(_ string, caronaID int) {
+	for nome := range Config.Pares {
+		go executarOuEnfileirar(tarefaRemota{Tipo: tarefaCaronaCancelada, Empresa: nome, CaronaID: caronaID})
 	}
 }
 
@@ -306,42 +292,33 @@ func ProcessarCancelarReserva(conn net.Conn, dados string) {
 		return
 	}
 
-	// 2. Avisa os servidores de cada trecho do itinerário
-	var servidoresComFalha []string
-
+	// 2. Devolve o assento de cada trecho: os desta empresa na hora; os das outras, por
+	//    notificação confiável (se a empresa estiver fora do ar, fica guardada e é reenviada).
+	var servidoresPendentes []string
 	for _, trecho := range reservaCancelada.Trechos {
-		// Se o trecho for desta própria empresa:
 		if strings.EqualFold(trecho.Empresa, Config.Empresa) || trecho.Empresa == "" {
 			if InstanciaCaronas != nil {
 				_ = InstanciaCaronas.LiberarAssentoConfirmado(trecho.CaronaID, trecho.Origem, trecho.Destino, req.Passageiro)
 			}
 			continue
 		}
-
-		// Se o trecho for de um servidor parceiro:
-		urlPar, existe := Config.Pares[trecho.Empresa]
-		if !existe {
+		if _, existe := urlDoPar(trecho.Empresa); !existe {
 			continue
 		}
-
-		errRemoto := InstanciaClienteREST.EnviarCancelamentoTrecho(
-			urlPar,
-			trecho.CaronaID,
-			trecho.Origem,
-			trecho.Destino,
-			req.Passageiro,
-		)
-
-		if errRemoto != nil {
-			servidoresComFalha = append(servidoresComFalha, trecho.Empresa)
+		entregue := executarOuEnfileirar(tarefaRemota{
+			Tipo: tarefaLiberarTrecho, Empresa: trecho.Empresa, CaronaID: trecho.CaronaID,
+			Origem: trecho.Origem, Destino: trecho.Destino, Passageiro: req.Passageiro,
+		})
+		if !entregue {
+			servidoresPendentes = append(servidoresPendentes, trecho.Empresa)
 		}
 	}
 
 	msgRetorno := "Reserva cancelada com sucesso em todos os servidores"
-	if len(servidoresComFalha) > 0 {
+	if len(servidoresPendentes) > 0 {
 		msgRetorno = fmt.Sprintf(
-			"Reserva cancelada localmente. O(s) servidor(es) %v estavam inacessiveis e serao atualizados automaticamente ao religarem.",
-			servidoresComFalha,
+			"Reserva cancelada. O(s) servidor(es) %v estao inacessiveis: o aviso foi guardado e sera reenviado automaticamente ate ser entregue.",
+			servidoresPendentes,
 		)
 	}
 

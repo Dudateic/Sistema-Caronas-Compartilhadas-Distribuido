@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/distribuido"
+	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/modelos"
 	"Sistema-Caronas-Compartilhadas-Distribuido/componentes/rest"
 )
 
@@ -32,6 +33,7 @@ func InicializarCaronas() error {
 func InicializarReservas() error {
 	InstanciaReservas = NovoGerenciadorReservas(Config.Empresa, DiretorioDados)
 	InstanciaUsuarios = NovoGerenciadorUsuarios(DiretorioDados)
+	InstanciaOutbox = NovoOutboxRemoto(DiretorioDados)
 	AoCancelarCaronaRemota = LimparReservasDeCaronaExterna
 	return nil
 }
@@ -89,42 +91,68 @@ func InicializarTransacoes() error {
 	return InstanciaCoordenador.Recuperar()
 }
 
+// LimparReservasDaCarona trata o cancelamento, nesta empresa, de uma carona desta empresa: remove as
+// reservas guardadas aqui que dependiam dela, avisa os passageiros e DEVOLVE os assentos que essas
+// reservas ocupavam nos demais trechos (inclusive em outras empresas).
 func LimparReservasDaCarona(caronaID int) {
+	desfeitas := removerReservasDaCarona(caronaID, func(t modelos.TrechoViagem) bool {
+		return t.CaronaID == caronaID && (t.Empresa == Config.Empresa || t.Empresa == "")
+	}, "carona #%d foi cancelada pelo motorista.", caronaID)
+
+	for _, res := range desfeitas {
+		liberarOutrosTrechos(res.Passageiro, res.Trechos, func(t modelos.TrechoViagem) bool {
+			return t.CaronaID == caronaID && (t.Empresa == Config.Empresa || t.Empresa == "")
+		})
+	}
+}
+
+// LimparReservasDeCaronaExterna trata o aviso de que uma carona de OUTRA empresa foi cancelada.
+// É idempotente: se a reserva já foi desfeita, não há nada a fazer.
+func LimparReservasDeCaronaExterna(empresaOrigem string, caronaID int) {
+	pertence := func(t modelos.TrechoViagem) bool {
+		return t.CaronaID == caronaID && strings.EqualFold(t.Empresa, empresaOrigem)
+	}
+	desfeitas := removerReservasDaCarona(caronaID, pertence,
+		"carona #%d da Empresa "+empresaOrigem+" foi cancelada pelo motorista.", caronaID)
+
+	for _, res := range desfeitas {
+		liberarOutrosTrechos(res.Passageiro, res.Trechos, pertence)
+	}
+}
+
+// removerReservasDaCarona apaga as reservas que contêm algum trecho da carona e notifica os passageiros.
+// Não faz chamadas de rede: devolve as reservas desfeitas para o chamador liberar os demais trechos.
+func removerReservasDaCarona(_ int, doTrecho func(modelos.TrechoViagem) bool, motivoFmt string, args ...any) []modelos.Reserva {
 	if InstanciaReservas == nil {
-		return
+		return nil
 	}
 
 	InstanciaReservas.mu.Lock()
 	defer InstanciaReservas.mu.Unlock()
 
-	alterouReservas := false
-	alterouNotificacoes := false
-
+	var desfeitas []modelos.Reserva
 	for id, res := range InstanciaReservas.reservas {
 		afetada := false
 		for _, t := range res.Trechos {
-			if t.CaronaID == caronaID && (t.Empresa == Config.Empresa || t.Empresa == "") {
+			if doTrecho(t) {
 				afetada = true
 				break
 			}
 		}
-
-		if afetada {
-			delete(InstanciaReservas.reservas, id)
-			alterouReservas = true
-
-			msg := fmt.Sprintf("Aviso: Sua reserva de bilhete #%d foi cancelada porque a carona #%d foi cancelada pelo motorista.", id, caronaID)
-			InstanciaReservas.adicionarNotificacaoSemLock(res.Passageiro, msg)
-			alterouNotificacoes = true
+		if !afetada {
+			continue
 		}
+		delete(InstanciaReservas.reservas, id)
+		desfeitas = append(desfeitas, res)
+		InstanciaReservas.adicionarNotificacaoSemLock(res.Passageiro,
+			fmt.Sprintf("Aviso: Sua reserva de bilhete #%d foi cancelada porque a "+motivoFmt, append([]any{id}, args...)...))
 	}
 
-	if alterouReservas {
+	if len(desfeitas) > 0 {
 		_ = InstanciaReservas.salvarEmDisco()
-	}
-	if alterouNotificacoes {
 		_ = InstanciaReservas.salvarNotificacoesEmDisco()
 	}
+	return desfeitas
 }
 
 func IniciarLimpezaBloqueios(ctx context.Context) {
@@ -142,44 +170,6 @@ func IniciarLimpezaBloqueios(ctx context.Context) {
 			}
 		}
 	}()
-}
-
-func LimparReservasDeCaronaExterna(empresaOrigem string, caronaID int) {
-	if InstanciaReservas == nil {
-		return
-	}
-
-	InstanciaReservas.mu.Lock()
-	defer InstanciaReservas.mu.Unlock()
-
-	alterouReservas := false
-	alterouNotificacoes := false
-
-	for id, res := range InstanciaReservas.reservas {
-		afetada := false
-		for _, t := range res.Trechos {
-			if t.CaronaID == caronaID && strings.EqualFold(t.Empresa, empresaOrigem) {
-				afetada = true
-				break
-			}
-		}
-
-		if afetada {
-			delete(InstanciaReservas.reservas, id)
-			alterouReservas = true
-
-			msg := fmt.Sprintf("Aviso: Sua reserva de bilhete #%d foi cancelada porque a carona #%d da Empresa %s foi cancelada pelo motorista.", id, caronaID, empresaOrigem)
-			InstanciaReservas.adicionarNotificacaoSemLock(res.Passageiro, msg)
-			alterouNotificacoes = true
-		}
-	}
-
-	if alterouReservas {
-		_ = InstanciaReservas.salvarEmDisco()
-	}
-	if alterouNotificacoes {
-		_ = InstanciaReservas.salvarNotificacoesEmDisco()
-	}
 }
 
 func NovoHandlerAPI() http.Handler {

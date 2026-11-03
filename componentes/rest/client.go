@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -16,6 +17,9 @@ import (
 const (
 	TimeoutPadraoHTTP = 3 * time.Second
 )
+
+// ErrNaoEncontrado indica HTTP 404: o recurso já não existe no destino (por exemplo, assento já liberado).
+var ErrNaoEncontrado = errors.New("recurso nao encontrado no destino")
 
 // ClienteRESTInterEmpresas realiza chamadas HTTP para os servidores das outras empresas do consórcio
 type ClienteRESTInterEmpresas struct {
@@ -188,6 +192,9 @@ func (c *ClienteRESTInterEmpresas) EnviarCancelamentoTrecho(enderecoBase string,
 	}
 	defer resp.Body.Close()
 
+	if resp.StatusCode == http.StatusNotFound {
+		return ErrNaoEncontrado
+	}
 	if resp.StatusCode != http.StatusOK {
 		return fmt.Errorf("servidor respondeu com HTTP %d ao cancelar trecho", resp.StatusCode)
 	}
@@ -247,4 +254,29 @@ func (c *ClienteRESTInterEmpresas) ConsultarEstado(enderecoBase, txID string) (s
 		return "", fmt.Errorf("resposta invalida do participante: %w", err)
 	}
 	return e.Estado, nil
+}
+
+// NotificarCaronaCancelada avisa uma empresa parceira que uma carona foi cancelada pelo motorista.
+func (c *ClienteRESTInterEmpresas) NotificarCaronaCancelada(enderecoBase, empresaOrigem string, caronaID int) error {
+	payload, _ := json.Marshal(map[string]any{"empresa": empresaOrigem, "carona_id": caronaID})
+
+	ctx, cancel := context.WithTimeout(context.Background(), TimeoutPadraoHTTP)
+	defer cancel()
+
+	req, err := http.NewRequestWithContext(ctx, http.MethodPost,
+		fmt.Sprintf("%s/api/v1/caronas/cancelada", strings.TrimRight(enderecoBase, "/")), bytes.NewReader(payload))
+	if err != nil {
+		return err
+	}
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := c.httpClient.Do(req)
+	if err != nil {
+		return fmt.Errorf("falha ao notificar %s: %w", enderecoBase, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("%s respondeu HTTP %d", enderecoBase, resp.StatusCode)
+	}
+	return nil
 }

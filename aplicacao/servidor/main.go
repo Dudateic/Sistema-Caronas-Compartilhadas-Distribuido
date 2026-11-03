@@ -87,6 +87,7 @@ func main() {
 	ctx, cancelar := context.WithCancel(context.Background())
 	defer cancelar()
 	servicos.IniciarLimpezaBloqueios(ctx)
+	servicos.IniciarReenvioNotificacoes(ctx)
 
 	// API REST entre servidores
 	api := &http.Server{Addr: *httpAddr, Handler: servicos.NovoHandlerAPI(), ReadHeaderTimeout: 5 * time.Second}
