@@ -16,7 +16,6 @@ Sistema distribuído em que várias empresas de caronas formam um consórcio. Ca
 8. [Demonstração de Falha](#demonstração-de-falha)
 9. [Configuração](#configuração)
 10. [Estrutura do Repositório](#estrutura-do-repositório)
-11. [Limitações Conhecidas](#limitações-conhecidas)
 
 ## Arquitetura
 
